@@ -17,4 +17,12 @@ public class AccountInfo {
 		perm.forEach(p -> permissions.add((String)p));
 		for(String s:permissions)System.out.println(s);
 	}
+	
+	public String getUsername(){
+		return this.username;
+	}
+	
+	public boolean hasPermission(String permission) {
+		return permissions.contains(permission);
+	}
 }

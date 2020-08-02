@@ -11,20 +11,18 @@ import org.json.simple.JSONObject;
 import com.Tuong.ContentCreator.AuthUI;
 import com.Tuong.MedXMain.JSONHelper;
 
-public class AuthManagement {
+public class AuthManager {
 	private AuthUI authUI;
 	private final String account_path = "Data/employees.json";
 	private AccountInfo account_info;
 	
-	public AuthManagement() {
-		this.authUI = new AuthUI();
+	public AuthManager() {
+		this.authUI = new AuthUI(this);
 		loadAuthenication();
-		System.out.println(checkAuthenication("Guest", "Guest"));
 	}
 	
 	public boolean checkAuthenication(String username, String password) {
 		JSONArray auth = (JSONArray) JSONHelper.readFile(account_path);
-		password = getMd5(password);
 		for (int i = 0; i < auth.size(); i++) 
 		{
 			JSONObject object = (JSONObject) auth.get(i);
@@ -63,7 +61,7 @@ public class AuthManagement {
 			JSONHelper.writeFile(file.getPath(), array2.toJSONString());
 		}
 	}
-	public static String getMd5(String input) 
+	public String getMd5(String input) 
     { 
         try { 
             // Static getInstance method is called with hashing MD5 

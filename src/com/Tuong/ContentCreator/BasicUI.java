@@ -8,6 +8,7 @@ import java.awt.event.FocusListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 public class BasicUI extends JFrame {
@@ -20,6 +21,7 @@ public class BasicUI extends JFrame {
 		setSize(d);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		pack();
+		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 
@@ -52,5 +54,8 @@ public class BasicUI extends JFrame {
 			}
 		});
 		return button;
+	}
+	protected void showDialog(String title,String content, int option) {
+		JOptionPane.showMessageDialog(this,content,title,option);
 	}
 }
