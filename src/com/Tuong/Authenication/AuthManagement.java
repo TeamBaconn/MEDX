@@ -14,10 +14,29 @@ import com.Tuong.MedXMain.JSONHelper;
 public class AuthManagement {
 	private AuthUI authUI;
 	private final String account_path = "Data/employees.json";
+	private AccountInfo account_info;
 	
 	public AuthManagement() {
 		this.authUI = new AuthUI();
 		loadAuthenication();
+		System.out.println(checkAuthenication("Guest", "Guest"));
+	}
+	
+	public boolean checkAuthenication(String username, String password) {
+		JSONArray auth = (JSONArray) JSONHelper.readFile(account_path);
+		password = getMd5(password);
+		for (int i = 0; i < auth.size(); i++) 
+		{
+			JSONObject object = (JSONObject) auth.get(i);
+			//Check if the username and password is correct
+			if (object.get("Username").equals(username) && object.get("Password").equals(password)) 
+			{
+				//Establish the connection
+				this.account_info = new AccountInfo(object);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	//Load accounts
@@ -39,9 +58,9 @@ public class AuthManagement {
 			array.add("medical.remove");
 			array.add("medical.request");
 			obj.put("Permission",array);
-			JSONObject obj2 = new JSONObject();
-			obj2.put("Account",obj);
-			JSONHelper.writeFile(file.getPath(), obj2.toJSONString());
+			JSONArray array2 = new JSONArray();
+			array2.add(obj);
+			JSONHelper.writeFile(file.getPath(), array2.toJSONString());
 		}
 	}
 	public static String getMd5(String input) 
@@ -69,6 +88,9 @@ public class AuthManagement {
             throw new RuntimeException(e); 
         } 
     } 
+	
+	
+	
 	public AuthUI getUI() {
 		return this.authUI;
 	}
