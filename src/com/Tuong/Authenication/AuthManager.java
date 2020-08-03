@@ -9,16 +9,23 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.Tuong.ContentCreator.AuthUI;
+import com.Tuong.ContentCreator.HomeUI;
 import com.Tuong.MedXMain.JSONHelper;
 
 public class AuthManager {
 	private AuthUI authUI;
+	private HomeUI homeUI;
 	private final String account_path = "Data/employees.json";
 	private AccountInfo account_info;
 	
 	public AuthManager() {
 		this.authUI = new AuthUI(this);
 		loadAuthenication();
+	}
+	
+	public void menu() {
+		this.authUI = null;
+		this.homeUI = new HomeUI();
 	}
 	
 	public boolean checkAuthenication(String username, String password) {
@@ -86,10 +93,4 @@ public class AuthManager {
             throw new RuntimeException(e); 
         } 
     } 
-	
-	
-	
-	public AuthUI getUI() {
-		return this.authUI;
-	}
 }
