@@ -1,5 +1,7 @@
 package com.Tuong.Authenication;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -10,13 +12,17 @@ import org.json.simple.JSONObject;
 
 import com.Tuong.ContentCreator.AuthUI;
 import com.Tuong.ContentCreator.HomeUI;
+import com.Tuong.ContentCreator.MedUI;
 import com.Tuong.MedXMain.JSONHelper;
 
 public class AuthManager {
 	private AuthUI authUI;
 	private HomeUI homeUI;
+	private MedUI medUI;
+	
 	private final String account_path = "Data/employees.json";
 	private AccountInfo account_info;
+	
 	
 	public AuthManager() {
 		this.authUI = new AuthUI(this);
@@ -25,7 +31,55 @@ public class AuthManager {
 	
 	public void menu() {
 		this.authUI = null;
-		this.homeUI = new HomeUI();
+		this.homeUI = new HomeUI(this);
+	}
+	
+	public void openMedUI() {
+		if(!account_info.hasPermission("medical.view")) {
+			homeUI.showDialog("Permission required!", "You dont have permission to do this action", 2);
+			return;
+		}
+		if(medUI != null) {
+			medUI.toFront();
+			medUI.requestFocus();
+			return;
+		}
+		medUI = new MedUI(this);
+		medUI.addWindowListener(new WindowListener() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent e) {
+				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+				medUI = null;
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent e) {
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent e) {
+				
+			}
+		});
 	}
 	
 	public boolean checkAuthenication(String username, String password) {
