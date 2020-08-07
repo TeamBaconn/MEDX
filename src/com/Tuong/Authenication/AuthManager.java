@@ -29,7 +29,8 @@ public class AuthManager {
 		loadAuthenication();
 	}
 	
-	public void menu() {
+	public void openMenu() {
+		this.authUI.setVisible(false);
 		this.authUI = null;
 		this.homeUI = new HomeUI(this);
 	}

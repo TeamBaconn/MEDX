@@ -7,12 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -32,7 +31,13 @@ public class BasicUI extends JFrame {
 	protected void setupUI() {
 		// Blank function for overriding with custom UI setup in extends classes
 	}
-
+	
+	protected JLabel createLabel(String displayText, Container cont) {
+		JLabel label = new JLabel(displayText);
+		cont.add(label);
+		return label;
+	}
+	
 	protected JTextField createTextField(String displayText, Container cont) {
 		JTextField t = new JTextField(displayText);
 		t.addFocusListener(new FocusListener() {

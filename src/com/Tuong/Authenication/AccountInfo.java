@@ -9,6 +9,7 @@ public class AccountInfo {
 	private String username;
 	private ArrayList<String> permissions;
 	
+	@SuppressWarnings("unchecked")
 	public AccountInfo(JSONObject object) {
 		this.username = (String)object.get("Username");
 		
