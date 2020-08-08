@@ -20,13 +20,13 @@ public class MedicineManager {
 		loadFile();
 		//Loading the medicines
 		medicines = new ArrayList<Medicine>();
-		addMedicine("Thuoc tien", false, null);
-		addMedicine("Thuoc bac", false, null);
-		addMedicine("Thuoc bo", false, null);
+		addMedicine("Thuoc tien", false, null,null);
+		addMedicine("Thuoc bac", false, null,null);
+		addMedicine("Thuoc bo", false, null,null);
 	}
 	
-	public void addMedicine(String name, boolean available, Date date) {
-		medicines.add(new Medicine(name, available, date));
+	public void addMedicine(String name, boolean available, Date date, MedicineCategory cat) {
+		medicines.add(new Medicine(name, available, date, cat));
 	}
 	
 	public ArrayList<MedicineSet> getMed(String name) {

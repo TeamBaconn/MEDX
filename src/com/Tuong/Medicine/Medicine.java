@@ -6,8 +6,9 @@ public class Medicine {
 	private String name;
 	private boolean available;
 	private Date expDate;
+	private MedicineCategory category;
 	
-	public Medicine(String name, boolean available, Date date) {
+	public Medicine(String name, boolean available, Date date, MedicineCategory category) {
 		this.name = name;
 		this.available = available;
 		this.expDate = date;

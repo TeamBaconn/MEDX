@@ -9,21 +9,24 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.Tuong.Authenication.AuthManager;
 import com.Tuong.DateUtils.Date;
 import com.Tuong.DateUtils.DatePicker;
+import com.Tuong.Medicine.MedicineCategory;
 import com.Tuong.Medicine.MedicineSet;
 
 public class MedUI extends BasicUI{
@@ -32,7 +35,7 @@ public class MedUI extends BasicUI{
 	private JList<MedicineSet> list;
 	
 	public MedUI(AuthManager auth_manager) {
-		super("Medicine Manager", new Dimension(800,500),false);
+		super("Medicine Manager", new Dimension(900,600),false);
 		this.auth_manager = auth_manager;
 	}
 	@Override
@@ -59,21 +62,22 @@ public class MedUI extends BasicUI{
 		form.createLabel("EXP Date");
 		DatePicker dPicker = new DatePicker(new Date(), true);
 		form.addComponent(dPicker);
-		form.createLabel("Available");
-		JCheckBox check = new JCheckBox();
-		form.addComponent(check);
+		form.createLabel("Units");
+		JSpinner unit = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+		form.addComponent(unit);
 		JButton addMed = new JButton("Create");
 		addMed.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+			
 			}
 		});
 		form.addComponent(addMed);
 		
-		
 		JPanel listMed = new JPanel();
+		listMed.setLayout(new BoxLayout(listMed, BoxLayout.Y_AXIS));
 		list = new JList<MedicineSet>();
+		list.setMaximumSize(new Dimension(400, 200));
 		list.setPreferredSize(new Dimension(400, 200));
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.addListSelectionListener(new ListSelectionListener() {
@@ -85,9 +89,26 @@ public class MedUI extends BasicUI{
 			}
 		});
 		listMed.add(list);
+		listMed.add(Box.createRigidArea(new Dimension(0,10)));
+		listMed.add(medInfo);
+		
+		JPanel listCategory = new JPanel();
+		listCategory.setLayout(new BoxLayout(listCategory, BoxLayout.Y_AXIS));
+		JList<MedicineCategory> listCate = new JList<MedicineCategory>();
+		listCate.setMaximumSize(new Dimension(400, 200));
+		listCate.setPreferredSize(new Dimension(400, 200));
+		JPanel cateInfo = new JPanel();
+		cateInfo.setLayout(new GridBagLayout());
+		FormCreator formCate = new FormCreator(cateInfo, 2, n, 30);
+		formCate.createLabel("Name");
+		JTextField cateName = formCate.createTextField("");
+		
+		listCategory.add(listCate);
+		listCategory.add(Box.createRigidArea(new Dimension(0,10)));
+		listCategory.add(cateInfo);
 		
 		add(listMed);
-		add(medInfo);
+		add(listCategory);
 	}
 	private void searchAction(JTextField medName) {
 		medName.addKeyListener(new KeyListener() {

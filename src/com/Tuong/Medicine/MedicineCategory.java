@@ -15,4 +15,9 @@ public class MedicineCategory {
 	public String getHint() {
 		return this.hint;
 	}
+	
+	@Override
+	public String toString() {
+		return this.name;
+	}
 }
