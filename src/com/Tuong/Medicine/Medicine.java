@@ -1,6 +1,6 @@
 package com.Tuong.Medicine;
 
-import java.util.Date;
+import com.Tuong.DateUtils.Date;
 
 public class Medicine {
 	private String name;

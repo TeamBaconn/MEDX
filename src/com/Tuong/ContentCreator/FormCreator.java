@@ -37,19 +37,6 @@ public class FormCreator {
 	}
 	public JTextField createTextField(String displayText) {
 		JTextField t = new JTextField(displayText);
-		t.addFocusListener(new FocusListener() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				if (t.getText().length() <= 0)
-					t.setText(displayText);
-			}
-
-			@Override
-			public void focusGained(FocusEvent e) {
-				if (t.getText().contentEquals(displayText))
-					t.setText("");
-			}
-		});
 		addComponent(t);
 		return t;
 	}

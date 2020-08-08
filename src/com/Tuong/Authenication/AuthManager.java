@@ -14,6 +14,7 @@ import com.Tuong.ContentCreator.AuthUI;
 import com.Tuong.ContentCreator.HomeUI;
 import com.Tuong.ContentCreator.MedUI;
 import com.Tuong.MedXMain.JSONHelper;
+import com.Tuong.Medicine.MedicineManager;
 
 public class AuthManager {
 	private AuthUI authUI;
@@ -23,8 +24,9 @@ public class AuthManager {
 	private final String account_path = "Data/employees.json";
 	private AccountInfo account_info;
 	
-	
+	private MedicineManager med_manager;
 	public AuthManager() {
+		this.med_manager = new MedicineManager();
 		this.authUI = new AuthUI(this);
 		loadAuthenication();
 	}
@@ -83,6 +85,10 @@ public class AuthManager {
 		});
 	}
 	
+	public MedicineManager getMedicineManager() {
+		return this.med_manager;
+	}
+	
 	public boolean checkAuthenication(String username, String password) {
 		JSONArray auth = (JSONArray) JSONHelper.readFile(account_path);
 		for (int i = 0; i < auth.size(); i++) 
@@ -126,24 +132,15 @@ public class AuthManager {
 	public String getMd5(String input) 
     { 
         try { 
-            // Static getInstance method is called with hashing MD5 
-            MessageDigest md = MessageDigest.getInstance("MD5"); 
-  
-            // digest() method is called to calculate message digest 
-            //  of an input digest() return array of byte 
-            byte[] messageDigest = md.digest(input.getBytes()); 
-  
-            // Convert byte array into signum representation 
-            BigInteger no = new BigInteger(1, messageDigest); 
-  
-            // Convert message digest into hex value 
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(input.getBytes());
+            BigInteger no = new BigInteger(1, messageDigest);
             String hashtext = no.toString(16); 
             while (hashtext.length() < 32) { 
                 hashtext = "0" + hashtext; 
             } 
             return hashtext; 
         }  
-        // For specifying wrong message digest algorithms 
         catch (NoSuchAlgorithmException e) { 
             throw new RuntimeException(e); 
         } 
