@@ -15,11 +15,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import com.Tuong.Authenication.AuthManager;
+
 public class BasicUI extends JFrame {
-	public BasicUI(String name, Dimension d, boolean exit_on_close) {
+	protected AuthManager auth_manager;
+	public BasicUI(String name, Dimension d, boolean exit_on_close, AuthManager auth_manager) {
 		// Setting up the UI
 		super(name);
-
+		this.auth_manager = auth_manager;
 		setupUI();
 		setIconImage(new ImageIcon("Data/logo_size_invert.png").getImage());
 		setSize(d);
@@ -74,5 +77,9 @@ public class BasicUI extends JFrame {
 
 	public void showDialog(String title, String content, int option) {
 		JOptionPane.showMessageDialog(this, content, title, option);
+	}
+	
+	public int showConfirmDialog(String title, String content) {
+		return JOptionPane.showConfirmDialog(this, content, title, JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 	}
 }

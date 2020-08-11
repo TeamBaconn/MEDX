@@ -3,6 +3,7 @@ package com.Tuong.DateUtils;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Field;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -12,8 +13,9 @@ import javax.swing.JPanel;
 public class DatePicker extends JPanel{
 	
 	private static final long serialVersionUID = -2195827019719478050L;
-	
-	private Date date;
+
+	private Object setter;
+	private String value_name;
 	private boolean timeEnable;
 	private JComboBox<Integer>[] show;
 	private final String[] display = {"D","M","Y","H","M"};
@@ -22,7 +24,6 @@ public class DatePicker extends JPanel{
 	@SuppressWarnings("unchecked")
 	public DatePicker(Date date, boolean timeEnable) {
 		super(new FlowLayout(FlowLayout.LEFT));
-		this.date = date;
 		this.timeEnable = timeEnable;
 		show = new JComboBox[timeEnable?5:3];
 		for(int i = 0; i < show.length; i++) {
@@ -30,7 +31,6 @@ public class DatePicker extends JPanel{
 			Integer[] n = {};
 			switch (i) {
 			case 0:
-				setDay(date.day,date.month, date.year, show[i]);
 				updateDay(show[i]);
 				break;
 			case 1:
@@ -63,35 +63,59 @@ public class DatePicker extends JPanel{
 			add(new JLabel(display[i]));
 			add(show[i]);
 		}
+		setDay(date.day,date.month, date.year,date.hour,date.min);
 	}
-	private void updateDate() {
-		this.date.day = (int) show[0].getSelectedItem();
-		this.date.month = (int) show[1].getSelectedItem();
-		this.date.year = (int) show[2].getSelectedItem();
-		if(!timeEnable) return;
-		this.date.hour = (int) show[3].getSelectedItem();
-		this.date.min = (int) show[4].getSelectedItem();
-	}
+	
 	public Date getDate() {
-		return this.date;
+		return new Date((int)show[0].getSelectedItem(),(int)show[1].getSelectedItem(), (int)show[2].getSelectedItem(), (timeEnable?(int)show[3].getSelectedItem():0),(timeEnable?(int)show[4].getSelectedItem():0));
 	}
-	private void setDay(int day, int month, int year, JComboBox<Integer> show) {
+	
+	private void setDay(int day, int month, int year,int hour,int min) {
 		Integer[] n = new Integer[getDateInMonth(month, year)];
 		for(int k = 0; k < n.length; k++) n[k] = k+1;
-		show.setModel(new DefaultComboBoxModel<Integer>(n));
-		show.setSelectedIndex(day>n.length?0:day-1);
+		show[0].setModel(new DefaultComboBoxModel<Integer>(n));
+		show[0].setSelectedIndex(day>n.length?0:day-1);
+		n = new Integer[20];
+		for(int k = 0; k < n.length; k++) n[k] = year-10+k;
+		show[2].setModel(new DefaultComboBoxModel<Integer>(n));
+		show[2].setSelectedIndex(10);
+		show[1].setSelectedIndex(month-1);
+		if(setter == null) return;
+		Field set;
+		try {
+			set = setter.getClass().getDeclaredField(value_name);
+			set.setAccessible(true);
+			set.set(setter, new Date(day,month,year,hour,min));
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 	}
 	private void updateDay(JComboBox<Integer> update) {
 		update.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setDay((int)show[0].getSelectedItem(),(int)show[1].getSelectedItem(), (int)show[2].getSelectedItem(), show[0]);
-				updateDate();
+				setDay((int)show[0].getSelectedItem(),(int)show[1].getSelectedItem(), (int)show[2].getSelectedItem(), (timeEnable?(int)show[3].getSelectedItem():0),(timeEnable?(int)show[4].getSelectedItem():0));
 			}
 		});
 	}
 	private int getDateInMonth(int month, int nam) {
 		if(month == 2) return (((nam % 4 == 0 && nam % 100 != 0) || nam % 400 == 0) ? 29 : 28);
 		return date_in_month[month-1];
+	}
+	public void setDateSetter(Object setter, String value_name) {
+		this.setter = setter;
+		this.value_name = value_name;
+	}
+	public void setDate(Date date) {
+		setDay(date.day, date.month, date.year, date.hour, date.min);
+		if(!timeEnable) return;
+		show[3].setSelectedItem(date.hour);
+		show[4].setSelectedItem(date.min);
 	}
 }

@@ -15,6 +15,8 @@ public class Date {
 		this.day = day;
 		this.month = month;
 		this.year = year;
+		this.hour = 0;
+		this.min = 0;
 	}
 	public Date(int day,int month,int year,int hour,int min) {
 		this.hour = hour;
@@ -25,5 +27,15 @@ public class Date {
 	}
 	public void printDebug() {
 		System.out.println("Date is "+day+"/"+month+"/"+year+" : time "+hour+" "+min);
+	}
+	
+	public static Date parse(String s) {
+		String[] array = s.split(":");
+		return new Date(Integer.parseInt(array[0]), Integer.parseInt(array[1]), Integer.parseInt(array[2]), Integer.parseInt(array[3]), Integer.parseInt(array[4]));
+	}
+	
+	@Override
+	public String toString() {
+		return day+":"+month+":"+year+":"+hour+":"+min;
 	}
 }

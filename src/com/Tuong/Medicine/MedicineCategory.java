@@ -7,7 +7,10 @@ public class MedicineCategory {
 		this.name = name;
 		this.hint = hint;
 	}
-	
+	public void update(String name, String hint) {
+		this.name = name;
+		this.hint = hint;
+	}
 	public String getName() {
 		return this.name;
 	}

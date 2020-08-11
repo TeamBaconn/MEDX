@@ -4,8 +4,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -32,6 +30,7 @@ public class FormCreator {
 			con.gridx = 0;
 			con.gridy++;
 		}
+		if(comp == null) return;
 		comp.setPreferredSize(new Dimension(compsLength[con.gridx],lengthY));
 		cont.add(comp,con);
 	}

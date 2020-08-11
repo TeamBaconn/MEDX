@@ -10,9 +10,8 @@ import javax.swing.JPanel;
 import com.Tuong.Authenication.AuthManager;
 
 public class HomeUI extends BasicUI{
-	private AuthManager auth_manager;
 	public HomeUI(AuthManager auth_manager) {
-		super("MedX", new Dimension(800,500),true);
+		super("MedX", new Dimension(800,500),true,auth_manager);
 		this.auth_manager = auth_manager;
 	}
 	

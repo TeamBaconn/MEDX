@@ -71,6 +71,7 @@ public class AuthManager {
 			
 			@Override
 			public void windowClosing(WindowEvent e) {
+				getMedicineManager().saveData();
 				medUI = null;
 			}
 			

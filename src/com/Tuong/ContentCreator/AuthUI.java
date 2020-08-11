@@ -15,9 +15,8 @@ import javax.swing.JTextField;
 import com.Tuong.Authenication.AuthManager;
 
 public class AuthUI extends BasicUI {
-	private AuthManager auth_manager;
 	public AuthUI(AuthManager auth_manager) {
-		super("MedX", new Dimension(250, 350),true);
+		super("MedX", new Dimension(250, 350),true,auth_manager);
 		this.auth_manager = auth_manager;
 	}
 
