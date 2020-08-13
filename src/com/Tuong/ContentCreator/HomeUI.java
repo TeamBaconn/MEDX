@@ -11,7 +11,7 @@ import com.Tuong.Authenication.AuthManager;
 
 public class HomeUI extends BasicUI{
 	public HomeUI(AuthManager auth_manager) {
-		super("MedX", new Dimension(800,500),true,auth_manager);
+		super("MedX", new Dimension(300,500),true,auth_manager);
 		this.auth_manager = auth_manager;
 	}
 	
@@ -20,7 +20,12 @@ public class HomeUI extends BasicUI{
 		setLayout(new BorderLayout(10,10));
 		JPanel authPanel = new JPanel();
 		authPanel.setLayout(new BoxLayout(authPanel, BoxLayout.Y_AXIS));
-		JButton jbutton2 = createButton("Doctor", authPanel, null);
+		JButton jbutton2 = createButton("Patient Manager", authPanel, new ButtonAction() {
+			@Override
+			public void click() {
+				auth_manager.openPatientUI();
+			}
+		});
 		JButton jbutton3 = createButton("Medicine", authPanel, new ButtonAction() {
 			@Override
 			public void click() {

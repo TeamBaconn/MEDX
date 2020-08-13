@@ -57,7 +57,7 @@ public class MedUI extends BasicUI{
 		 * Name - Name of the medicine
 		 * Category - Combo box
 		 * Date - EXP of the med
-		 * 
+		 * Unit - Unit of the medicine
 		 */
 		int[] n = {100,300};
 		

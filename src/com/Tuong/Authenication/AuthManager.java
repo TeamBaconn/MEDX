@@ -13,19 +13,25 @@ import org.json.simple.JSONObject;
 import com.Tuong.ContentCreator.AuthUI;
 import com.Tuong.ContentCreator.HomeUI;
 import com.Tuong.ContentCreator.MedUI;
+import com.Tuong.ContentCreator.PatientManagerUI;
 import com.Tuong.MedXMain.JSONHelper;
 import com.Tuong.Medicine.MedicineManager;
+import com.Tuong.Patient.PatientManager;
 
 public class AuthManager {
 	private AuthUI authUI;
 	private HomeUI homeUI;
 	private MedUI medUI;
+	private PatientManagerUI pManagerUI;
 	
 	private final String account_path = "Data/employees.json";
 	private AccountInfo account_info;
 	
 	private MedicineManager med_manager;
+	private PatientManager patient_manager;
+	
 	public AuthManager() {
+		this.patient_manager = new PatientManager(this);
 		this.med_manager = new MedicineManager();
 		this.authUI = new AuthUI(this);
 		loadAuthenication();
@@ -35,6 +41,62 @@ public class AuthManager {
 		this.authUI.setVisible(false);
 		this.authUI = null;
 		this.homeUI = new HomeUI(this);
+	}
+	
+	public void openPatientUI() {
+		if(!account_info.hasPermission("medical.view")) {
+			homeUI.showDialog("Permission required!", "You dont have permission to do this action", 2);
+			return;
+		}
+		if(pManagerUI != null) {
+			pManagerUI.toFront();
+			pManagerUI.requestFocus();
+			return;
+		}
+		pManagerUI = new PatientManagerUI(this);
+		pManagerUI.addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+				pManagerUI = null;
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 	
 	public void openMedUI() {
@@ -88,6 +150,10 @@ public class AuthManager {
 	
 	public MedicineManager getMedicineManager() {
 		return this.med_manager;
+	}
+	
+	public PatientManager getPatientManager() {
+		return this.patient_manager;
 	}
 	
 	public boolean checkAuthenication(String username, String password) {
