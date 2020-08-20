@@ -49,6 +49,13 @@ public class MedUI extends BasicUI{
 	}
 	@Override
 	public void setupUI() {
+		addCloseAction(new ButtonAction() {
+			@Override
+			public void click() {
+				auth_manager.getMedicineManager().saveData();
+				auth_manager.setMedUI(null);
+			}
+		});
 		FlowLayout flow = new FlowLayout(FlowLayout.LEADING, 20, 10);
 		setLayout(flow);
 		

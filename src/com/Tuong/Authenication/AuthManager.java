@@ -54,49 +54,6 @@ public class AuthManager {
 			return;
 		}
 		pManagerUI = new PatientManagerUI(this);
-		pManagerUI.addWindowListener(new WindowListener() {
-			
-			@Override
-			public void windowOpened(WindowEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowIconified(WindowEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowDeiconified(WindowEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowDeactivated(WindowEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowClosing(WindowEvent e) {
-				pManagerUI = null;
-			}
-			
-			@Override
-			public void windowClosed(WindowEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowActivated(WindowEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
 	}
 	
 	public void openMedUI() {
@@ -110,42 +67,6 @@ public class AuthManager {
 			return;
 		}
 		medUI = new MedUI(this);
-		medUI.addWindowListener(new WindowListener() {
-			@Override
-			public void windowOpened(WindowEvent e) {
-				
-			}
-			
-			@Override
-			public void windowIconified(WindowEvent e) {
-				
-			}
-			
-			@Override
-			public void windowDeiconified(WindowEvent e) {
-				
-			}
-			
-			@Override
-			public void windowDeactivated(WindowEvent e) {
-				
-			}
-			
-			@Override
-			public void windowClosing(WindowEvent e) {
-				getMedicineManager().saveData();
-				medUI = null;
-			}
-			
-			@Override
-			public void windowClosed(WindowEvent e) {
-			}
-			
-			@Override
-			public void windowActivated(WindowEvent e) {
-				
-			}
-		});
 	}
 	
 	public MedicineManager getMedicineManager() {
@@ -154,6 +75,18 @@ public class AuthManager {
 	
 	public PatientManager getPatientManager() {
 		return this.patient_manager;
+	}
+	
+	public PatientManagerUI getPatientUI() {
+		return this.pManagerUI;
+	}
+	
+	public void setPatientUI(PatientManagerUI UI) {
+		this.pManagerUI = UI;
+	}
+	
+	public void setMedUI(MedUI UI) {
+		this.medUI = UI;
 	}
 	
 	public boolean checkAuthenication(String username, String password) {

@@ -29,9 +29,22 @@ public class Date {
 		System.out.println("Date is "+day+"/"+month+"/"+year+" : time "+hour+" "+min);
 	}
 	
+	public static int compare(Date d1, Date d2) {
+		if(d1.year >= d2.year && d1.month >= d2.month) {
+			if(d1.day > d2.day) return 1;
+			else if(d1.day == d2.day) return 0;
+		}
+		return -1;
+	}
+	
 	public static Date parse(String s) {
+		if(s == null) return new Date();
 		String[] array = s.split(":");
 		return new Date(Integer.parseInt(array[0]), Integer.parseInt(array[1]), Integer.parseInt(array[2]), Integer.parseInt(array[3]), Integer.parseInt(array[4]));
+	}
+	
+	public String toReadable() {
+		return day+"/"+month+"/"+year;
 	}
 	
 	@Override

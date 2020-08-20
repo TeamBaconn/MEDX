@@ -21,7 +21,6 @@ public class PatientManager {
 	public void createPatientInfo(String name) {
 		System.out.println("Create patient info " + name);
 		JSONObject obj = new JSONObject();
-		obj.put("Name", name);
 		JSONHelper.writeFile(getValidPatient(name), obj.toJSONString());
 	}
 	

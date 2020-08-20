@@ -4,9 +4,11 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class FormCreator {
 	private GridBagConstraints con;
@@ -22,6 +24,11 @@ public class FormCreator {
 		this.lengthY = lengthY;
 		con.gridx = -1;
 		con.gridy = 0;
+		con.ipadx = 10;
+		con.insets = new Insets(0, 10, 0, 10);
+	}
+	public void setSize(int[] n) {
+		this.compsLength = n;
 	}
 	public void addComponent(Component comp) {
 		con.gridx++;
@@ -34,12 +41,16 @@ public class FormCreator {
 		comp.setPreferredSize(new Dimension(compsLength[con.gridx],lengthY));
 		cont.add(comp,con);
 	}
+	
 	public JTextField createTextField(String displayText) {
 		JTextField t = new JTextField(displayText);
 		addComponent(t);
 		return t;
 	}
+	
 	public void createLabel(String text) {
-		addComponent(new JLabel(text));
+		JLabel t = new JLabel(text);
+		t.setHorizontalAlignment(SwingConstants.RIGHT);
+		addComponent(t);
 	}
 }
