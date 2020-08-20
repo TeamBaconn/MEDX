@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -31,11 +32,20 @@ public class PatientUI extends BasicUI{
 	private JTextArea diagnosis;
 	private PatientSet set;
 	private JComboBox<GraphType> graphList;
+	private PatientUI patientUI;
+	private Graph graph;
 	
 	public PatientUI(AuthManager auth_manager, PatientSet set) {
 		super("MedX", new Dimension(800, 600), false, auth_manager);
 		loadPatient(set);
+		patientUI = this;
 		pack();
+	}
+	
+	public boolean createNewGraph(String graphName, String graphUnit) {
+		for(int i = 0; i < graphList.getModel().getSize(); i++) if(graphList.getItemAt(i).name.equals(graphName)) return false;
+		graphList.addItem(new GraphType(graphName, graphUnit));
+		return true;
 	}
 	
 	public void loadPatient(PatientSet set) {
@@ -43,6 +53,18 @@ public class PatientUI extends BasicUI{
 		this.set=set;
 		this.patient = new Patient(set.name, (String) object.get("Diagnosis"), 
 				Date.parse((String) object.get("DOB")));
+		graphList.setModel(new DefaultComboBoxModel<GraphType>());
+		JSONArray graphs = (JSONArray)object.get("Graphs");
+		if(graphs != null) for(int i = 0; i < graphs.size(); i++) {
+			JSONObject graph = (JSONObject) graphs.get(i);
+			GraphType g = new GraphType((String)graph.get("Name"), (String)graph.get("Unit"));
+			String[] v = ((String)graph.get("Value")).split(",");
+			for(int j = 0; j < v.length; j++) if(v[j].length()>1){
+				g.value.add(new GraphValue(Date.parse(v[j].split("/")[1]),Integer.valueOf(v[j].split("/")[0])));
+			}
+			graphList.addItem(g);
+		}
+		graph.setGraph((GraphType) graphList.getSelectedItem());
 		System.out.println("Open patient record " +patient.getName());
 		reloadUI();
 	}
@@ -59,10 +81,11 @@ public class PatientUI extends BasicUI{
 			d.put("Name",g.name);
 			d.put("Unit",g.unit);
 			String s = "";
-			for(GraphValue v : g.value) s+=v.value+",";
+			for(GraphValue v : g.value) s+=v.value+"/"+v.date.toString()+",";
 			d.put("Value",s);
-			graph.add(g);
+			graph.add(d);
 		}
+		obj.put("Graphs",graph);
 		JSONHelper.writeFile(set.path, obj.toJSONString());
 	
 	}
@@ -94,9 +117,11 @@ public class PatientUI extends BasicUI{
 		patientForm.createLabel("Graph");
 		graphList = new JComboBox<GraphType>();
 		patientForm.addComponent(graphList);
-		
+		patientForm.addComponent(null);
+		JButton newGraph = new JButton("Create new graph");
+		patientForm.addComponent(newGraph);
 		patientForm.setSize(n);
-		Graph graph = new Graph((GraphType)graphList.getSelectedItem());
+		graph = new Graph((GraphType)graphList.getSelectedItem());
 		
 		JPanel bGraph = new JPanel();
 		bGraph.setLayout(new GridLayout(4, 1));
@@ -126,6 +151,18 @@ public class PatientUI extends BasicUI{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				graph.addValue(dP.getDate(),Integer.parseInt(value.getText()));
+			}
+		});
+		newGraph.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new GraphCreatorUI(patientUI);
+			}
+		});
+		graphList.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graph.setGraph((GraphType) graphList.getSelectedItem());
 			}
 		});
 	}

@@ -17,7 +17,6 @@ import com.Tuong.DateUtils.Date;
 
 public class Graph extends JPanel implements MouseMotionListener{
 	private int mouseX = 0, mouseY = 0;
-	private ArrayList<GraphValue> value = new ArrayList<GraphValue>();
 	private int median = 0;
 
 	private GraphType graph;
@@ -31,12 +30,18 @@ public class Graph extends JPanel implements MouseMotionListener{
 	}
 	
 	public void addValue(Date date, int k) {
-		for(int i = 0; i < value.size(); i++) if(Date.compare(date,value.get(i).date) == -1) {
-			value.add(i, new GraphValue(date, k));
+		GraphValue v = new GraphValue(date, k);
+		for(int i = 0; i < graph.value.size(); i++) if(Date.compare(date,graph.value.get(i).date) == -1) {
+			graph.value.add(i, v);
 			repaint();
 			return;
 		}
-		value.add(new GraphValue(date, k));
+		graph.value.add(v);
+		repaint();
+	}
+	
+	public void setGraph(GraphType type) {
+		this.graph = type;
 		repaint();
 	}
 	
@@ -55,13 +60,14 @@ public class Graph extends JPanel implements MouseMotionListener{
 		g.setColor(Color.black);
 		g.drawString(graph.name, getSize().width/2-g.getFontMetrics().stringWidth(graph.name)/2, 20);
 		//Draw line
-		if(value.size() <= 0) return;
+		if(graph.value.size() <= 0) 
+			return;
 		int max = getMaxValue();
 		g.setColor(Color.green);
 		g.drawLine(0, getSize().height/2, getSize().width, getSize().height/2);
-		g.drawString(value.get(0).value+" "+graph.unit, 0, 10+getSize().height/2);
+		g.drawString(graph.value.get(0).value+" "+graph.unit, 0, 10+getSize().height/2);
 		g.setColor(Color.magenta);
-		int ymed = (int) (getSize().height/2-((float)(median-value.get(0).value)/(float)max)*(getSize().height/2*3/5));
+		int ymed = (int) (getSize().height/2-((float)(median-graph.value.get(0).value)/(float)max)*(getSize().height/2*3/5));
 		g.drawLine(0, ymed, getSize().width, ymed);
 		g.drawString(median+" "+graph.unit, 0, 10+ymed);
 		Graphics2D g2d = (Graphics2D)g;
@@ -70,9 +76,9 @@ public class Graph extends JPanel implements MouseMotionListener{
 		int ix = offset_x, iy = getSize().height/2;
 		int fx = ix, fy = iy;
 		int closest = -1;
-		for(int i = 0; i < value.size(); i++) {
-			fx = (getSize().width-offset_x)/value.size()*(i)+offset_x;
-			fy = (int) (getSize().height/2-((float)(value.get(i).value-value.get(0).value)/(float)max)*(getSize().height/2*3/5));
+		for(int i = 0; i < graph.value.size(); i++) {
+			fx = (getSize().width-offset_x)/graph.value.size()*(i)+offset_x;
+			fy = (int) (getSize().height/2-((float)(graph.value.get(i).value-graph.value.get(0).value)/(float)max)*(getSize().height/2*3/5));
 			g2d.drawOval(fx-3, fy-3, 6, 6);
 			if(checkMouseCollision(fx, fy))closest=i;
 			if(i == 0) continue;
@@ -80,18 +86,18 @@ public class Graph extends JPanel implements MouseMotionListener{
 			ix = fx;
 			iy = fy;
 		}
-		if(closest >= 0) drawInfo(g2d, (getSize().width-offset_x)/value.size()*(closest)+offset_x, 
-				(int) (getSize().height/2-((float)(value.get(closest).value-value.get(0).value)/(float)max)*(getSize().height/2*3/5))
+		if(closest >= 0) drawInfo(g2d, (getSize().width-offset_x)/graph.value.size()*(closest)+offset_x, 
+				(int) (getSize().height/2-((float)(graph.value.get(closest).value-graph.value.get(0).value)/(float)max)*(getSize().height/2*3/5))
 		, closest);
 	}
 	private int getMaxValue() {
 		int max = 0;
 		median = 0;
-		for(int i = 0; i < value.size(); i++) { 
-			if(Math.abs(value.get(i).value-value.get(0).value) > max) max = Math.abs(value.get(i).value-value.get(0).value); 
-			median += value.get(i).value;
+		for(int i = 0; i < graph.value.size(); i++) { 
+			if(Math.abs(graph.value.get(i).value-graph.value.get(0).value) > max) max = Math.abs(graph.value.get(i).value-graph.value.get(0).value); 
+			median += graph.value.get(i).value;
 		}
-		median /= value.size();
+		median /= graph.value.size();
 		return max;
 	}
 	private final int info_x = 100, info_y = 50;
@@ -99,8 +105,8 @@ public class Graph extends JPanel implements MouseMotionListener{
 		g2d.setColor(Color.lightGray);
 		g2d.fillRect(fx-info_x/2, fy, info_x, info_y);
 		g2d.setColor(Color.black);
-		g2d.drawString(value.get(i).value+"m/s", fx-info_x/2+10, fy+20);
-		g2d.drawString(value.get(i).date.toReadable(), fx-info_x/2+10, fy+40);
+		g2d.drawString(graph.value.get(i).value+"m/s", fx-info_x/2+10, fy+20);
+		g2d.drawString(graph.value.get(i).date.toReadable(), fx-info_x/2+10, fy+40);
 	}
 	
 	private boolean checkMouseCollision(int x,int y) {
