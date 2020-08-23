@@ -27,6 +27,10 @@ public class PatientManagerUI extends BasicUI{
 		super("Patient Manager", new Dimension(450,600), false, auth_manager);
 	}
 	
+	public PatientUI getPatientUI() {
+		return this.patientUI;
+	}
+	
 	@Override
 	public void setupUI() {
 		addCloseAction(new ButtonAction() {

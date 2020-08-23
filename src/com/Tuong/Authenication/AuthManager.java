@@ -89,6 +89,10 @@ public class AuthManager {
 		this.medUI = UI;
 	}
 	
+	public MedUI getMedUI() {
+		return this.medUI;
+	}
+	
 	public boolean checkAuthenication(String username, String password) {
 		JSONArray auth = (JSONArray) JSONHelper.readFile(account_path);
 		for (int i = 0; i < auth.size(); i++) 

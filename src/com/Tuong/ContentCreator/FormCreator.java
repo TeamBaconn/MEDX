@@ -8,7 +8,6 @@ import java.awt.Insets;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 public class FormCreator {
 	private GridBagConstraints con;
@@ -39,6 +38,7 @@ public class FormCreator {
 		}
 		if(comp == null) return;
 		comp.setPreferredSize(new Dimension(compsLength[con.gridx],lengthY));
+		comp.setMinimumSize(new Dimension(compsLength[con.gridx],lengthY));
 		cont.add(comp,con);
 	}
 	
@@ -50,7 +50,6 @@ public class FormCreator {
 	
 	public void createLabel(String text) {
 		JLabel t = new JLabel(text);
-		t.setHorizontalAlignment(SwingConstants.RIGHT);
 		addComponent(t);
 	}
 }

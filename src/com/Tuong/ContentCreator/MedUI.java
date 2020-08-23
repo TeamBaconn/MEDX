@@ -33,6 +33,7 @@ import com.Tuong.DateUtils.Date;
 import com.Tuong.DateUtils.DatePicker;
 import com.Tuong.Medicine.MedicineCategory;
 import com.Tuong.Medicine.MedicineSet;
+import com.Tuong.Patient.PatientSet;
 
 public class MedUI extends BasicUI{
 	
@@ -42,11 +43,28 @@ public class MedUI extends BasicUI{
 	private JComboBox<MedicineCategory> category;
 	private DatePicker dPicker;
 	private JSpinner unit;
+	private JButton addPat;
+	private PatientSet patient;
 	
 	public MedUI(AuthManager auth_manager) {
 		super("Medicine Manager", new Dimension(900,600),false,auth_manager);
 		pack();
 	}
+	
+	public void setPatient(PatientSet p) {
+		openAddMedButton();
+		this.patient = p;
+	}
+	
+	private void openAddMedButton() {
+		if(list.getSelectedValue() == null || patient == null) {
+			addPat.setVisible(false);
+			return;
+		}
+		addPat.setText("Add "+list.getSelectedValue().med.getName()+" to "+patient.name);
+		addPat.setVisible(true);
+	}
+	
 	@Override
 	public void setupUI() {
 		addCloseAction(new ButtonAction() {
@@ -69,7 +87,7 @@ public class MedUI extends BasicUI{
 		int[] n = {100,300};
 		
 		JPanel listMed = new JPanel();
-		listMed.setPreferredSize(new Dimension(400,500));
+		listMed.setPreferredSize(new Dimension(450,500));
 		listMed.setLayout(new BoxLayout(listMed, BoxLayout.Y_AXIS));
 		list = new JList<MedicineSet>();
 		list.setMaximumSize(new Dimension(400, 200));
@@ -96,10 +114,16 @@ public class MedUI extends BasicUI{
 		form.addComponent(unit);
 		JButton addMed = new JButton("Create");
 		JButton delMed = new JButton("Delete");
+		addPat = new JButton();
+		addPat.setVisible(false);
+		
 		form.addComponent(null);
 		form.addComponent(addMed);
 		form.addComponent(null);
 		form.addComponent(delMed);
+		form.addComponent(null);
+		form.addComponent(addPat);
+		
 		category.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -118,6 +142,7 @@ public class MedUI extends BasicUI{
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				//Check selection in Jlist
+				openAddMedButton();
 				if(!e.getValueIsAdjusting()) return;
 				medName.setText(list.getSelectedValue().med.getName());
 				dPicker.setDateSetter(list.getSelectedValue().med,"expDate");
@@ -137,7 +162,7 @@ public class MedUI extends BasicUI{
 		refresh();
 		
 		JPanel listCategory = new JPanel();
-		listCategory.setPreferredSize(new Dimension(400,500));
+		listCategory.setPreferredSize(new Dimension(450,500));
 		listCategory.setLayout(new BoxLayout(listCategory, BoxLayout.Y_AXIS));
 		JList<MedicineCategory> listCate = new JList<MedicineCategory>();
 		updateCategory(listCate);
@@ -204,6 +229,12 @@ public class MedUI extends BasicUI{
 				
 			}
 		});
+		addPat.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openMedAdd();
+			}
+		});
 		
 		listCategory.add(listCate);
 		listCategory.add(Box.createRigidArea(new Dimension(0,10)));
@@ -212,6 +243,11 @@ public class MedUI extends BasicUI{
 		
 		add(listMed);
 		add(listCategory);
+	}
+	
+	private void openMedAdd() {
+		if(patient == null || list.getSelectedValue() == null) return;
+		new MedAddUI(patient, this, list.getSelectedValue().med);
 	}
 	
 	public void refresh() {

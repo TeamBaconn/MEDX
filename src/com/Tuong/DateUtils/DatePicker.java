@@ -1,16 +1,20 @@
 package com.Tuong.DateUtils;
 
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.lang.reflect.Field;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
-public class DatePicker extends JPanel{
+public class DatePicker extends JLabel{
 	
 	private static final long serialVersionUID = -2195827019719478050L;
 
@@ -20,11 +24,17 @@ public class DatePicker extends JPanel{
 	private JComboBox<Integer>[] show;
 	private final String[] display = {"D","M","Y","H","M"};
 	private final int[] date_in_month = {31,28,31,30,31,30,31,31,30,31,30,31};
+	private JFrame date_picker;
+	private Date date;
 	
-	@SuppressWarnings("unchecked")
 	public DatePicker(Date date, boolean timeEnable) {
-		super(new FlowLayout(FlowLayout.LEFT));
+		super(date.toReadable());
 		this.timeEnable = timeEnable;
+		this.date = date;
+		setForeground(Color.BLUE.darker());
+		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		date_picker = new JFrame();
+		date_picker.setLayout(new FlowLayout(LEFT));
 		show = new JComboBox[timeEnable?5:3];
 		for(int i = 0; i < show.length; i++) {
 			show[i] = new JComboBox<Integer>();
@@ -60,10 +70,37 @@ public class DatePicker extends JPanel{
 				show[i].setSelectedIndex(date.min-1);
 				break;
 			}
-			add(new JLabel(display[i]));
-			add(show[i]);
+			date_picker.add(new JLabel(display[i]));
+			date_picker.add(show[i]);
 		}
 		setDay(date.day,date.month, date.year,date.hour,date.min);
+		date_picker.pack();
+		addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				date_picker.setVisible(true);
+			}
+		});
 	}
 	
 	public Date getDate() {
@@ -80,6 +117,7 @@ public class DatePicker extends JPanel{
 		show[2].setModel(new DefaultComboBoxModel<Integer>(n));
 		show[2].setSelectedIndex(10);
 		show[1].setSelectedIndex(month-1);
+		setText(getDate().toReadable());
 		if(setter == null) return;
 		Field set;
 		try {

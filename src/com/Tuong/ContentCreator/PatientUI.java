@@ -13,6 +13,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -42,6 +43,10 @@ public class PatientUI extends BasicUI{
 		pack();
 	}
 	
+	public Patient getPatient() {
+		return this.patient;
+	}
+	
 	public boolean createNewGraph(String graphName, String graphUnit) {
 		for(int i = 0; i < graphList.getModel().getSize(); i++) if(graphList.getItemAt(i).name.equals(graphName)) return false;
 		graphList.addItem(new GraphType(graphName, graphUnit));
@@ -49,6 +54,8 @@ public class PatientUI extends BasicUI{
 	}
 	
 	public void loadPatient(PatientSet set) {
+		if(set == null) return;
+		auth_manager.getMedUI().setPatient(set);
 		JSONObject object = (JSONObject) JSONHelper.readFile(set.path);
 		this.set=set;
 		this.patient = new Patient(set.name, (String) object.get("Diagnosis"), 
@@ -101,7 +108,7 @@ public class PatientUI extends BasicUI{
 		});
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		JPanel patientInfo = new JPanel(new GridBagLayout());
-		int[] n = {300,500};
+		int[] n = {100,500};
 		FormCreator patientForm = new FormCreator(patientInfo, 2, n, 30);
 		patientForm.createLabel("Name");
 		patient_name = patientForm.createTextField("");
@@ -122,29 +129,28 @@ public class PatientUI extends BasicUI{
 		patientForm.addComponent(newGraph);
 		patientForm.setSize(n);
 		graph = new Graph((GraphType)graphList.getSelectedItem());
-		
 		JPanel bGraph = new JPanel();
-		bGraph.setLayout(new GridLayout(4, 1));
-		JPanel adjust = new JPanel(new GridLayout(1,2));
+		bGraph.setLayout(new BoxLayout(bGraph, BoxLayout.Y_AXIS));
+		JPanel adjust = new JPanel(new GridLayout(2,2));
 		JButton up = new JButton("Up");
 		JButton down = new JButton("Down");
 		adjust.add(up);
 		adjust.add(down);
-		JPanel search = new JPanel(new GridLayout(1, 2));
 		JTextField value = new JTextField();
 		JButton insert = new JButton(">>");
 		DatePicker dP = new DatePicker(new Date(), false);
-		search.add(value);
-		search.add(insert);
+		dP.setAlignmentX(CENTER_ALIGNMENT);
+		dP.setVerticalTextPosition(SwingConstants.CENTER);
+		adjust.add(value);
+		adjust.add(insert);
 		
 		bGraph.add(adjust);
-		bGraph.add(search);
 		bGraph.add(dP);
 		patientForm.addComponent(bGraph);
-		bGraph.setPreferredSize(new Dimension(n[0],200));
+		bGraph.setPreferredSize(new Dimension(n[0],150));
 
 		patientForm.addComponent(graph);
-		graph.setPreferredSize(new Dimension(n[1],200));
+		graph.setPreferredSize(new Dimension(n[1],150));
 		add(patientInfo);
 		
 		insert.addActionListener(new ActionListener() {
