@@ -102,6 +102,7 @@ public class PatientManagerUI extends BasicUI{
 	public void closePatientProfile(boolean t) {
 		if(t) auth_manager.setPatientUI(null);
 		if(patientUI == null) return;
+		auth_manager.getMedUI().setPatient(null);
 		patientUI.savePatient();
 		patientUI.setVisible(false);
 		patientUI = null;

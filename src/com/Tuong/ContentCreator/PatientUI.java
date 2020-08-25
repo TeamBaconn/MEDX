@@ -55,7 +55,7 @@ public class PatientUI extends BasicUI{
 	
 	public void loadPatient(PatientSet set) {
 		if(set == null) return;
-		auth_manager.getMedUI().setPatient(set);
+		if(auth_manager.getMedUI() != null) auth_manager.getMedUI().setPatient(set);
 		JSONObject object = (JSONObject) JSONHelper.readFile(set.path);
 		this.set=set;
 		this.patient = new Patient(set.name, (String) object.get("Diagnosis"), 

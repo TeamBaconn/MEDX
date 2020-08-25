@@ -52,8 +52,8 @@ public class MedUI extends BasicUI{
 	}
 	
 	public void setPatient(PatientSet p) {
-		openAddMedButton();
 		this.patient = p;
+		openAddMedButton();
 	}
 	
 	private void openAddMedButton() {
