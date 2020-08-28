@@ -13,6 +13,9 @@ public class HomeUI extends BasicUI{
 	public HomeUI(AuthManager auth_manager) {
 		super("MedX", new Dimension(300,500),true,auth_manager);
 		this.auth_manager = auth_manager;
+		//Debug
+		auth_manager.openPatientUI();
+		auth_manager.openMedUI();
 	}
 	
 	@Override

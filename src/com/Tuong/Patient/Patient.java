@@ -3,12 +3,12 @@ package com.Tuong.Patient;
 import java.util.ArrayList;
 
 import com.Tuong.DateUtils.Date;
-import com.Tuong.Medicine.MedicineRecord;
+import com.Tuong.Medicine.Prescription;
 
 public class Patient {
 	
 	private String name;
-	private ArrayList<MedicineRecord> mRecord;
+	private ArrayList<Prescription> prescriptions;
 	private Date DOB;
 	private String diagnosis;
 	

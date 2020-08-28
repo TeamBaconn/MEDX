@@ -15,8 +15,8 @@ public class Date {
 		this.day = day;
 		this.month = month;
 		this.year = year;
-		this.hour = 0;
-		this.min = 0;
+		this.hour = -1;
+		this.min = -1;
 	}
 	public Date(int day,int month,int year,int hour,int min) {
 		this.hour = hour;
@@ -44,9 +44,16 @@ public class Date {
 	}
 	
 	public String toReadable() {
-		return day+"/"+month+"/"+year;
-	}
+		return getProperValue(day)+"/"+getProperValue(month)+"/"+year;
+	}	
 	
+	public String toReadableWithTime() {
+		return getProperValue(day)+"/"+getProperValue(month)+"/"+year+" - "+getProperValue(hour)+":"+getProperValue(min);
+	}	
+	public String getProperValue(int i) {
+		return i < 10 ? "0"+i : ""+i;
+	}
+
 	@Override
 	public String toString() {
 		return day+":"+month+":"+year+":"+hour+":"+min;

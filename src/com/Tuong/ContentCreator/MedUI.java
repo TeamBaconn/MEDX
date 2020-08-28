@@ -23,6 +23,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -74,8 +77,7 @@ public class MedUI extends BasicUI{
 				auth_manager.setMedUI(null);
 			}
 		});
-		FlowLayout flow = new FlowLayout(FlowLayout.LEADING, 20, 10);
-		setLayout(flow);
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		
 		/*
 		 * Med information
@@ -87,14 +89,15 @@ public class MedUI extends BasicUI{
 		int[] n = {100,300};
 		
 		JPanel listMed = new JPanel();
-		listMed.setPreferredSize(new Dimension(450,500));
+		listMed.setBorder(new CompoundBorder(new TitledBorder("Medication Information"), new EmptyBorder(12, 0, 0, 0)));
 		listMed.setLayout(new BoxLayout(listMed, BoxLayout.Y_AXIS));
+		listMed.add(Box.createVerticalGlue());
 		list = new JList<MedicineSet>();
 		list.setMaximumSize(new Dimension(400, 200));
 		list.setPreferredSize(new Dimension(400, 200));
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listMed.add(list);
-		
+		listMed.add(Box.createRigidArea(new Dimension(0,20)));
 		JPanel medInfo = new JPanel();
 		medInfo.setLayout(new GridBagLayout());
 		listMed.add(medInfo);
@@ -162,8 +165,9 @@ public class MedUI extends BasicUI{
 		refresh();
 		
 		JPanel listCategory = new JPanel();
-		listCategory.setPreferredSize(new Dimension(450,500));
+		listCategory.setBorder(new CompoundBorder(new TitledBorder("Categories"), new EmptyBorder(12, 0, 0, 0)));
 		listCategory.setLayout(new BoxLayout(listCategory, BoxLayout.Y_AXIS));
+		listCategory.add(Box.createVerticalGlue());
 		JList<MedicineCategory> listCate = new JList<MedicineCategory>();
 		updateCategory(listCate);
 		listCate.setMaximumSize(new Dimension(400, 200));
@@ -175,11 +179,10 @@ public class MedUI extends BasicUI{
 		JTextField cateName = formCate.createTextField("");
 		JButton addCate = new JButton("Create");
 		JButton removeCate = new JButton("Remove");
+		formCate.createLabel("Description");
+		JTextField hint = formCate.createTextField("");
 		formCate.addComponent(addCate);
 		formCate.addComponent(removeCate);
-		formCate.createLabel("Description");
-		JTextArea hint = new JTextArea("");
-		hint.setPreferredSize(new Dimension(400, 200));
 		removeCate.setVisible(false);
 		removeCate.addActionListener(new ActionListener() {
 			@Override
@@ -237,9 +240,8 @@ public class MedUI extends BasicUI{
 		});
 		
 		listCategory.add(listCate);
-		listCategory.add(Box.createRigidArea(new Dimension(0,10)));
+		listCategory.add(Box.createRigidArea(new Dimension(0,20)));
 		listCategory.add(cateInfo);
-		listCategory.add(hint);
 		
 		add(listMed);
 		add(listCategory);
@@ -247,7 +249,11 @@ public class MedUI extends BasicUI{
 	
 	private void openMedAdd() {
 		if(patient == null || list.getSelectedValue() == null) return;
-		new MedAddUI(patient, this, list.getSelectedValue().med);
+		new MedAddUI(auth_manager, patient, this, list.getSelectedValue().med);
+	}
+	
+	public PatientSet getPatient() {
+		return this.patient;
 	}
 	
 	public void refresh() {

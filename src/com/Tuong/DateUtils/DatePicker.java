@@ -13,8 +13,9 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 
-public class DatePicker extends JLabel{
+public class DatePicker extends JTextField{
 	
 	private static final long serialVersionUID = -2195827019719478050L;
 
@@ -28,11 +29,9 @@ public class DatePicker extends JLabel{
 	private Date date;
 	
 	public DatePicker(Date date, boolean timeEnable) {
-		super(date.toReadable());
+		super(!timeEnable?date.toReadable() : date.toReadableWithTime());
 		this.timeEnable = timeEnable;
 		this.date = date;
-		setForeground(Color.BLUE.darker());
-		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		date_picker = new JFrame();
 		date_picker.setLayout(new FlowLayout(LEFT));
 		show = new JComboBox[timeEnable?5:3];
@@ -117,7 +116,7 @@ public class DatePicker extends JLabel{
 		show[2].setModel(new DefaultComboBoxModel<Integer>(n));
 		show[2].setSelectedIndex(10);
 		show[1].setSelectedIndex(month-1);
-		setText(getDate().toReadable());
+		setText(!timeEnable?date.toReadable() : date.toReadableWithTime());
 		if(setter == null) return;
 		Field set;
 		try {

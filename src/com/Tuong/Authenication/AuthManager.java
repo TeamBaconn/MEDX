@@ -14,8 +14,10 @@ import com.Tuong.ContentCreator.AuthUI;
 import com.Tuong.ContentCreator.HomeUI;
 import com.Tuong.ContentCreator.MedUI;
 import com.Tuong.ContentCreator.PatientManagerUI;
+import com.Tuong.ContentCreator.PrescriptionUI;
 import com.Tuong.MedXMain.JSONHelper;
 import com.Tuong.Medicine.MedicineManager;
+import com.Tuong.Medicine.Prescription;
 import com.Tuong.Patient.PatientManager;
 
 public class AuthManager {
@@ -30,11 +32,18 @@ public class AuthManager {
 	private MedicineManager med_manager;
 	private PatientManager patient_manager;
 	
+	private PrescriptionUI prescription;
+	
 	public AuthManager() {
 		this.patient_manager = new PatientManager(this);
 		this.med_manager = new MedicineManager();
 		this.authUI = new AuthUI(this);
 		loadAuthenication();
+	}
+	
+	public PrescriptionUI getPrescription() {
+		if(prescription == null) prescription = new PrescriptionUI(this, getMedUI().getPatient());
+		return prescription;
 	}
 	
 	public void openMenu() {

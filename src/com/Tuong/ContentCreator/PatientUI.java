@@ -139,8 +139,7 @@ public class PatientUI extends BasicUI{
 		JTextField value = new JTextField();
 		JButton insert = new JButton(">>");
 		DatePicker dP = new DatePicker(new Date(), false);
-		dP.setAlignmentX(CENTER_ALIGNMENT);
-		dP.setVerticalTextPosition(SwingConstants.CENTER);
+		dP.setMaximumSize(new Dimension(100,30));
 		adjust.add(value);
 		adjust.add(insert);
 		
