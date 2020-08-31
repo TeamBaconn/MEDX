@@ -1,12 +1,16 @@
 package com.Tuong.ContentCreator;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.Box;
@@ -36,6 +40,7 @@ import com.Tuong.DateUtils.Date;
 import com.Tuong.DateUtils.DatePicker;
 import com.Tuong.Medicine.MedicineCategory;
 import com.Tuong.Medicine.MedicineSet;
+import com.Tuong.Patient.Patient;
 import com.Tuong.Patient.PatientSet;
 
 public class MedUI extends BasicUI{
@@ -48,6 +53,10 @@ public class MedUI extends BasicUI{
 	private JSpinner unit;
 	private JButton addPat;
 	private PatientSet patient;
+	
+	private JList<PatientSet> p_list;
+	private JTextField patient_name;
+	private PatientUI patientUI;
 	
 	public MedUI(AuthManager auth_manager) {
 		super("Medicine Manager", new Dimension(900,600),false,auth_manager);
@@ -77,7 +86,7 @@ public class MedUI extends BasicUI{
 				auth_manager.setMedUI(null);
 			}
 		});
-		setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		
 		/*
 		 * Med information
@@ -87,7 +96,8 @@ public class MedUI extends BasicUI{
 		 * Unit - Unit of the medicine
 		 */
 		int[] n = {100,300};
-		
+		JPanel medication = new JPanel();
+		medication.setLayout(new BoxLayout(medication, BoxLayout.LINE_AXIS));
 		JPanel listMed = new JPanel();
 		listMed.setBorder(new CompoundBorder(new TitledBorder("Medication Information"), new EmptyBorder(12, 0, 0, 0)));
 		listMed.setLayout(new BoxLayout(listMed, BoxLayout.Y_AXIS));
@@ -243,8 +253,170 @@ public class MedUI extends BasicUI{
 		listCategory.add(Box.createRigidArea(new Dimension(0,20)));
 		listCategory.add(cateInfo);
 		
-		add(listMed);
-		add(listCategory);
+		JPanel patientManager = new JPanel();
+		patientManager.setLayout(new BoxLayout(patientManager, BoxLayout.LINE_AXIS));
+		JPanel listP = new JPanel();
+		listP.setBorder(new CompoundBorder(new TitledBorder("Patient Lookup"), new EmptyBorder(12, 0, 0, 0)));
+		listP.setLayout(new BoxLayout(listP, BoxLayout.Y_AXIS));
+		listP.add(Box.createVerticalGlue());
+		
+		p_list = new JList<PatientSet>();
+
+		p_list.setMaximumSize(new Dimension(400, 200));
+		p_list.setPreferredSize(new Dimension(400, 200));
+		
+		JPanel patient_info = new JPanel(new GridBagLayout());
+		FormCreator form3 = new FormCreator(patient_info, 2, n, 30);
+		JButton create = new JButton("Create");
+		
+		form3.createLabel("Patient name");
+		patient_name = form3.createTextField("");
+		form3.addComponent(null);
+		form3.addComponent(create);
+		
+		refreshList();
+		listP.add(p_list);
+		listP.add(patient_info);
+		
+		JPanel patientInfoPanel = setupPatientInfo();
+		patientInfoPanel.setBorder(new CompoundBorder(new TitledBorder("Patient Information"), new EmptyBorder(12, 0, 0, 0)));
+		
+		p_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		p_list.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount() < 2) return;
+				patientInfoPanel.setVisible(true);
+				repaint();
+				if(patientUI != null) {
+					patientUI.savePatient();
+					patientUI.loadPatient(p_list.getSelectedValue());
+				}else patientUI = new PatientUI(auth_manager, p_list.getSelectedValue());
+			}
+		});
+		
+		create.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				auth_manager.getPatientManager().createPatientInfo(patient_name.getText());
+				refreshList();
+			}
+		});
+		
+		
+		
+		medication.add(listMed);
+		medication.add(listCategory);
+		add(medication);
+		patientManager.add(listP);
+		patientManager.add(patientInfoPanel);
+		add(patientManager);
+		pack();
+	}
+	private DatePicker DOB;
+	private JTextField diagnosis;
+	private PatientSet set;
+	private JComboBox<GraphType> graphList;
+	private Graph graph;
+	
+	public JPanel setupPatientInfo() {
+		JPanel patientInfo = new JPanel(new GridBagLayout());
+		int[] n = {100,500};
+		FormCreator patientForm = new FormCreator(patientInfo, 2, n, 30);
+		patientForm.createLabel("Name");
+		patient_name = patientForm.createTextField("");
+		patientForm.createLabel("DOB");
+		DOB = new DatePicker(new Date(), false);
+		patientForm.addComponent(DOB);
+		
+		patientForm.createLabel("Diagnosis");
+		diagnosis = new JTextField("");
+		patientForm.addComponent(diagnosis);
+		
+		patientForm.createLabel("Graph");
+		graphList = new JComboBox<GraphType>();
+		patientForm.addComponent(graphList);
+		patientForm.addComponent(null);
+		JButton newGraph = new JButton("Create new graph");
+		patientForm.addComponent(newGraph);
+		patientForm.setSize(n);
+		graph = new Graph((GraphType)graphList.getSelectedItem());
+		JPanel bGraph = new JPanel();
+		bGraph.setLayout(new BoxLayout(bGraph, BoxLayout.Y_AXIS));
+		JPanel adjust = new JPanel(new GridLayout(2,2));
+		JButton up = new JButton("Up");
+		JButton down = new JButton("Down");
+		adjust.add(up);
+		adjust.add(down);
+		JTextField value = new JTextField();
+		JButton insert = new JButton(">>");
+		DatePicker dP = new DatePicker(new Date(), false);
+		dP.setMaximumSize(new Dimension(100,30));
+		adjust.add(value);
+		adjust.add(insert);
+		
+		bGraph.add(adjust);
+		bGraph.add(dP);
+		patientForm.addComponent(bGraph);
+		bGraph.setPreferredSize(new Dimension(n[0],150));
+		bGraph.setMinimumSize(new Dimension(n[0],150));
+
+		patientForm.addComponent(graph);
+		graph.setPreferredSize(new Dimension(n[1],150));
+		graph.setMinimumSize(new Dimension(n[1],150));
+		
+		insert.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graph.addValue(dP.getDate(),Integer.parseInt(value.getText()));
+			}
+		});
+		newGraph.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new GraphCreatorUI(patientUI);
+			}
+		});
+		graphList.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graph.setGraph((GraphType) graphList.getSelectedItem());
+			}
+		});
+		return patientInfo;
+	}
+	
+	public void closePatientProfile(boolean t) {
+		if(t) auth_manager.setPatientUI(null);
+		if(patientUI == null) return;
+		if(auth_manager.getMedUI() != null) auth_manager.getMedUI().setPatient(null);
+		patientUI.savePatient();
+		patientUI.setVisible(false);
+		patientUI = null;
+	}
+	
+	public void refreshList() {
+		p_list.setModel(auth_manager.getPatientManager().getPatient());
 	}
 	
 	private void openMedAdd() {
