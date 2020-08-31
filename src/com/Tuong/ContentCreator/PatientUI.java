@@ -161,7 +161,6 @@ public class PatientUI extends BasicUI{
 		newGraph.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new GraphCreatorUI(patientUI);
 			}
 		});
 		graphList.addActionListener(new ActionListener() {

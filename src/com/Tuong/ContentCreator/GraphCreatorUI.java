@@ -5,12 +5,14 @@ import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import javax.swing.JTextField;
 
+import com.Tuong.Authenication.AuthManager;
+
 public class GraphCreatorUI extends BasicUI{
-	private PatientUI pUI;
-	public GraphCreatorUI(PatientUI pUI) {
+	private MedUI pUI;
+	public GraphCreatorUI(AuthManager pUI) {
 		super("Create new graph", new Dimension(300,100), false, null);
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-		this.pUI = pUI;
+		this.pUI = pUI.getMedUI();
 	}
 	@Override
 	public void setupUI() {
