@@ -3,6 +3,7 @@ package com.Tuong.ContentCreator;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -57,12 +58,12 @@ public class MedUI extends BasicUI{
 	private JButton addPat;
 	
 	private JList<PatientSet> p_list;
+	private JTextField patient_name_search;
 	private JTextField patient_name;
 	private PatientUI patientUI;
 	
 	public MedUI(AuthManager auth_manager) {
-		super("Medicine Manager", new Dimension(900,600),false,auth_manager);
-		pack();
+		super("Medicine Manager", Toolkit.getDefaultToolkit().getScreenSize(),false,auth_manager);
 	}
 	
 	public void setPatient(PatientSet p) {
@@ -258,21 +259,20 @@ public class MedUI extends BasicUI{
 		JPanel patientManager = new JPanel();
 		patientManager.setLayout(new BoxLayout(patientManager, BoxLayout.LINE_AXIS));
 		JPanel listP = new JPanel();
-		listP.setBorder(new CompoundBorder(new TitledBorder("Patient Lookup"), new EmptyBorder(12, 0, 0, 0)));
 		listP.setLayout(new BoxLayout(listP, BoxLayout.Y_AXIS));
 		listP.add(Box.createVerticalGlue());
 		
 		p_list = new JList<PatientSet>();
 
-		p_list.setMaximumSize(new Dimension(400, 200));
 		p_list.setPreferredSize(new Dimension(400, 200));
+		p_list.setMaximumSize(new Dimension(400, 200));
 		
 		JPanel patient_info = new JPanel(new GridBagLayout());
 		FormCreator form3 = new FormCreator(patient_info, 2, n, 30);
 		JButton create = new JButton("Create");
 		
 		form3.createLabel("Patient name");
-		patient_name = form3.createTextField("");
+		patient_name_search = form3.createTextField("");
 		form3.addComponent(null);
 		form3.addComponent(create);
 		
@@ -308,8 +308,8 @@ public class MedUI extends BasicUI{
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				patientInfoPanel.setVisible(true);
-				pack();
+				patientTab.setEnabledAt(1, true);
+				patientTab.setEnabledAt(2, true);
 				if(patient != null) savePatient();
 				loadPatient(p_list.getSelectedValue());
 			}
@@ -318,24 +318,25 @@ public class MedUI extends BasicUI{
 		create.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				auth_manager.getPatientManager().createPatientInfo(patient_name.getText());
+				auth_manager.getPatientManager().createPatientInfo(patient_name_search.getText());
 				refreshList();
 			}
 		});
 		
 		JPanel prescription = getPrescriptionUI();
-		
+
+		patientTab.addTab("Patient Lookup", listP);
 		patientTab.addTab("Patient Info", patientInfoPanel);
 		patientTab.addTab("Prescription", prescription);
 		
 		medication.add(listMed);
 		medication.add(listCategory);
-		add(medication);
-		patientManager.add(listP);
 		patientManager.add(patientTab);
-		patientInfoPanel.setVisible(false);
+		patientTab.setEnabledAt(1, false);
+		patientTab.setEnabledAt(2, false);
+		
 		add(patientManager);
-		pack();
+		add(medication);
 	}
 
 	private DatePicker start_date,end_date;
