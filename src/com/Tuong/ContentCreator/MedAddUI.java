@@ -35,7 +35,7 @@ public class MedAddUI extends BasicUI{
 		finish.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				auth_manager.getPrescription().addMedicine(getMedicinePrescription());;
+				//auth_manager.getPrescription().addMedicine(getMedicinePrescription());;
 			}
 
 			private MedicinePrescription getMedicinePrescription() {

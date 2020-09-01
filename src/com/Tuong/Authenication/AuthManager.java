@@ -1,7 +1,5 @@
 package com.Tuong.Authenication;
 
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -11,28 +9,20 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.Tuong.ContentCreator.AuthUI;
-import com.Tuong.ContentCreator.HomeUI;
 import com.Tuong.ContentCreator.MedUI;
-import com.Tuong.ContentCreator.PatientManagerUI;
-import com.Tuong.ContentCreator.PrescriptionUI;
 import com.Tuong.MedXMain.JSONHelper;
 import com.Tuong.Medicine.MedicineManager;
-import com.Tuong.Medicine.Prescription;
 import com.Tuong.Patient.PatientManager;
 
 public class AuthManager {
 	private AuthUI authUI;
-	private HomeUI homeUI;
 	private MedUI medUI;
-	private PatientManagerUI pManagerUI;
 	
 	private final String account_path = "Data/employees.json";
 	private AccountInfo account_info;
 	
 	private MedicineManager med_manager;
 	private PatientManager patient_manager;
-	
-	private PrescriptionUI prescription;
 	
 	public AuthManager() {
 		this.patient_manager = new PatientManager(this);
@@ -41,35 +31,12 @@ public class AuthManager {
 		loadAuthenication();
 	}
 	
-	public PrescriptionUI getPrescription() {
-		if(prescription == null) prescription = new PrescriptionUI(this, getMedUI().getPatient());
-		return prescription;
-	}
-	
 	public void openMenu() {
 		this.authUI.setVisible(false);
 		this.authUI = null;
-		this.homeUI = new HomeUI(this);
+		openMedUI();
 	}
-	
-	public void openPatientUI() {
-		if(!account_info.hasPermission("medical.view")) {
-			homeUI.showDialog("Permission required!", "You dont have permission to do this action", 2);
-			return;
-		}
-		if(pManagerUI != null) {
-			pManagerUI.toFront();
-			pManagerUI.requestFocus();
-			return;
-		}
-		pManagerUI = new PatientManagerUI(this);
-	}
-	
 	public void openMedUI() {
-		if(!account_info.hasPermission("medical.view")) {
-			homeUI.showDialog("Permission required!", "You dont have permission to do this action", 2);
-			return;
-		}
 		if(medUI != null) {
 			medUI.toFront();
 			medUI.requestFocus();
@@ -84,14 +51,6 @@ public class AuthManager {
 	
 	public PatientManager getPatientManager() {
 		return this.patient_manager;
-	}
-	
-	public PatientManagerUI getPatientUI() {
-		return this.pManagerUI;
-	}
-	
-	public void setPatientUI(PatientManagerUI UI) {
-		this.pManagerUI = UI;
 	}
 	
 	public void setMedUI(MedUI UI) {

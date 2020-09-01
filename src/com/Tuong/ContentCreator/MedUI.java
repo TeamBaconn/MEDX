@@ -60,7 +60,6 @@ public class MedUI extends BasicUI{
 	private JList<PatientSet> p_list;
 	private JTextField patient_name_search;
 	private JTextField patient_name;
-	private PatientUI patientUI;
 	
 	public MedUI(AuthManager auth_manager) {
 		super("Medicine Manager", Toolkit.getDefaultToolkit().getScreenSize(),false,auth_manager);
@@ -502,16 +501,7 @@ public class MedUI extends BasicUI{
 		});
 		return patientInfo;
 	}
-	
-	public void closePatientProfile(boolean t) {
-		if(t) auth_manager.setPatientUI(null);
-		if(patientUI == null) return;
-		if(auth_manager.getMedUI() != null) auth_manager.getMedUI().setPatient(null);
-		patientUI.savePatient();
-		patientUI.setVisible(false);
-		patientUI = null;
-	}
-	
+
 	public void refreshList() {
 		p_list.setModel(auth_manager.getPatientManager().getPatient());
 	}
