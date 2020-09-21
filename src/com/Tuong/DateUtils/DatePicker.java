@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.lang.reflect.Field;
+import java.util.Calendar;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -26,12 +27,10 @@ public class DatePicker extends JTextField {
 	private final String[] display = { "D", "M", "Y", "H", "M" };
 	private final int[] date_in_month = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	private JFrame date_picker;
-	private Date date;
 
 	public DatePicker(Date date, boolean timeEnable) {
 		super(!timeEnable ? date.toReadable() : date.toReadableWithTime());
 		this.timeEnable = timeEnable;
-		this.date = date;
 		date_picker = new JFrame();
 		date_picker.setLayout(new FlowLayout(LEFT));
 		show = new JComboBox[timeEnable ? 5 : 3];
@@ -120,12 +119,6 @@ public class DatePicker extends JTextField {
 	}
 
 	private void setDay(int day, int month, int year, int hour, int min) {
-		date.day = day;
-		date.month = month;
-		date.year = year;
-		date.hour = hour;
-		date.min = min;
-		setText(!timeEnable ? date.toReadable() : date.toReadableWithTime());
 		if (timeEnable) {
 			show[3].setSelectedIndex(hour - 1);
 			show[4].setSelectedIndex(min - 1);
@@ -141,6 +134,9 @@ public class DatePicker extends JTextField {
 		show[2].setModel(new DefaultComboBoxModel<Integer>(n));
 		show[2].setSelectedIndex(10);
 		show[1].setSelectedIndex(month - 1);
+		
+		setText(!timeEnable ? getDate().toReadable() : getDate().toReadableWithTime());
+		
 		if (setter == null)
 			return;
 		Field set;
@@ -164,7 +160,8 @@ public class DatePicker extends JTextField {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setDay((int) show[0].getSelectedItem(), (int) show[1].getSelectedItem(),
-						(int) show[2].getSelectedItem(), (timeEnable ? (int) show[3].getSelectedItem() : 0),
+						(int) show[2].getSelectedItem(), 
+						(timeEnable ? (int) show[3].getSelectedItem() : 0),
 						(timeEnable ? (int) show[4].getSelectedItem() : 0));
 			}
 		});

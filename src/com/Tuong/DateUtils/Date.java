@@ -8,7 +8,7 @@ public class Date {
 		this.year = Calendar.getInstance().get(Calendar.YEAR);
 		this.month = Calendar.getInstance().get(Calendar.MONTH)+1;
 		this.day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-		this.hour = Calendar.getInstance().get(Calendar.HOUR);
+		this.hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
 		this.min = Calendar.getInstance().get(Calendar.MINUTE);	
 	}
 	public Date(int day, int month, int year) {
@@ -30,12 +30,14 @@ public class Date {
 	}
 	
 	public static int compare(Date d1, Date d2) {
-		if(d1.year >= d2.year && d1.month >= d2.month) {
-			if(d1.day > d2.day) return 1;
-			else if(d1.day == d2.day) return 0;
-		}
-		return -1;
-	}
+        if (d1.year == d2.year && d1.month == d2.month && d1.day == d2.day)
+            return 0;
+        if (d1.year != d2.year)
+            return d1.year > d2.year ? 1 : -1;
+        if (d1.month != d2.month)
+            return d1.month > d2.month ? 1 : -1;
+        return d1.day > d2.day ? 1 : -1;
+    }
 	
 	public static Date parse(String s) {
 		if(s == null) return new Date();

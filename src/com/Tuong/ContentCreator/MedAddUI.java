@@ -15,10 +15,8 @@ import com.Tuong.Medicine.MedicinePrescription;
 import com.Tuong.Patient.PatientSet;
 
 public class MedAddUI extends BasicUI{
-	private Medicine medicine;
 	public MedAddUI(AuthManager auth_manager, PatientSet patient, MedUI med, Medicine medicine) {
-		super("Add "+medicine.getName()+" to patient "+patient.name,new Dimension(320,200),false,auth_manager);
-		this.medicine = medicine;
+		super("Add "+medicine.getName()+" to patient "+patient.name,new Dimension(380,200),false,auth_manager);
 		setLayout(new GridBagLayout());
 		int[] n = {150, 150};
 		FormCreator form = new FormCreator(this, 2, n, 30);
@@ -35,16 +33,13 @@ public class MedAddUI extends BasicUI{
 		finish.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//auth_manager.getPrescription().addMedicine(getMedicinePrescription());;
+				auth_manager.getMedUI().addMedicine(getMedicinePrescription());
+				setVisible(false);
 			}
 
 			private MedicinePrescription getMedicinePrescription() {
 				return new MedicinePrescription(medicine, (int)frequency.getValue());
 			}
 		});
-	}
-	
-	@Override
-	protected void setupUI() {
 	}
 }

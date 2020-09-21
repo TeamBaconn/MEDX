@@ -62,14 +62,20 @@ public class MedUI extends BasicUI{
 	private JTextField patient_name;
 	
 	public MedUI(AuthManager auth_manager) {
-		super("Medicine Manager", Toolkit.getDefaultToolkit().getScreenSize(),false,auth_manager);
+		super("Medicine Manager", Toolkit.getDefaultToolkit().getScreenSize(),true,auth_manager);
 	}
 	
 	public void setPatient(PatientSet p) {
 		this.set = p;
 		openAddMedButton();
 	}
-	
+	public void addMedicine(MedicinePrescription medicine) {
+		DefaultListModel<MedicinePrescription> model = new DefaultListModel<MedicinePrescription>();
+		for(int i = 0; i < prescriptions.getModel().getSize(); i++) model.addElement(prescriptions.getModel().getElementAt(i));
+		model.addElement(medicine);
+		prescriptions.clearSelection();
+		prescriptions.setModel(model);
+	}
 	private void openAddMedButton() {
 		if(list.getSelectedValue() == null || set == null) {
 			addPat.setVisible(false);
@@ -85,6 +91,7 @@ public class MedUI extends BasicUI{
 			@Override
 			public void click() {
 				auth_manager.getMedicineManager().saveData();
+				savePatient();
 				auth_manager.setMedUI(null);
 			}
 		});
@@ -142,6 +149,11 @@ public class MedUI extends BasicUI{
 		category.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(category.getSelectedIndex() == category.getModel().getSize()-1) {
+					System.out.println("Hello");
+					category.setSelectedIndex(category.getSelectedIndex());
+					return;
+				}
 				if(list.getSelectedValue() == null) return;
 				list.getSelectedValue().med.setCategory((MedicineCategory)category.getSelectedItem());
 			}
@@ -307,10 +319,14 @@ public class MedUI extends BasicUI{
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				//Load new patient
 				patientTab.setEnabledAt(1, true);
-				patientTab.setEnabledAt(2, true);
+				//patientTab.setEnabledAt(2, true);
 				if(patient != null) savePatient();
 				loadPatient(p_list.getSelectedValue());
+				patientTab.setSelectedIndex(1);
+				
+				prescription_patient_name.setText(patient.getName());
 			}
 		});
 		
@@ -326,13 +342,14 @@ public class MedUI extends BasicUI{
 
 		patientTab.addTab("Patient Lookup", listP);
 		patientTab.addTab("Patient Info", patientInfoPanel);
-		patientTab.addTab("Prescription", prescription);
+		//patientTab.addTab("Prescription", prescription);
 		
 		medication.add(listMed);
 		medication.add(listCategory);
 		patientManager.add(patientTab);
+		patientManager.add(prescription);
 		patientTab.setEnabledAt(1, false);
-		patientTab.setEnabledAt(2, false);
+		//patientTab.setEnabledAt(2, false);
 		
 		add(patientManager);
 		add(medication);
@@ -341,20 +358,23 @@ public class MedUI extends BasicUI{
 	private DatePicker start_date,end_date;
 	private JTextField note;
 	private JList<MedicinePrescription> prescriptions;
+	private JTextField prescription_patient_name;
 	public JPanel getPrescriptionUI() {
 		JPanel pre = new JPanel();
-		pre.setLayout(new BoxLayout(pre, BoxLayout.Y_AXIS));
-		
+		pre.setLayout(new BoxLayout(pre, BoxLayout.LINE_AXIS));
+		pre.add(new MedicationTable());
 		prescriptions = new JList<MedicinePrescription>();
 		prescriptions.setPreferredSize(new Dimension(400,200));
 		prescriptions.setMaximumSize(new Dimension(400,200));
-		pre.add(prescriptions);
+		//pre.add(prescriptions);
 		
 		JPanel f = new JPanel(new GridBagLayout());
 		int[] n = {140,240};
 		FormCreator form = new FormCreator(f, 2, n, 30);
 		form.createLabel("Patient name: ");
-		form.createLabel("");
+		prescription_patient_name = new JTextField();
+		prescription_patient_name.setEditable(false);
+		form.addComponent(prescription_patient_name);
 		form.createLabel("Note");
 		note = form.createTextField("");
 	
@@ -370,7 +390,7 @@ public class MedUI extends BasicUI{
 		JButton print = new JButton("Print");
 		print.setMaximumSize(new Dimension(400,40));
 		print.setAlignmentX(CENTER_ALIGNMENT);
-		pre.add(print);
+		//pre.add(print);
 		return pre;
 	}
 	
@@ -395,7 +415,7 @@ public class MedUI extends BasicUI{
 			GraphType g = new GraphType((String)graph.get("Name"), (String)graph.get("Unit"));
 			String[] v = ((String)graph.get("Value")).split(",");
 			for(int j = 0; j < v.length; j++) if(v[j].length()>1){
-				g.value.add(new GraphValue(Date.parse(v[j].split("/")[1]),Integer.valueOf(v[j].split("/")[0])));
+				g.value.add(new GraphValue(Date.parse(v[j].split("/")[1]),Double.valueOf(v[j].split("/")[0])));
 			}
 			graphList.addItem(g);
 		}
@@ -405,6 +425,7 @@ public class MedUI extends BasicUI{
 	}
 	
 	public void savePatient() {
+		if(patient == null) return;
 		System.out.println("Save patient "+patient.getName());
 		JSONObject obj = new JSONObject();
 		obj.put("DOB", DOB.getDate().toString());
@@ -484,7 +505,7 @@ public class MedUI extends BasicUI{
 		insert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				graph.addValue(dP.getDate(),Integer.parseInt(value.getText()));
+				graph.addValue(dP.getDate(),Double.parseDouble(value.getText()));
 			}
 		});
 		newGraph.addActionListener(new ActionListener() {
@@ -521,6 +542,7 @@ public class MedUI extends BasicUI{
 		medName.setText("");
 		DefaultComboBoxModel<MedicineCategory> cat = new DefaultComboBoxModel<MedicineCategory>();
 		auth_manager.getMedicineManager().getCategories().forEach(a -> cat.addElement(a));
+		cat.addElement(new MedicineCategory("Add new category...", ""));
 		category.setModel(cat);
 		category.setSelectedIndex(0);
 		updateMedicine("");
