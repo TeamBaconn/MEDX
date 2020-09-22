@@ -3,25 +3,24 @@ package com.Tuong.Medicine;
 import com.Tuong.DateUtils.Date;
 
 public class Medicine {
-	private String name;
-	private boolean available;
+	private String name,unit;
 	private Date expDate;
 	private MedicineCategory category;
-	private int unit;
+	private int stock;
 	
-	public Medicine(String name, int unit, Date date, MedicineCategory category) {
+	public Medicine(String name, String unit, int stock, Date date, MedicineCategory category) {
 		this.name = name;
-		this.available = unit != 0;
 		this.expDate = date;
 		this.unit = unit;
 		this.category = category;
+		this.stock = stock;
 	}
 	
 	public Date getEXP() {
 		return this.expDate;
 	}
 	
-	public int getUnit() {
+	public String getUnit() {
 		return this.unit;
 	}
 	
@@ -33,12 +32,16 @@ public class Medicine {
 		return this.category;
 	}
 	
-	public boolean isAvailable() {
-		return this.available;
+	public int getStock() {
+		return stock;
 	}
 	
-	public void setUnit(int unit) {
-		this.unit = unit;
+	public void setStock(int stock) {
+		this.stock = stock;
+	}
+	
+	public boolean isAvailable() {
+		return stock <= 0;
 	}
 	public void setCategory(MedicineCategory cat) {
 		this.category = cat;

@@ -25,7 +25,7 @@ public class AuthManager {
 	private PatientManager patient_manager;
 	
 	public AuthManager() {
-		this.patient_manager = new PatientManager(this);
+		this.patient_manager = new PatientManager();
 		this.med_manager = new MedicineManager();
 		this.authUI = new AuthUI(this);
 		loadAuthenication();

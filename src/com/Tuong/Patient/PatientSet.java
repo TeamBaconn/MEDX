@@ -3,13 +3,12 @@ package com.Tuong.Patient;
 public class PatientSet {
 	public int w;
 	public String name, path;
-	public PatientSet(String path) {
+	public PatientSet(String path, String name) {
 		this.path = path;
-		this.name = parseField(path);
+		this.name = parseField(name);
 	}
 	private String parseField(String name) {
-		String[] s = name.split("/");
-		return s[s.length-1].split("_")[0];
+		return name.split("_")[0];
 	}
 	@Override
 	public String toString() {

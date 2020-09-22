@@ -1,17 +1,15 @@
 package com.Tuong.Medicine;
 
-import com.Tuong.DateUtils.Date;
-
 public class MedicinePrescription {
 	public Medicine medicine;
-	public int frequency;
-	public MedicinePrescription(Medicine medicine, int frequency) {
+	public int volume;
+	public MedicinePrescription(Medicine medicine, int volume) {
 		this.medicine = medicine;
-		this.frequency = frequency;
+		this.volume = volume;
 	}
 	
 	@Override
 	public String toString() {
-		return medicine.getName() +" "+frequency+" times";
+		return medicine.getName() +" "+volume+" times";
 	}
 }

@@ -1,4 +1,4 @@
-package com.Tuong.ContentCreator;
+package com.Tuong.Graph;
 
 import java.awt.Dimension;
 
@@ -6,8 +6,13 @@ import javax.swing.BoxLayout;
 import javax.swing.JTextField;
 
 import com.Tuong.Authenication.AuthManager;
+import com.Tuong.ContentCreator.MedUI;
+import com.Tuong.ContentHelper.BasicUI;
+import com.Tuong.ContentHelper.ButtonAction;
 
 public class GraphCreatorUI extends BasicUI{
+	private static final long serialVersionUID = 4972121492576858217L;
+	
 	private MedUI pUI;
 	public GraphCreatorUI(AuthManager pUI) {
 		super("Create new graph", new Dimension(300,100), false, null);

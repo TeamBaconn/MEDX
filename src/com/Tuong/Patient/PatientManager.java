@@ -10,11 +10,9 @@ import com.Tuong.Authenication.AuthManager;
 import com.Tuong.MedXMain.JSONHelper;
 
 public class PatientManager {
-	private AuthManager auth_manager;
 	private final String patient_path = "Patient/";
 
-	public PatientManager(AuthManager auth_manager) {
-		this.auth_manager = auth_manager;
+	public PatientManager() {
 		System.out.println("Setup patient manager");
 	}
 
@@ -26,7 +24,7 @@ public class PatientManager {
 	
 	public DefaultListModel<PatientSet> getPatient(){
 		DefaultListModel<PatientSet> model = new DefaultListModel<PatientSet>();
-		for(File c : new File(patient_path).listFiles()) model.addElement(new PatientSet(c.getPath()));
+		for(File c : new File(patient_path).listFiles()) model.addElement(new PatientSet(c.getPath(),c.getAbsoluteFile().getName()));
 		return model;
 	}
 

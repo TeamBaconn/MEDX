@@ -1,14 +1,11 @@
 package com.Tuong.DateUtils;
 
-import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.lang.reflect.Field;
-import java.util.Calendar;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -28,6 +25,7 @@ public class DatePicker extends JTextField {
 	private final int[] date_in_month = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	private JFrame date_picker;
 
+	@SuppressWarnings("unchecked")
 	public DatePicker(Date date, boolean timeEnable) {
 		super(!timeEnable ? date.toReadable() : date.toReadableWithTime());
 		this.timeEnable = timeEnable;
@@ -113,9 +111,10 @@ public class DatePicker extends JTextField {
 	}
 
 	public Date getDate() {
-		return new Date((int) show[0].getSelectedItem(), (int) show[1].getSelectedItem(),
+		try {		return new Date((int) show[0].getSelectedItem(), (int) show[1].getSelectedItem(),
 				(int) show[2].getSelectedItem(), (timeEnable ? (int) show[3].getSelectedItem() : 0),
 				(timeEnable ? (int) show[4].getSelectedItem() : 0));
+		}catch(NullPointerException ex) { return new Date(); }
 	}
 
 	private void setDay(int day, int month, int year, int hour, int min) {
@@ -159,10 +158,12 @@ public class DatePicker extends JTextField {
 		update.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				try {
 				setDay((int) show[0].getSelectedItem(), (int) show[1].getSelectedItem(),
 						(int) show[2].getSelectedItem(), 
 						(timeEnable ? (int) show[3].getSelectedItem() : 0),
 						(timeEnable ? (int) show[4].getSelectedItem() : 0));
+				}catch(NullPointerException ex) {}
 			}
 		});
 	}

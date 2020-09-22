@@ -8,8 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.Box;
@@ -38,9 +36,17 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.Tuong.Authenication.AuthManager;
+import com.Tuong.ContentHelper.BasicUI;
+import com.Tuong.ContentHelper.ButtonAction;
+import com.Tuong.ContentHelper.FormCreator;
 import com.Tuong.DateUtils.Date;
 import com.Tuong.DateUtils.DatePicker;
+import com.Tuong.Graph.Graph;
+import com.Tuong.Graph.GraphCreatorUI;
+import com.Tuong.Graph.GraphType;
+import com.Tuong.Graph.GraphValue;
 import com.Tuong.MedXMain.JSONHelper;
+import com.Tuong.MedXMain.MedXMain;
 import com.Tuong.Medicine.MedicineCategory;
 import com.Tuong.Medicine.MedicinePrescription;
 import com.Tuong.Medicine.MedicineSet;
@@ -57,9 +63,9 @@ public class MedUI extends BasicUI{
 	private JSpinner unit;
 	private JButton addPat;
 	
-	private JList<PatientSet> p_list;
-	private JTextField patient_name_search;
 	private JTextField patient_name;
+	
+	private PatientLookup patient_lookup;
 	
 	public MedUI(AuthManager auth_manager) {
 		super("Medicine Manager", Toolkit.getDefaultToolkit().getScreenSize(),true,auth_manager);
@@ -70,11 +76,12 @@ public class MedUI extends BasicUI{
 		openAddMedButton();
 	}
 	public void addMedicine(MedicinePrescription medicine) {
-		DefaultListModel<MedicinePrescription> model = new DefaultListModel<MedicinePrescription>();
+		/*DefaultListModel<MedicinePrescription> model = new DefaultListModel<MedicinePrescription>();
 		for(int i = 0; i < prescriptions.getModel().getSize(); i++) model.addElement(prescriptions.getModel().getElementAt(i));
 		model.addElement(medicine);
 		prescriptions.clearSelection();
-		prescriptions.setModel(model);
+		prescriptions.setModel(model);*/
+		medTable.model.add(medicine);
 	}
 	private void openAddMedButton() {
 		if(list.getSelectedValue() == null || set == null) {
@@ -84,7 +91,8 @@ public class MedUI extends BasicUI{
 		addPat.setText("Add "+list.getSelectedValue().med.getName()+" to "+set.name);
 		addPat.setVisible(true);
 	}
-	
+
+	JTabbedPane patientTab;
 	@Override
 	public void setupUI() {
 		addCloseAction(new ButtonAction() {
@@ -104,7 +112,6 @@ public class MedUI extends BasicUI{
 		 * Date - EXP of the med
 		 * Unit - Unit of the medicine
 		 */
-		int[] n = {100,300};
 		JPanel medication = new JPanel();
 		medication.setLayout(new BoxLayout(medication, BoxLayout.LINE_AXIS));
 		JPanel listMed = new JPanel();
@@ -121,7 +128,7 @@ public class MedUI extends BasicUI{
 		medInfo.setLayout(new GridBagLayout());
 		listMed.add(medInfo);
 		
-		FormCreator form = new FormCreator(medInfo, 2, n, 30);
+		FormCreator form = new FormCreator(medInfo, 2, MedXMain.form_size_constant, 30);
 		dPicker = new DatePicker(new Date(), false);
 		form.createLabel("Name");
 		medName = form.createTextField("");
@@ -162,7 +169,7 @@ public class MedUI extends BasicUI{
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if(list.getSelectedValue() == null) return;
-				list.getSelectedValue().med.setUnit((int)unit.getValue());
+				list.getSelectedValue().med.setStock((int)unit.getValue());
 			}
 		});
 		list.addListSelectionListener(new ListSelectionListener() {
@@ -174,14 +181,14 @@ public class MedUI extends BasicUI{
 				medName.setText(list.getSelectedValue().med.getName());
 				dPicker.setDateSetter(list.getSelectedValue().med,"expDate");
 				dPicker.setDate(list.getSelectedValue().med.getEXP());
-				unit.setValue(list.getSelectedValue().med.getUnit());
+				unit.setValue(list.getSelectedValue().med.getStock());
 				category.setSelectedItem(list.getSelectedValue().med.getCategory());
 			}
 		});
 		addMed.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				auth_manager.getMedicineManager().addMedicine(medName.getText(), (int)unit.getValue(), dPicker.getDate(), (MedicineCategory)category.getSelectedItem());
+				auth_manager.getMedicineManager().addMedicine(medName.getText(),"Unit name", (int)unit.getValue(), dPicker.getDate(), (MedicineCategory)category.getSelectedItem());
 				refresh();
 				showDialog("MedX", "Add medicine successfully", JOptionPane.INFORMATION_MESSAGE);
 			}
@@ -198,7 +205,7 @@ public class MedUI extends BasicUI{
 		listCate.setPreferredSize(new Dimension(400, 200));
 		JPanel cateInfo = new JPanel();
 		cateInfo.setLayout(new GridBagLayout());
-		FormCreator formCate = new FormCreator(cateInfo, 2, n, 30);
+		FormCreator formCate = new FormCreator(cateInfo, 2, MedXMain.form_size_constant, 30);
 		formCate.createLabel("Category");
 		JTextField cateName = formCate.createTextField("");
 		JButton addCate = new JButton("Create");
@@ -269,78 +276,16 @@ public class MedUI extends BasicUI{
 		
 		JPanel patientManager = new JPanel();
 		patientManager.setLayout(new BoxLayout(patientManager, BoxLayout.LINE_AXIS));
-		JPanel listP = new JPanel();
-		listP.setLayout(new BoxLayout(listP, BoxLayout.Y_AXIS));
-		listP.add(Box.createVerticalGlue());
-		
-		p_list = new JList<PatientSet>();
-
-		p_list.setPreferredSize(new Dimension(400, 200));
-		p_list.setMaximumSize(new Dimension(400, 200));
-		
-		JPanel patient_info = new JPanel(new GridBagLayout());
-		FormCreator form3 = new FormCreator(patient_info, 2, n, 30);
-		JButton create = new JButton("Create");
-		
-		form3.createLabel("Patient name");
-		patient_name_search = form3.createTextField("");
-		form3.addComponent(null);
-		form3.addComponent(create);
-		
-		refreshList();
-		listP.add(p_list);
-		listP.add(patient_info);
-
-		JTabbedPane patientTab = new JTabbedPane();
 		
 		JPanel patientInfoPanel = setupPatientInfo();
 		
-		p_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		p_list.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				//Load new patient
-				patientTab.setEnabledAt(1, true);
-				//patientTab.setEnabledAt(2, true);
-				if(patient != null) savePatient();
-				loadPatient(p_list.getSelectedValue());
-				patientTab.setSelectedIndex(1);
-				
-				prescription_patient_name.setText(patient.getName());
-			}
-		});
 		
-		create.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				auth_manager.getPatientManager().createPatientInfo(patient_name_search.getText());
-				refreshList();
-			}
-		});
 		
 		JPanel prescription = getPrescriptionUI();
-
-		patientTab.addTab("Patient Lookup", listP);
+		
+		patient_lookup = new PatientLookup(auth_manager);
+		patientTab = new JTabbedPane();
+		patientTab.addTab("Patient Lookup", patient_lookup);
 		patientTab.addTab("Patient Info", patientInfoPanel);
 		//patientTab.addTab("Prescription", prescription);
 		
@@ -354,15 +299,25 @@ public class MedUI extends BasicUI{
 		add(patientManager);
 		add(medication);
 	}
-
+	public void updatePatient(PatientSet patientSet) {
+		auth_manager.getMedUI().patientTab.setEnabledAt(1, true);
+		//patientTab.setEnabledAt(2, true);
+		if(patient != null) savePatient();
+		loadPatient(patientSet);
+		patientTab.setSelectedIndex(1);
+		
+		prescription_patient_name.setText(patient.getName());
+	}
 	private DatePicker start_date,end_date;
 	private JTextField note;
 	private JList<MedicinePrescription> prescriptions;
 	private JTextField prescription_patient_name;
+	private MedicationTable medTable;
 	public JPanel getPrescriptionUI() {
 		JPanel pre = new JPanel();
-		pre.setLayout(new BoxLayout(pre, BoxLayout.LINE_AXIS));
-		pre.add(new MedicationTable());
+		pre.setLayout(new BoxLayout(pre, BoxLayout.Y_AXIS));
+		medTable = new MedicationTable();
+		pre.add(medTable);
 		prescriptions = new JList<MedicinePrescription>();
 		prescriptions.setPreferredSize(new Dimension(400,200));
 		prescriptions.setMaximumSize(new Dimension(400,200));
@@ -521,10 +476,6 @@ public class MedUI extends BasicUI{
 			}
 		});
 		return patientInfo;
-	}
-
-	public void refreshList() {
-		p_list.setModel(auth_manager.getPatientManager().getPatient());
 	}
 	
 	private void openMedAdd() {

@@ -26,6 +26,7 @@ public class MedicineManager {
 		readData();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void saveData() {
 		System.out.println("Start saving med data");
 		// Save categories data
@@ -47,6 +48,7 @@ public class MedicineManager {
 			obj.put("EXP",med.getEXP().toString());
 			obj.put("Category", (med.getCategory() != null) ? med.getCategory().toString() : "NULL");
 			obj.put("Unit",med.getUnit());
+			obj.put("Stock",med.getStock());
 			array.add(obj);
 		}
 		JSONHelper.writeFile(med_path, array.toJSONString());
@@ -74,7 +76,7 @@ public class MedicineManager {
 			JSONArray cats = (JSONArray) JSONHelper.readFile(med_path);
 			for (int i = 0; i < cats.size(); i++) {
 				JSONObject obj = (JSONObject) cats.get(i);
-				addMedicine((String)obj.get("Name"), ((Long)obj.get("Unit")).intValue(), Date.parse((String)obj.get("EXP")), getMedicineCategory((String)obj.get("Category")));
+				addMedicine(obj.get("Name"), obj.get("Unit"),obj.get("Stock"), obj.get("EXP"), getMedicineCategory((String)obj.get("Category")));
 			}
 		}
 		
@@ -99,8 +101,12 @@ public class MedicineManager {
 			if (cat.getName().contentEquals(name)) return cat;
 		return null;
 	}
-	public void addMedicine(String name, int unit, Date date, MedicineCategory cat) {
-		medicines.add(new Medicine(name, unit, date, cat));
+	public void addMedicine(Object name, Object unit, Object volume, Object date, Object cat) {
+		medicines.add(new Medicine(name != null ? (String) name : "NaN",
+						unit != null ? (String)unit : "NaN", 
+						(volume != null ? ((Long)volume).intValue() : -1), 
+						date != null ? Date.parse((String)date) : new Date(), 
+						(MedicineCategory) cat));
 	}
 
 	public ArrayList<MedicineCategory> getCategories() {

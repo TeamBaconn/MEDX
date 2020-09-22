@@ -1,4 +1,4 @@
-package com.Tuong.ContentCreator;
+package com.Tuong.ContentHelper;
 
 public interface ButtonAction {
 	public void click();

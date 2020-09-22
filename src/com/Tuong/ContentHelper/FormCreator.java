@@ -1,4 +1,4 @@
-package com.Tuong.ContentCreator;
+package com.Tuong.ContentHelper;
 
 import java.awt.Component;
 import java.awt.Container;

@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.Tuong.Authenication.AuthManager;
+import com.Tuong.ContentHelper.BasicUI;
+import com.Tuong.ContentHelper.ButtonAction;
 
 public class AuthUI extends BasicUI {
 	public AuthUI(AuthManager auth_manager) {

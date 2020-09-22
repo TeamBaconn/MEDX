@@ -1,4 +1,4 @@
-package com.Tuong.ContentCreator;
+package com.Tuong.Graph;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -8,7 +8,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
@@ -16,6 +15,8 @@ import javax.swing.border.LineBorder;
 import com.Tuong.DateUtils.Date;
 
 public class Graph extends JPanel implements MouseMotionListener {
+	private static final long serialVersionUID = 3591139506652988572L;
+	
 	private int mouseX = 0, mouseY = 0;
 	private double median = 0;
 
@@ -144,32 +145,5 @@ public class Graph extends JPanel implements MouseMotionListener {
 		mouseX = e.getX();
 		mouseY = e.getY();
 		repaint();
-	}
-}
-
-class GraphValue {
-	public double value;
-	public Date date;
-
-	public GraphValue(Date date, double value) {
-		this.value = value;
-		this.date = date;
-	}
-}
-
-class GraphType {
-	public String name;
-	public ArrayList<GraphValue> value;
-	public String unit;
-
-	public GraphType(String name, String unit) {
-		this.name = name;
-		this.unit = unit;
-		value = new ArrayList<GraphValue>();
-	}
-
-	@Override
-	public String toString() {
-		return this.name;
 	}
 }

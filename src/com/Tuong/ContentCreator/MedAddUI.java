@@ -10,11 +10,15 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import com.Tuong.Authenication.AuthManager;
+import com.Tuong.ContentHelper.BasicUI;
+import com.Tuong.ContentHelper.FormCreator;
 import com.Tuong.Medicine.Medicine;
 import com.Tuong.Medicine.MedicinePrescription;
 import com.Tuong.Patient.PatientSet;
 
 public class MedAddUI extends BasicUI{
+	private static final long serialVersionUID = -8392225927731163336L;
+
 	public MedAddUI(AuthManager auth_manager, PatientSet patient, MedUI med, Medicine medicine) {
 		super("Add "+medicine.getName()+" to patient "+patient.name,new Dimension(380,200),false,auth_manager);
 		setLayout(new GridBagLayout());
