@@ -17,18 +17,12 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -49,47 +43,20 @@ import com.Tuong.MedXMain.JSONHelper;
 import com.Tuong.MedXMain.MedXMain;
 import com.Tuong.Medicine.MedicineCategory;
 import com.Tuong.Medicine.MedicinePrescription;
-import com.Tuong.Medicine.MedicineSet;
 import com.Tuong.Patient.Patient;
-import com.Tuong.Patient.PatientSet;
 
 public class MedUI extends BasicUI{
 	
-	private JList<MedicineSet> list;
-	
-	private JTextField medName;
-	private JComboBox<MedicineCategory> category;
-	private DatePicker dPicker;
-	private JSpinner unit;
-	private JButton addPat;
-	
 	private JTextField patient_name;
 	
+	private MedicineList listMed;
 	private PatientLookup patient_lookup;
 	
 	public MedUI(AuthManager auth_manager) {
 		super("Medicine Manager", Toolkit.getDefaultToolkit().getScreenSize(),true,auth_manager);
 	}
-	
-	public void setPatient(PatientSet p) {
-		this.set = p;
-		openAddMedButton();
-	}
 	public void addMedicine(MedicinePrescription medicine) {
-		/*DefaultListModel<MedicinePrescription> model = new DefaultListModel<MedicinePrescription>();
-		for(int i = 0; i < prescriptions.getModel().getSize(); i++) model.addElement(prescriptions.getModel().getElementAt(i));
-		model.addElement(medicine);
-		prescriptions.clearSelection();
-		prescriptions.setModel(model);*/
 		medTable.model.add(medicine);
-	}
-	private void openAddMedButton() {
-		if(list.getSelectedValue() == null || set == null) {
-			addPat.setVisible(false);
-			return;
-		}
-		addPat.setText("Add "+list.getSelectedValue().med.getName()+" to "+set.name);
-		addPat.setVisible(true);
 	}
 
 	JTabbedPane patientTab;
@@ -114,86 +81,8 @@ public class MedUI extends BasicUI{
 		 */
 		JPanel medication = new JPanel();
 		medication.setLayout(new BoxLayout(medication, BoxLayout.LINE_AXIS));
-		JPanel listMed = new JPanel();
-		listMed.setBorder(new CompoundBorder(new TitledBorder("Medication Information"), new EmptyBorder(12, 0, 0, 0)));
-		listMed.setLayout(new BoxLayout(listMed, BoxLayout.Y_AXIS));
-		listMed.add(Box.createVerticalGlue());
-		list = new JList<MedicineSet>();
-		list.setMaximumSize(new Dimension(400, 200));
-		list.setPreferredSize(new Dimension(400, 200));
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		listMed.add(list);
-		listMed.add(Box.createRigidArea(new Dimension(0,20)));
-		JPanel medInfo = new JPanel();
-		medInfo.setLayout(new GridBagLayout());
-		listMed.add(medInfo);
 		
-		FormCreator form = new FormCreator(medInfo, 2, MedXMain.form_size_constant, 30);
-		dPicker = new DatePicker(new Date(), false);
-		form.createLabel("Name");
-		medName = form.createTextField("");
-		searchAction(medName,dPicker);
-		form.createLabel("Category");
-		category = new JComboBox<MedicineCategory>();
-		form.addComponent(category);
-		form.createLabel("EXP Date");
-		form.addComponent(dPicker);
-		form.createLabel("Units");
-		unit = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-		form.addComponent(unit);
-		JButton addMed = new JButton("Create");
-		JButton delMed = new JButton("Delete");
-		addPat = new JButton();
-		addPat.setVisible(false);
-		
-		form.addComponent(null);
-		form.addComponent(addMed);
-		form.addComponent(null);
-		form.addComponent(delMed);
-		form.addComponent(null);
-		form.addComponent(addPat);
-		
-		category.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(category.getSelectedIndex() == category.getModel().getSize()-1) {
-					System.out.println("Hello");
-					category.setSelectedIndex(category.getSelectedIndex());
-					return;
-				}
-				if(list.getSelectedValue() == null) return;
-				list.getSelectedValue().med.setCategory((MedicineCategory)category.getSelectedItem());
-			}
-		});
-		unit.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				if(list.getSelectedValue() == null) return;
-				list.getSelectedValue().med.setStock((int)unit.getValue());
-			}
-		});
-		list.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				//Check selection in Jlist
-				openAddMedButton();
-				if(!e.getValueIsAdjusting()) return;
-				medName.setText(list.getSelectedValue().med.getName());
-				dPicker.setDateSetter(list.getSelectedValue().med,"expDate");
-				dPicker.setDate(list.getSelectedValue().med.getEXP());
-				unit.setValue(list.getSelectedValue().med.getStock());
-				category.setSelectedItem(list.getSelectedValue().med.getCategory());
-			}
-		});
-		addMed.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				auth_manager.getMedicineManager().addMedicine(medName.getText(),"Unit name", (int)unit.getValue(), dPicker.getDate(), (MedicineCategory)category.getSelectedItem());
-				refresh();
-				showDialog("MedX", "Add medicine successfully", JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
-		refresh();
+		listMed = new MedicineList(auth_manager);
 		
 		JPanel listCategory = new JPanel();
 		listCategory.setBorder(new CompoundBorder(new TitledBorder("Categories"), new EmptyBorder(12, 0, 0, 0)));
@@ -224,7 +113,7 @@ public class MedUI extends BasicUI{
 				cateName.setText("");
 				hint.setText("");
 				updateCategory(listCate);
-				refresh();
+				listMed.refresh();
 			}
 		});
 		addCate.addActionListener(new ActionListener() {
@@ -232,7 +121,7 @@ public class MedUI extends BasicUI{
 			public void actionPerformed(ActionEvent e) {
 				auth_manager.getMedicineManager().addMedicineCategory(cateName.getText(), hint.getText());
 				updateCategory(listCate);
-				refresh();
+				listMed.refresh();
 				showDialog("MedX", "Create new category ("+cateName.getText()+") successful", 1);
 			}
 		});
@@ -261,12 +150,6 @@ public class MedUI extends BasicUI{
 			@Override
 			public void keyPressed(KeyEvent e) {
 				
-			}
-		});
-		addPat.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				openMedAdd();
 			}
 		});
 		
@@ -299,11 +182,11 @@ public class MedUI extends BasicUI{
 		add(patientManager);
 		add(medication);
 	}
-	public void updatePatient(PatientSet patientSet) {
+	public void updatePatient(int id) {
 		auth_manager.getMedUI().patientTab.setEnabledAt(1, true);
 		//patientTab.setEnabledAt(2, true);
 		if(patient != null) savePatient();
-		loadPatient(patientSet);
+		loadPatient(id);
 		patientTab.setSelectedIndex(1);
 		
 		prescription_patient_name.setText(patient.getName());
@@ -351,18 +234,14 @@ public class MedUI extends BasicUI{
 	
 	private DatePicker DOB;
 	private JTextField diagnosis;
-	private PatientSet set;
 	private JComboBox<GraphType> graphList;
 	private Graph graph;
 	private Patient patient;
 	
-	public void loadPatient(PatientSet set) {
-		if(set == null) return;
-		if(auth_manager.getMedUI() != null) auth_manager.getMedUI().setPatient(set);
-		JSONObject object = (JSONObject) JSONHelper.readFile(set.path);
-		this.set=set;
-		this.patient = new Patient(set.name, (String) object.get("Diagnosis"), 
-				Date.parse((String) object.get("DOB")));
+	public void loadPatient(int id) {
+		if(id <= 0) return;
+		JSONObject object = (JSONObject) JSONHelper.readFile(auth_manager.getPatientManager().getPatientPath(id));
+		this.patient = auth_manager.getPatientManager().loadPatient(id);
 		graphList.setModel(new DefaultComboBoxModel<GraphType>());
 		JSONArray graphs = (JSONArray)object.get("Graphs");
 		if(graphs != null) for(int i = 0; i < graphs.size(); i++) {
@@ -383,6 +262,7 @@ public class MedUI extends BasicUI{
 		if(patient == null) return;
 		System.out.println("Save patient "+patient.getName());
 		JSONObject obj = new JSONObject();
+		obj.put("Name", patient.getName());
 		obj.put("DOB", DOB.getDate().toString());
 		obj.put("Diagnosis", diagnosis.getText());
 		JSONArray graph = new JSONArray();
@@ -397,7 +277,7 @@ public class MedUI extends BasicUI{
 			graph.add(d);
 		}
 		obj.put("Graphs",graph);
-		JSONHelper.writeFile(set.path, obj.toJSONString());
+		JSONHelper.writeFile(auth_manager.getPatientManager().getPatientPath(patient.getID()), obj.toJSONString());
 	
 	}
 	public boolean createNewGraph(String graphName, String graphUnit) {
@@ -478,45 +358,6 @@ public class MedUI extends BasicUI{
 		return patientInfo;
 	}
 	
-	private void openMedAdd() {
-		if(set == null || list.getSelectedValue() == null) return;
-		new MedAddUI(auth_manager, set, this, list.getSelectedValue().med);
-	}
-	
-	public PatientSet getPatient() {
-		return this.set;
-	}
-	
-	public void refresh() {
-		dPicker.setDateSetter(null,"");
-		dPicker.setDate(new Date());
-		medName.setText("");
-		DefaultComboBoxModel<MedicineCategory> cat = new DefaultComboBoxModel<MedicineCategory>();
-		auth_manager.getMedicineManager().getCategories().forEach(a -> cat.addElement(a));
-		cat.addElement(new MedicineCategory("Add new category...", ""));
-		category.setModel(cat);
-		category.setSelectedIndex(0);
-		updateMedicine("");
-	}
-	
-	private void searchAction(JTextField medName, DatePicker date) {
-		updateMedicine(medName.getText());
-		medName.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				updateMedicine(medName.getText());
-			}			
-			@Override
-			public void keyReleased(KeyEvent e) {
-				
-			}
-			@Override
-			public void keyPressed(KeyEvent e) {
-				
-			}
-		});
-	}
-	
 	private void updateCategory(JList<MedicineCategory> list) {
 		ArrayList<MedicineCategory> n = auth_manager.getMedicineManager().getCategories();
 		DefaultListModel model = new DefaultListModel();
@@ -525,17 +366,5 @@ public class MedUI extends BasicUI{
 		}
 		list.clearSelection();
 		list.setModel(model);
-	}
-
-	private void updateMedicine(String medName) {
-		ArrayList<MedicineSet> n = auth_manager.getMedicineManager().getMed(medName);
-		DefaultListModel model = new DefaultListModel();
-		for(int i = 0; i < n.size(); i++) {
-			if(medName.length() != 0 && n.get(0).w - n.get(i).w > 10) break;
-			model.addElement(n.get(i));
-		}
-		list.clearSelection();
-		list.setModel(model);
-		dPicker.setDateSetter(null, "");
 	}
 }

@@ -11,11 +11,21 @@ public class Patient {
 	private ArrayList<Prescription> prescriptions;
 	private Date DOB;
 	private String diagnosis;
+	private int id;
 	
-	public Patient(String name, String diagnosis, Date DOB) {
+	public Patient(int id,String name, String diagnosis, Date DOB) {
 		this.name = name;
 		this.diagnosis = diagnosis;
 		this.DOB = DOB;
+		this.id = id;
+	}
+	@Override
+	public String toString() {
+		return this.name;
+	}
+	
+	public int getID() {
+		return this.id;
 	}
 	
 	public String getName() {

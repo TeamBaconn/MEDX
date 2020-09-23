@@ -6,35 +6,37 @@ import javax.swing.DefaultListModel;
 
 import org.json.simple.JSONObject;
 
-import com.Tuong.Authenication.AuthManager;
+import com.Tuong.DateUtils.Date;
 import com.Tuong.MedXMain.JSONHelper;
+import com.Tuong.Trie.Trie;
 
 public class PatientManager {
 	private final String patient_path = "Patient/";
-
+	private final String patient_data_path = "Data/patient_data.dat";
+	
+	public Trie patient_data;
+	
 	public PatientManager() {
 		System.out.println("Setup patient manager");
+		patient_data = new Trie(patient_data_path);
 	}
 
 	public void createPatientInfo(String name) {
-		System.out.println("Create patient info " + name);
+		int id = patient_data.insertString(name);
+		if(id < 0) return;
+		patient_data.save(patient_data_path);
 		JSONObject obj = new JSONObject();
-		JSONHelper.writeFile(getValidPatient(name), obj.toJSONString());
+		obj.put("Name", name);
+		JSONHelper.writeFile(getPatientPath(id), obj.toJSONString());
+		System.out.println("Create patient info " + name);
 	}
-	
-	public DefaultListModel<PatientSet> getPatient(){
-		DefaultListModel<PatientSet> model = new DefaultListModel<PatientSet>();
-		for(File c : new File(patient_path).listFiles()) model.addElement(new PatientSet(c.getPath(),c.getAbsoluteFile().getName()));
-		return model;
+	public Patient loadPatient(int id) {
+		JSONObject object = (JSONObject) JSONHelper.readFile(getPatientPath(id));
+		return new Patient(id, object.get("Name") != null ? (String)object.get("Name") : "NaN", 
+				object.get("Diagnosis") != null ? (String) object.get("Diagnosis") : "NaN", 
+						object.get("DOB") != null ? Date.parse((String) object.get("DOB")) : new Date());
 	}
-
-	private String getValidPatient(String name) {
-		File file = new File(patient_path + name + "_0.json");
-		if (file.exists()) {
-			int i = 1;
-			while (file.exists())
-				file = new File(patient_path + name + "_" + i + ".json");
-		}
-		return file.getPath();
+	public String getPatientPath(int id) {
+		return patient_path+id+".json";
 	}
 }
