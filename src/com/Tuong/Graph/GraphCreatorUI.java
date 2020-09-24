@@ -26,7 +26,7 @@ public class GraphCreatorUI extends BasicUI{
 		createButton("Create graph", this, new ButtonAction() {
 			@Override
 			public void click() {
-				if(pUI.createNewGraph(name.getText(), unit.getText())) {
+				if(pUI.patientInfo.createNewGraph(name.getText(), unit.getText())) {
 					showDialog("Success", "You just created "+name.getText()+" graph", 1);
 					setVisible(false);
 				}else 

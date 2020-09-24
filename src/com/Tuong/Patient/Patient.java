@@ -3,22 +3,29 @@ package com.Tuong.Patient;
 import java.util.ArrayList;
 
 import com.Tuong.DateUtils.Date;
-import com.Tuong.Medicine.Prescription;
+import com.Tuong.Graph.GraphType;
 
 public class Patient {
 	
-	private String name;
-	private ArrayList<Prescription> prescriptions;
-	private Date DOB;
-	private String diagnosis;
-	private int id;
+	public String name;
+	public ArrayList<GraphType> graphList;
+	public Date DOB;
+	public String diagnosis;
+	public String dial;
+	public int id;
 	
-	public Patient(int id,String name, String diagnosis, Date DOB) {
+	public Patient(int id,String name, String diagnosis, Date DOB, ArrayList<GraphType> graphList) {
 		this.name = name;
+		this.graphList = graphList;
 		this.diagnosis = diagnosis;
 		this.DOB = DOB;
 		this.id = id;
 	}
+	
+	public boolean isVertified() {
+		return (name != "NaN" && diagnosis != "NaN" && id > 0) || graphList.size() > 0;
+	}
+	
 	@Override
 	public String toString() {
 		return this.name;
@@ -26,6 +33,10 @@ public class Patient {
 	
 	public int getID() {
 		return this.id;
+	}
+	
+	public ArrayList<GraphType> getGraphs(){
+		return graphList;
 	}
 	
 	public String getName() {
@@ -38,7 +49,7 @@ public class Patient {
 	}
 	
 	public String getDiagnosis() {
-		if(DOB == null) return "NAN";
+		if(DOB == null) return "NaN";
 		return this.diagnosis;
 	}
 }

@@ -9,6 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+
+import com.Tuong.MedXMain.VNCharacterUtils;
 
 public class Trie {
 
@@ -26,37 +29,39 @@ public class Trie {
 		root = new TrieNode();
 		read(filepath);
 	}
-
-	public int[] getRecommend(String key, int max_result) {
+	int last;
+	public void runLast(int max_result, int[] score, TrieNode root) {
+		if(root == null || last > max_result) return;
+		if(root.id != null) {
+			for(int i = 0; i < root.id.size(); i++) {
+				if(last > max_result) return;
+				score[root.id.get(i)-1]++;
+				last++;
+			}	
+		}
+		for(int i = 0; i < root.children.length; i++) runLast(max_result, score, root.children[i]);
+	}
+	public ArrayList<TrieResult> getRecommend(String key) {
 		key = getTrieString(key);
-		int[] result = new int[max_result];
-		int[] result_max = new int[max_result];
-		Arrays.fill(result_max, 0);
-		Arrays.fill(result, -1);
-		if(key.length() <= 0) return result;
+		ArrayList<TrieResult> result = new ArrayList<TrieResult>();
 		score = new int[size];
 		Arrays.fill(score, 0);
 		String[] s = key.split(" ");
 		for (int i = 0; i < s.length; i++) {
 			TrieNode node = search(s[i]);
-			if (node == null || node.id == null)
+			if (node == null) continue;
+			if (node.id == null) {
+				last = 0;
+				runLast(10, score, node);
 				continue;
+			}
 			node.id.forEach(t -> score[t-1]++);
 		}
 		for (int i = 0; i < score.length; i++) {
-			if(score[i] == 0) continue;
-			for (int k = 0; k < max_result; k++) {
-				if (score[i] >= result_max[k]) {
-					for (int j = max_result - 2; j >= k; j--) {
-						result_max[j + 1] = result_max[j];
-						result[j + 1] = result[j];
-					}
-					result_max[k] = score[i];
-					result[k] = i;
-					break;
-				}
-			}
+			if(!(score[i] != 0 && score[i] >= s.length)) continue;
+			result.add(new TrieResult(score[i], i));
 		}
+		Collections.sort(result,Collections.reverseOrder()); 
 		//System.out.println(key);
 		//for(int i = 0; i < max_result; i++) System.out.println(result_max[i]+" "+(result[i]+1));
 		return result;
@@ -93,7 +98,6 @@ public class Trie {
 	}
 
 	public TrieNode search(String key) {
-		key = getTrieString(key);
 		int level;
 		int length = key.length();
 		int index;
@@ -111,8 +115,8 @@ public class Trie {
 		return pCrawl;
 	}
 
-	public String getTrieString(String input) {
-		return input.toLowerCase();
+	public String getTrieString(String s) {
+		return VNCharacterUtils.removeAccent(s.toLowerCase());
 	}
 
 	public void save(String filepath) {
@@ -180,4 +184,35 @@ public class Trie {
 			}
 		}
 	}
+	public void delete(String key, int id) {
+		String[] s = getTrieString(key).split(" ");
+		for(int i = 0; i < s.length; i++) remove(root, s[i], id, 0);
+		if(id >= size) size--;
+	}
+	public boolean isEmpty(TrieNode root) {
+		if(root == null) return true;
+        for(int i = 0; i < root.children.length; i++) if(root.children[i] != null) return false;
+        return true;
+	}
+	public TrieNode remove(TrieNode root, String key, int id, int depth) 
+	{ 
+	    if (root == null) 
+	        return null; 
+	    if (depth == key.length()) { 
+	        if (root.id != null) {
+	        	for(int i = 0; i < root.id.size(); i++) if(root.id.get(i) == id) {
+	        		root.id.remove(i);
+	        	}
+	        	if(root.id.size() <= 0) root.id = null;
+	        }
+	        if (isEmpty(root) && root.id == null) root = null; 
+	        return root; 
+	    } 
+	    int index = key.charAt(depth) - 'a';
+	    root.children[index] = remove(root.children[index], key, id, depth + 1); 
+	    if (isEmpty(root) && root.id == null) {  
+	        root = null; 
+	    } 
+	    return root; 
+	} 
 }

@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import com.Tuong.Authenication.AuthManager;
 
 public class BasicUI extends JFrame {
+	private static final long serialVersionUID = -8323627314065426705L;
 	protected AuthManager auth_manager;
 	public BasicUI(String name, Dimension d, boolean exit_on_close, AuthManager auth_manager) {
 		// Setting up the UI
