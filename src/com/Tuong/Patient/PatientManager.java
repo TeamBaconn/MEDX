@@ -13,8 +13,8 @@ import com.Tuong.MedXMain.JSONHelper;
 import com.Tuong.Trie.Trie;
 
 public class PatientManager {
-	private final String patient_path = "Patient/";
-	private final String patient_data_path = "Patient/patient_data.dat";
+	public static final String patient_path = "Patient/";
+	public static final String patient_data_path = "Patient/patient_data.dat";
 	
 	public Trie patient_data;
 	
@@ -25,6 +25,7 @@ public class PatientManager {
 
 	@SuppressWarnings("unchecked")
 	public void createPatientInfo(String name) {
+		if(name.length() <= 0) return;
 		int id = patient_data.insertString(name);
 		if(id < 0) return;
 		patient_data.save(patient_data_path);
@@ -51,7 +52,8 @@ public class PatientManager {
 			}
 			graphList.add(g);
 		}
-		return new Patient(id, object.get("Name") != null ? (String)object.get("Name") : "NaN", 
+		return new Patient(id, object.get("Name") != null ? (String)object.get("Name") : "NaN",
+				object.get("Phone") != null ? (String)object.get("Phone") : "000-000-0000",
 				object.get("Diagnosis") != null ? (String) object.get("Diagnosis") : "NaN", 
 						object.get("DOB") != null ? Date.parse((String) object.get("DOB")) : new Date(),
 								graphList);

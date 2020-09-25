@@ -15,7 +15,7 @@ import com.Tuong.MedXMain.VNCharacterUtils;
 
 public class Trie {
 
-	static final int ALPHABET_SIZE = 26;
+	static final int ALPHABET_SIZE = 36;
 	private TrieNode root;
 	public int size = 0;
 
@@ -62,8 +62,6 @@ public class Trie {
 			result.add(new TrieResult(score[i], i));
 		}
 		Collections.sort(result,Collections.reverseOrder()); 
-		//System.out.println(key);
-		//for(int i = 0; i < max_result; i++) System.out.println(result_max[i]+" "+(result[i]+1));
 		return result;
 	}
 
@@ -76,8 +74,13 @@ public class Trie {
 			insert(s[i], size);
 		return size;
 	}
-
-	public void insert(String key, int size) {
+	private int getIndex(char c) {
+		return c >= 'a' && c <= 'z' ? c - 'a' : c - '0';
+	}
+	private char getChar(int c) {
+		return c <= 26 ? (char)(c + 'a') : (char)(c + '0');
+	}
+	public void insert(String key, int id) {
 		int level;
 		int length = key.length();
 		int index;
@@ -85,7 +88,7 @@ public class Trie {
 		TrieNode pCrawl = root;
 
 		for (level = 0; level < length; level++) {
-			index = key.charAt(level) - 'a';
+			index = getIndex(key.charAt(level));
 			if (pCrawl.children[index] == null)
 				pCrawl.children[index] = new TrieNode();
 
@@ -93,8 +96,8 @@ public class Trie {
 		}
 		if (pCrawl.id == null)
 			pCrawl.id = new ArrayList<Integer>();
-		if (!pCrawl.id.contains(size))
-			pCrawl.id.add(size);
+		if (!pCrawl.id.contains(id))
+			pCrawl.id.add(id);
 	}
 
 	public TrieNode search(String key) {
@@ -104,7 +107,7 @@ public class Trie {
 		TrieNode pCrawl = root;
 
 		for (level = 0; level < length; level++) {
-			index = key.charAt(level) - 'a';
+			index = getIndex(key.charAt(level));
 
 			if (pCrawl.children[index] == null)
 				return pCrawl;
@@ -118,7 +121,6 @@ public class Trie {
 	public String getTrieString(String s) {
 		return VNCharacterUtils.removeAccent(s.toLowerCase());
 	}
-
 	public void save(String filepath) {
 		try {
 			long time = System.currentTimeMillis();
@@ -134,7 +136,6 @@ public class Trie {
 			ex.printStackTrace();
 		}
 	}
-
 	private void saveRun(TrieNode root, DataOutputStream fos) throws IOException {
 		if (root.id == null)
 			fos.writeInt(0);
@@ -163,7 +164,7 @@ public class Trie {
 			System.out.println("Can't read trie from " + filepath);
 		}
 	}
-
+	
 	private void readRun(TrieNode root, DataInputStream reader, String ans) throws IOException {
 		int arraysize = reader.readInt();
 		if (arraysize > 0) {
@@ -180,7 +181,7 @@ public class Trie {
 		for (int i = 0; i < root.children.length; i++) {
 			if (reader.readBoolean()) {
 				root.children[i] = new TrieNode();
-				readRun(root.children[i], reader, ans+(char)((int)'a'+i));
+				readRun(root.children[i], reader, ans+getChar(i));
 			}
 		}
 	}
@@ -208,7 +209,7 @@ public class Trie {
 	        if (isEmpty(root) && root.id == null) root = null; 
 	        return root; 
 	    } 
-	    int index = key.charAt(depth) - 'a';
+	    int index = getIndex(key.charAt(depth));
 	    root.children[index] = remove(root.children[index], key, id, depth + 1); 
 	    if (isEmpty(root) && root.id == null) {  
 	        root = null; 

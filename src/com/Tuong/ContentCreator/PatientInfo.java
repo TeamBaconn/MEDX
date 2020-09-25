@@ -6,13 +6,16 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -27,6 +30,7 @@ import com.Tuong.Graph.GraphType;
 import com.Tuong.Graph.GraphValue;
 import com.Tuong.MedXMain.JSONHelper;
 import com.Tuong.Patient.Patient;
+import com.Tuong.Patient.PatientManager;
 
 public class PatientInfo extends JPanel{
 	private static final long serialVersionUID = -617639484263588585L;
@@ -36,6 +40,8 @@ public class PatientInfo extends JPanel{
 	private JComboBox<GraphType> graphList;
 	private Graph graph;
 	private Patient patient;
+	
+	private JFormattedTextField patient_dial;
 	private JTextField patient_name;
 	
 	private AuthManager auth_manager;
@@ -49,6 +55,17 @@ public class PatientInfo extends JPanel{
 		patient_name = patientForm.createTextField("");
 		patient_name.setEditable(false);
 		patient_name.setBackground(Color.LIGHT_GRAY);
+		
+		patientForm.createLabel("Phone number");
+		try {
+			MaskFormatter formatter = new MaskFormatter("###-###-####");
+			formatter.setPlaceholderCharacter('_');
+			patient_dial = new JFormattedTextField(formatter);
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+		patientForm.addComponent(patient_dial);
+		
 		patientForm.createLabel("DOB");
 		DOB = new DatePicker(new Date(), false);
 		patientForm.addComponent(DOB);
@@ -111,6 +128,7 @@ public class PatientInfo extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				auth_manager.getPatientManager().delete(patient);
+				patient = null;
 				auth_manager.getMedUI().removePatient();
 			}
 		});
@@ -126,6 +144,12 @@ public class PatientInfo extends JPanel{
 		patient_name.setText(patient.getName());
 		diagnosis.setText(patient.getDiagnosis());
 		DOB.setDate(patient.getDOB());
+		try {
+			System.out.println(patient.getPhoneNumber());
+			patient_dial.setValue(patient_dial.getFormatter().stringToValue(patient.getPhoneNumber()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		
 		System.out.println("Open patient record " +patient.getName());
 	}
@@ -134,11 +158,18 @@ public class PatientInfo extends JPanel{
 	public void savePatient() {
 		if(patient == null) return;
 		System.out.println("Save patient "+patient.getName());
-
 		//Parse value into patient
 		patient.DOB = DOB.getDate();
 		patient.diagnosis = diagnosis.getText();
 		patient.graphList.clear();
+		
+		if(patient.getPhoneNumber() != patient_dial.getText().replace("_", "0")) {
+			auth_manager.getPatientManager().patient_data.delete(patient.getValidPhoneNumber(), patient.id);
+			patient.setPhoneNumber(patient_dial.getText());
+			auth_manager.getPatientManager().patient_data.insert(patient.getValidPhoneNumber(), patient.id);
+			auth_manager.getPatientManager().patient_data.save(PatientManager.patient_data_path);
+		}else
+		patient.setPhoneNumber(patient_dial.getText());
 		
 		for(int i = 0; i < graphList.getModel().getSize(); i++) patient.graphList.add(graphList.getModel().getElementAt(i));
 		
@@ -146,6 +177,7 @@ public class PatientInfo extends JPanel{
 		obj.put("Name", patient.getName());
 		obj.put("DOB", patient.DOB.toString());
 		obj.put("Diagnosis", patient.diagnosis);
+		obj.put("Phone", patient.getPhoneNumber());
 		JSONArray graph = new JSONArray();
 		for(int i = 0; i < graphList.getModel().getSize(); i++) {
 			GraphType g = graphList.getModel().getElementAt(i);
@@ -159,7 +191,6 @@ public class PatientInfo extends JPanel{
 		}
 		obj.put("Graphs",graph);
 		JSONHelper.writeFile(auth_manager.getPatientManager().getPatientPath(patient.getID()), obj.toJSONString());
-	
 	}
 	public boolean createNewGraph(String graphName, String graphUnit) {
 		for(int i = 0; i < graphList.getModel().getSize(); i++) if(graphList.getItemAt(i).name.equals(graphName)) return false;
