@@ -30,7 +30,6 @@ import com.Tuong.ContentHelper.FormCreator;
 import com.Tuong.DateUtils.Date;
 import com.Tuong.DateUtils.DatePicker;
 import com.Tuong.MedXMain.MedXMain;
-import com.Tuong.Medicine.MedicineCategory;
 import com.Tuong.Medicine.MedicinePrescription;
 
 public class MedUI extends BasicUI{
@@ -52,7 +51,6 @@ public class MedUI extends BasicUI{
 		addCloseAction(new ButtonAction() {
 			@Override
 			public void click() {
-				auth_manager.getMedicineManager().saveData();
 				patientInfo.savePatient();
 				auth_manager.setMedUI(null);
 			}
@@ -71,79 +69,6 @@ public class MedUI extends BasicUI{
 		
 		listMed = new MedicineList(auth_manager);
 		
-		JPanel listCategory = new JPanel();
-		listCategory.setBorder(new CompoundBorder(new TitledBorder("Categories"), new EmptyBorder(12, 0, 0, 0)));
-		listCategory.setLayout(new BoxLayout(listCategory, BoxLayout.Y_AXIS));
-		listCategory.add(Box.createVerticalGlue());
-		JList<MedicineCategory> listCate = new JList<MedicineCategory>();
-		updateCategory(listCate);
-		listCate.setMaximumSize(new Dimension(400, 200));
-		listCate.setPreferredSize(new Dimension(400, 200));
-		JPanel cateInfo = new JPanel();
-		cateInfo.setLayout(new GridBagLayout());
-		FormCreator formCate = new FormCreator(cateInfo, 2, MedXMain.form_size_constant, 30);
-		formCate.createLabel("Category");
-		JTextField cateName = formCate.createTextField("");
-		JButton addCate = new JButton("Create");
-		JButton removeCate = new JButton("Remove");
-		formCate.createLabel("Description");
-		JTextField hint = formCate.createTextField("");
-		formCate.addComponent(addCate);
-		formCate.addComponent(removeCate);
-		removeCate.setVisible(false);
-		removeCate.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(showConfirmDialog("MedX", "Do you want to delete "+cateName.getText()) == 1) return; 
-				showDialog("MedX", "Delete category ("+cateName.getText()+") successful", 1);
-				auth_manager.getMedicineManager().removeMedicineCategory(cateName.getText());
-				cateName.setText("");
-				hint.setText("");
-				updateCategory(listCate);
-				listMed.refresh();
-			}
-		});
-		addCate.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				auth_manager.getMedicineManager().addMedicineCategory(cateName.getText(), hint.getText());
-				updateCategory(listCate);
-				listMed.refresh();
-				showDialog("MedX", "Create new category ("+cateName.getText()+") successful", 1);
-			}
-		});
-		listCate.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				//Check selection in Jlist
-				if(!e.getValueIsAdjusting()) return;
-				addCate.setText("Fix");
-				removeCate.setVisible(true);
-				cateName.setText(listCate.getSelectedValue().getName());
-				hint.setText(listCate.getSelectedValue().getHint());
-			}
-		});
-		cateName.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				addCate.setText("Create");
-				listCate.clearSelection();
-				removeCate.setVisible(false);
-			}
-			@Override
-			public void keyReleased(KeyEvent e) {
-				
-			}
-			@Override
-			public void keyPressed(KeyEvent e) {
-				
-			}
-		});
-		
-		listCategory.add(listCate);
-		listCategory.add(Box.createRigidArea(new Dimension(0,20)));
-		listCategory.add(cateInfo);
-		
 		JPanel patientManager = new JPanel();
 		patientManager.setLayout(new BoxLayout(patientManager, BoxLayout.LINE_AXIS));
 		
@@ -160,7 +85,6 @@ public class MedUI extends BasicUI{
 		//patientTab.addTab("Prescription", prescription);
 		
 		medication.add(listMed);
-		medication.add(listCategory);
 		patientManager.add(patientTab);
 		patientManager.add(prescription);
 		patientTab.setEnabledAt(1, false);
@@ -223,15 +147,5 @@ public class MedUI extends BasicUI{
 		print.setAlignmentX(CENTER_ALIGNMENT);
 		//pre.add(print);
 		return pre;
-	}
-	
-	private void updateCategory(JList<MedicineCategory> list) {
-		ArrayList<MedicineCategory> n = auth_manager.getMedicineManager().getCategories();
-		DefaultListModel model = new DefaultListModel();
-		for(int i = 0; i < n.size(); i++) {
-			model.addElement(n.get(i));
-		}
-		list.clearSelection();
-		list.setModel(model);
 	}
 }

@@ -54,7 +54,7 @@ public class MedicineModel extends AbstractTableModel{
 		case 2:
 			return med.medicine.getName();
 		case 3:
-			return med.medicine.getCategory();
+			return med.medicine.getName();
 		case 4:
 			return med.volume;
 		case 5:

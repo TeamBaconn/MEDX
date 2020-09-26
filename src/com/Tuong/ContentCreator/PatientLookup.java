@@ -123,7 +123,7 @@ public class PatientLookup extends JPanel {
 
 	public void refreshList(String text) {
 		patient_name_search.setText(text);
-		ArrayList<TrieResult> score = auth_manager.getPatientManager().patient_data.getRecommend(text);
+		ArrayList<TrieResult> score = auth_manager.getPatientManager().patient_data.getRecommend(text,true);
 		DefaultListModel<Patient> model = new DefaultListModel<Patient>();
 		for (int i = 0; i < score.size(); i++) {
 			if (score.get(i).index + 1 > 0)
@@ -137,13 +137,14 @@ public class PatientLookup extends JPanel {
 	}
 }
 
-class PatientListRenderer implements ListCellRenderer<Patient> {
+class PatientListRenderer extends JLabel implements ListCellRenderer<Patient> {
 	private ImageIcon vertify;
 	private ImageIcon unvertify;
 
 	public PatientListRenderer() {
 		vertify = new ImageIcon(getScaledImage(new ImageIcon("Data/vertified_icon.png").getImage(),25,25));
 		unvertify = new ImageIcon(getScaledImage(new ImageIcon("Data/un_vertified_icon.png").getImage(),25,25));
+		setOpaque(true);
 	}
 
 	private Image getScaledImage(Image srcImg, int w, int h) {
@@ -160,11 +161,10 @@ class PatientListRenderer implements ListCellRenderer<Patient> {
 	@Override
 	public Component getListCellRendererComponent(JList<? extends Patient> list, Patient value, int index,
 			boolean isSelected, boolean cellHasFocus) {
-		JLabel label = new JLabel(value.id+" - "+value.toString());
-		label.setIcon(value.isVertified() ? vertify : unvertify);
-		label.setOpaque(true);
-		label.setBackground(!isSelected ? Color.WHITE : Color.LIGHT_GRAY);
-		return label;
+		setText(value.id+" - "+value.toString());
+		setIcon(value.isVertified() ? vertify : unvertify);
+		setBackground(!isSelected ? Color.WHITE : Color.LIGHT_GRAY);
+		return this;
 	}
 
 }

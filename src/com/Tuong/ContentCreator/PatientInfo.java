@@ -163,7 +163,7 @@ public class PatientInfo extends JPanel{
 		patient.diagnosis = diagnosis.getText();
 		patient.graphList.clear();
 		
-		if(patient.getPhoneNumber() != patient_dial.getText().replace("_", "0")) {
+		if(patient.havePhoneNumber() && patient.getPhoneNumber() != patient_dial.getText().replace("_", "0")) {
 			auth_manager.getPatientManager().patient_data.delete(patient.getValidPhoneNumber(), patient.id);
 			patient.setPhoneNumber(patient_dial.getText());
 			auth_manager.getPatientManager().patient_data.insert(patient.getValidPhoneNumber(), patient.id);

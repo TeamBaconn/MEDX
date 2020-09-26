@@ -1,132 +1,85 @@
 package com.Tuong.Medicine;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-import com.Tuong.DateUtils.Date;
 import com.Tuong.MedXMain.JSONHelper;
-
-import me.xdrop.fuzzywuzzy.FuzzySearch;
+import com.Tuong.Trie.Trie;
 
 public class MedicineManager {
 
-	private ArrayList<Medicine> medicines;
-	private ArrayList<MedicineCategory> categories;
+	private final String med_trie_path = "Data/MedicineInfo.dat";
+	private final String hoat_chat_trie_path = "Data/HoatChatInfo.dat";
 
-	private final String med_path = "Data/Medicines.json";
-	private final String cat_path = "Data/Categories.json";
+	public Trie med_trie;
+	public Trie hoat_chat_trie;
 
 	public MedicineManager() {
-		// Loading the files
-		loadFile();
-		// Loading the medicines
-		readData();
+		med_trie = new Trie(med_trie_path);
+		hoat_chat_trie = new Trie(hoat_chat_trie_path);
+		//crawlData();
 	}
 
-	@SuppressWarnings("unchecked")
-	public void saveData() {
-		System.out.println("Start saving med data");
-		// Save categories data
-		JSONArray array = new JSONArray();
-		JSONObject obj;
-		for (MedicineCategory cat : categories) {
-			obj = new JSONObject();
-			obj.put("Name", cat.getName());
-			obj.put("Hint", cat.getHint());
-			array.add(obj);
-		}
-		JSONHelper.writeFile(cat_path, array.toJSONString());
-		
-		// Save medicine data
-		array = new JSONArray();
-		for(Medicine med : medicines) {
-			obj = new JSONObject();
-			obj.put("Name", med.getName());
-			obj.put("EXP",med.getEXP().toString());
-			obj.put("Category", (med.getCategory() != null) ? med.getCategory().toString() : "NULL");
-			obj.put("Unit",med.getUnit());
-			obj.put("Stock",med.getStock());
-			array.add(obj);
-		}
-		JSONHelper.writeFile(med_path, array.toJSONString());
-	}
+	public final String med_path_save = "Medicine/";
 
-	public void readData() {
-		System.out.println("Start reading med data");
-		medicines = new ArrayList<Medicine>();
-		categories = new ArrayList<MedicineCategory>();
-		// Read categories data
-		File file = new File(cat_path);
-		if (file.exists()) 
-		{
-			JSONArray cats = (JSONArray) JSONHelper.readFile(cat_path);
-			for (int i = 0; i < cats.size(); i++) {
-				JSONObject obj = (JSONObject) cats.get(i);
-				addMedicineCategory((String) obj.get("Name"), (String) obj.get("Hint"));
+	public void crawlData() {
+		long time = System.currentTimeMillis();
+		for (int k = 'a'; k <= 'z'; k++) {
+			int flag = 0;
+			System.out.println("Start with "+(char)k);
+			while (flag != -1) {
+				try {
+					URL url = new URL(
+							"https://drugbank.vn/services/drugbank/api/public/thuoc?page="+flag+"&size=1000&tenThuoc="
+									+ (char) k + "&sort=rate,desc&sort=+" + (char) k + ",asc");
+					flag++;
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
+					String line = in.readLine();
+					if (line.length() > 2) {
+						JSONParser parser = new JSONParser();
+						JSONArray arr = (JSONArray) parser.parse(line);
+						for (int i = 0; i < arr.size(); i++) {
+							JSONObject obj = (JSONObject) arr.get(i);
+							if(med_trie.contains((String)obj.get("soDangKy"))) continue;
+							int id = med_trie.insert((String)obj.get("soDangKy"));
+							med_trie.insert(((String)obj.get("tenThuoc")),id);
+							String[] hoatChat = ((String)obj.get("hoatChat")).split(" ");
+							if(hoatChat.length > 0) hoat_chat_trie.insert(hoatChat[0], id);
+							JSONObject fin = new JSONObject();
+							fin.put("tenThuoc", obj.get("tenThuoc"));
+							fin.put("hoatChat", obj.get("hoatChat"));
+							fin.put("nongDo", obj.get("nongDo"));
+							fin.put("taDuoc", obj.get("taDuoc"));
+							fin.put("tuoiTho", obj.get("tuoiTho"));
+							fin.put("dongGoi", obj.get("dongGoi"));
+							fin.put("giaKeKhai", obj.get("giaKeKhai"));
+							fin.put("soLuong", 0);
+							JSONHelper.writeFile(med_path_save + id + ".json", fin.toJSONString());
+						}
+					}else flag = -1;
+					in.close();
+				} catch (MalformedURLException e) {
+					System.out.println("Malformed URL: " + e.getMessage());
+				} catch (IOException e) {
+					System.out.println("I/O Error: " + e.getMessage());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		
-		// Read medicines data
-		file = new File(cat_path);
-		if (file.exists()) 
-		{
-			JSONArray cats = (JSONArray) JSONHelper.readFile(med_path);
-			for (int i = 0; i < cats.size(); i++) {
-				JSONObject obj = (JSONObject) cats.get(i);
-				addMedicine(obj.get("Name"), obj.get("Unit"),obj.get("Stock"), obj.get("EXP"), getMedicineCategory((String)obj.get("Category")));
-			}
-		}
-		
-	}
-
-	public void addMedicineCategory(String name, String hint) {
-		for (MedicineCategory cat : categories)
-			if (cat.getName().contentEquals(name)) {
-				cat.update(name, hint);
-				return;
-			}
-		categories.add(new MedicineCategory(name, hint));
-	}
-	
-	public boolean removeMedicineCategory(String name) {
-		MedicineCategory cat = getMedicineCategory(name);
-		categories.remove(cat);
-		return cat != null;
-	}
-	public MedicineCategory getMedicineCategory(String name) {
-		for (MedicineCategory cat : categories)
-			if (cat.getName().contentEquals(name)) return cat;
-		return null;
-	}
-	public void addMedicine(Object name, Object unit, Object volume, Object date, Object cat) {
-		medicines.add(new Medicine(name != null ? (String) name : "NaN",
-						unit != null ? (String)unit : "NaN", 
-						(volume != null ? ((Long)volume).intValue() : -1), 
-						date != null ? Date.parse((String)date) : new Date(), 
-						(MedicineCategory) cat));
-	}
-
-	public ArrayList<MedicineCategory> getCategories() {
-		return this.categories;
-	}
-
-	public ArrayList<MedicineSet> getMed(String name) {
-		ArrayList<MedicineSet> rs = new ArrayList<MedicineSet>();
-		for (int i = 0; i < medicines.size(); i++)
-			rs.add(new MedicineSet(medicines.get(i), FuzzySearch.ratio(name, medicines.get(i).getName())));
-		rs.sort((o2, o1) -> o1.w - o2.w);
-		return rs;
-	}
-
-	private void loadFile() {
-		File file = new File(med_path);
-		if (!file.exists()) {
-			// Create file with basic user input
-			System.out.println("Create meds data");
-			JSONHelper.writeFile(file.getPath(), "");
-		}
+		System.out.println("Finish with time "+(System.currentTimeMillis()-time));
+		med_trie.save(med_trie_path);
+		hoat_chat_trie.save(hoat_chat_trie_path);
 	}
 }

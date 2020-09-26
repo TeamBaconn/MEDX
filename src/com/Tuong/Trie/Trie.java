@@ -15,7 +15,7 @@ import com.Tuong.MedXMain.VNCharacterUtils;
 
 public class Trie {
 
-	static final int ALPHABET_SIZE = 36;
+	static final int ALPHABET_SIZE = 37;
 	private TrieNode root;
 	public int size = 0;
 
@@ -41,7 +41,7 @@ public class Trie {
 		}
 		for(int i = 0; i < root.children.length; i++) runLast(max_result, score, root.children[i]);
 	}
-	public ArrayList<TrieResult> getRecommend(String key) {
+	public ArrayList<TrieResult> getRecommend(String key, boolean run_blind) {
 		key = getTrieString(key);
 		ArrayList<TrieResult> result = new ArrayList<TrieResult>();
 		score = new int[size];
@@ -52,7 +52,7 @@ public class Trie {
 			if (node == null) continue;
 			if (node.id == null) {
 				last = 0;
-				runLast(10, score, node);
+				if(run_blind) runLast(10, score, node);
 				continue;
 			}
 			node.id.forEach(t -> score[t-1]++);
@@ -75,12 +75,24 @@ public class Trie {
 		return size;
 	}
 	private int getIndex(char c) {
-		return c >= 'a' && c <= 'z' ? c - 'a' : c - '0';
+		if(c >= 'a' && c <= 'z') return c-'a';
+		if(c >= '0' && c <= '9') return c-'0';
+		return 36; //Wierd symbol
 	}
 	private char getChar(int c) {
-		return c <= 26 ? (char)(c + 'a') : (char)(c + '0');
+		if(c <= 26) return (char)(c + 'a');
+		if(c < 36) return (char)(c + '0');
+		return '-';
+	}
+	public int insert(String key) {
+		key = getTrieString(key);
+		if(key.length() < 0) return -1;
+		size++;
+		insert(key, size);
+		return size;
 	}
 	public void insert(String key, int id) {
+		key = getTrieString(key);
 		int level;
 		int length = key.length();
 		int index;
@@ -117,6 +129,25 @@ public class Trie {
 
 		return pCrawl;
 	}
+	
+	public boolean contains(String key) {
+		key = getTrieString(key);
+		int level;
+		int length = key.length();
+		int index;
+		TrieNode pCrawl = root;
+
+		for (level = 0; level < length; level++) {
+			index = getIndex(key.charAt(level));
+
+			if (pCrawl.children[index] == null)
+				return false;
+
+			pCrawl = pCrawl.children[index];
+		}
+
+		return pCrawl.children != null;
+	}
 
 	public String getTrieString(String s) {
 		return VNCharacterUtils.removeAccent(s.toLowerCase());
@@ -130,7 +161,7 @@ public class Trie {
 			saveRun(root, dos);
 			writer.flush();
 			writer.close();
-			time -= System.currentTimeMillis();
+			time = System.currentTimeMillis() - time;
 			System.out.println("Finish saving with " + size+ " components in "+time+" ms");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -158,7 +189,7 @@ public class Trie {
 			BufferedInputStream reader = new BufferedInputStream(fis);
 			DataInputStream din = new DataInputStream(reader);
 			readRun(root, din,"");
-			time -= System.currentTimeMillis();
+			time = System.currentTimeMillis() - time;
 			System.out.println("Finish reading with " + size + " components in "+time+" ms");
 		} catch (Exception ex) {
 			System.out.println("Can't read trie from " + filepath);

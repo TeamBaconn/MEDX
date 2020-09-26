@@ -24,17 +24,23 @@ public class Patient {
 	}
 	
 	public boolean isVertified() {
-		return (name != "NaN" && diagnosis != "NaN" && id > 0) || graphList.size() > 0;
+		return (name != "NaN" && havePhoneNumber());
 	}
 	
 	public void setPhoneNumber(String s) {
 		this.dial = s.replace("_", "0");
 	}
+	
 	public String getValidPhoneNumber() {
 		return this.dial != null ? this.dial.replace("-", "") : "0000000000";
 	}
+	
 	public String getPhoneNumber() {
 		return this.dial != null ? this.dial : "000-000-0000";
+	}
+	
+	public boolean havePhoneNumber() {
+		return this.dial != "000-000-0000";
 	}
 	
 	@Override
