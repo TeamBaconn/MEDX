@@ -9,7 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import com.Tuong.Medicine.MedicineModel;
+import com.Tuong.Table.MedicineModel;
+import com.Tuong.Table.SpinnerEditor;
 
 public class MedicationTable extends JPanel{
 	private static final long serialVersionUID = -1308483990338641187L;
@@ -21,8 +22,8 @@ public class MedicationTable extends JPanel{
 
 		model = new MedicineModel();
         JTable table = new JTable(model);
-        table.getColumnModel().getColumn(4).setCellEditor(new SpinnerEditor(model));
-        table.getColumnModel().getColumn(5).setCellEditor(new SpinnerEditor(model));
+        table.getColumnModel().getColumn(4).setCellEditor(new SpinnerEditor(model,"setUnit"));
+        table.getColumnModel().getColumn(5).setCellEditor(new SpinnerEditor(model,"setUnit"));
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
         table.setRowHeight(100);

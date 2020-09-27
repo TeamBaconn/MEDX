@@ -96,7 +96,7 @@ public class Trie {
 		int level;
 		int length = key.length();
 		int index;
-
+		if(id > size) size = id;
 		TrieNode pCrawl = root;
 
 		for (level = 0; level < length; level++) {

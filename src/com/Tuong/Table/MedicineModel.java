@@ -1,8 +1,10 @@
-package com.Tuong.Medicine;
+package com.Tuong.Table;
 
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
+
+import com.Tuong.Medicine.MedicinePrescription;
 
 public class MedicineModel extends AbstractTableModel{
 	private static final long serialVersionUID = -6427474011442687982L;

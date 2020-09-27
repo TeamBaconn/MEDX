@@ -1,12 +1,12 @@
 package com.Tuong.Medicine;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,8 +31,17 @@ public class MedicineManager {
 	}
 
 	public final String med_path_save = "Medicine/";
-
+	
+	public void deleteMedicine(Medicine medicine) {
+		med_trie.delete(medicine.getName(), medicine.getID());
+		med_trie.save(med_trie_path);
+		hoat_chat_trie.delete(medicine.getHoatChat().split(" ")[0], medicine.getID());
+		hoat_chat_trie.save(hoat_chat_trie_path);
+		new File(med_path_save+medicine.getName()+".json").delete();
+	}
+	
 	public void crawlData() {
+		Trie duplicate = new Trie();
 		long time = System.currentTimeMillis();
 		for (int k = 'a'; k <= 'z'; k++) {
 			int flag = 0;
@@ -51,12 +60,13 @@ public class MedicineManager {
 						JSONArray arr = (JSONArray) parser.parse(line);
 						for (int i = 0; i < arr.size(); i++) {
 							JSONObject obj = (JSONObject) arr.get(i);
-							if(med_trie.contains((String)obj.get("soDangKy"))) continue;
-							int id = med_trie.insert((String)obj.get("soDangKy"));
+							if(duplicate.contains((String)obj.get("soDangKy"))) continue;
+							int id = duplicate.insert((String)obj.get("soDangKy"));
 							med_trie.insert(((String)obj.get("tenThuoc")),id);
 							String[] hoatChat = ((String)obj.get("hoatChat")).split(" ");
 							if(hoatChat.length > 0) hoat_chat_trie.insert(hoatChat[0], id);
 							JSONObject fin = new JSONObject();
+							fin.put("ID", id);
 							fin.put("tenThuoc", obj.get("tenThuoc"));
 							fin.put("hoatChat", obj.get("hoatChat"));
 							fin.put("nongDo", obj.get("nongDo"));
