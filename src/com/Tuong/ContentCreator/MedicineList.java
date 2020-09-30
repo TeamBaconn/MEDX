@@ -46,16 +46,20 @@ public class MedicineList extends JPanel {
 
 		model = new MedicineListModel(auth_manager);
 		list = new JTable(model);
-		list.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
 		list.getColumnModel().getColumn(4).setCellEditor(new SpinnerEditor(model, "setUnit"));
 		list.getColumnModel().getColumn(6).setCellRenderer(new ButtonRenderer());
 		list.getColumnModel().getColumn(6).setCellEditor(new ButtonEditor(model, "deleteMedicine"));
 		
 		list.setRowHeight(40);
-		list.setPreferredScrollableViewportSize(new Dimension(500, 70));
+		list.setPreferredScrollableViewportSize(new Dimension(1000, 70));
 		JScrollPane scrollPne = new JScrollPane(list);
-		scrollPne.setPreferredSize(new Dimension(500, 400));
+		scrollPne.setPreferredSize(new Dimension(1000, 400));
+		scrollPne.setMaximumSize(new Dimension(1000, 400));
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		//Resize column
+		for(int i = 0; i < MedicineListModel.size.length; i++) list.getColumnModel().getColumn(i).setPreferredWidth((int) (scrollPne.getPreferredSize().getWidth()*MedicineListModel.size[i]));
+		
 		medName = new JTextField();
 		medName.addKeyListener(new KeyAdapter() {
 			@Override 

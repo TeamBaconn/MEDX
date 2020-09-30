@@ -1,10 +1,28 @@
 package com.Tuong.MedXMain;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.UnsupportedLookAndFeelException;
+
 import com.Tuong.Authenication.AuthManager;
 
 public class MedXMain {
 	public static final int[] form_size_constant = {100,300};
+	public static Font customFont;
 	public static void main(String[] args) {
+		try {
+		    customFont = Font.createFont(Font.TRUETYPE_FONT, new File("Data/slim.ttf")).deriveFont(15f);
+		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		    ge.registerFont(customFont);
+		} catch (IOException e) {
+		    e.printStackTrace();
+		} catch(FontFormatException e) {
+		    e.printStackTrace();
+		} 
 		new AuthManager();
 	}
 }

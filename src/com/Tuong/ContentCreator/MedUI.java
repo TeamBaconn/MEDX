@@ -1,35 +1,28 @@
 package com.Tuong.ContentCreator;
 
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.UIManager;
 
 import com.Tuong.Authenication.AuthManager;
 import com.Tuong.ContentHelper.BasicUI;
 import com.Tuong.ContentHelper.ButtonAction;
 import com.Tuong.ContentHelper.FormCreator;
+import com.Tuong.ContentHelper.MenuController;
 import com.Tuong.DateUtils.Date;
 import com.Tuong.DateUtils.DatePicker;
-import com.Tuong.MedXMain.MedXMain;
 import com.Tuong.Medicine.MedicinePrescription;
 
 public class MedUI extends BasicUI{
@@ -48,6 +41,7 @@ public class MedUI extends BasicUI{
 	JTabbedPane patientTab;
 	@Override
 	public void setupUI() {
+		UIManager.put("ToggleButton.select", Color.decode("#218c74"));
 		addCloseAction(new ButtonAction() {
 			@Override
 			public void click() {
@@ -55,8 +49,30 @@ public class MedUI extends BasicUI{
 				auth_manager.setMedUI(null);
 			}
 		});
-		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.LINE_AXIS));
+		setForeground(Color.decode("#f7f1e3"));
+		JPanel menu = new JPanel();
+		menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
+		menu.setMaximumSize(new Dimension(getSize().width*1/10,getSize().height));
+		menu.setBackground(Color.decode("#33d9b2"));
+		JLabel icon = new JLabel(new ImageIcon("Data/logo_size_invert.png"));
 		
+		menu.add(icon);
+		
+		JPanel card = new JPanel(new CardLayout());
+		card.setBackground(Color.decode("#f7f1e3"));
+		patient_lookup = new PatientLookup(auth_manager);
+		listMed = new MedicineList(auth_manager);
+		
+		card.add(patient_lookup,"1");
+		card.add(listMed,"2");
+		
+		MenuController menucont = new MenuController(menu, card,getSize().width/10,getSize().height/12);
+		menucont.createToggle("Patient lookup", "1", null);
+		menucont.createToggle("Medicine lookup", "2", null);
+		
+		add(menu);
+		add(card);
 		/*
 		 * Med information
 		 * Name - Name of the medicine
@@ -64,7 +80,7 @@ public class MedUI extends BasicUI{
 		 * Date - EXP of the med
 		 * Unit - Unit of the medicine
 		 */
-		JPanel medication = new JPanel();
+		/*JPanel medication = new JPanel();
 		medication.setLayout(new BoxLayout(medication, BoxLayout.LINE_AXIS));
 		
 		listMed = new MedicineList(auth_manager);
@@ -91,8 +107,9 @@ public class MedUI extends BasicUI{
 		//patientTab.setEnabledAt(2, false);
 		
 		add(patientManager);
-		add(medication);
+		add(medication);*/
 	}
+	
 	public void updatePatient(int id) {
 		auth_manager.getMedUI().patientTab.setEnabledAt(1, true);
 		if(patientInfo.getPatient() != null) patientInfo.savePatient();

@@ -1,5 +1,6 @@
 package com.Tuong.ContentHelper;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -26,9 +27,9 @@ public class BasicUI extends JFrame {
 		// Setting up the UI
 		super(name);
 		this.auth_manager = auth_manager;
+		setSize(d);
 		setupUI();
 		setIconImage(new ImageIcon("Data/logo_size_invert.png").getImage());
-		setSize(d);
 		if(exit_on_close) setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -78,7 +79,8 @@ public class BasicUI extends JFrame {
 	}
 	
 	protected JTextField createTextField(String displayText, Container cont) {
-		JTextField t = new JTextField(displayText);
+		JTextField t = new RoundTextfield();
+		t.setBackground(Color.decode("#f7f1e3"));
 		t.addFocusListener(new FocusListener() {
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -97,7 +99,7 @@ public class BasicUI extends JFrame {
 	}
 
 	protected JButton createButton(String displayText, Container comp, ButtonAction action) {
-		JButton button = new JButton(displayText);
+		JButton button = new RoundButton(displayText);
 		button.setText(displayText);
 		button.setAlignmentX(Component.CENTER_ALIGNMENT);
 		button.setAlignmentY(Component.CENTER_ALIGNMENT);

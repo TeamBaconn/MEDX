@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,7 +19,7 @@ import com.Tuong.ContentHelper.ButtonAction;
 
 public class AuthUI extends BasicUI {
 	public AuthUI(AuthManager auth_manager) {
-		super("MedX", new Dimension(250, 350),true,auth_manager);
+		super("MedX", new Dimension(250, 380),true,auth_manager);
 		this.auth_manager = auth_manager;
 	}
 
@@ -30,11 +31,13 @@ public class AuthUI extends BasicUI {
 		JLabel icon = new JLabel(new ImageIcon("Data/logo_size_invert.png"));
 		icon.setAlignmentX(Component.CENTER_ALIGNMENT);
 		authPanel.add(icon);
-		authPanel.setBackground(new Color(-13455435));
+		authPanel.setBackground(Color.decode("#33d9b2"));
 		JTextField username = createTextField("Username",authPanel);
 		username.setMaximumSize(new Dimension(200,40));
+		authPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 		JTextField password = createTextField("Password",authPanel);
 		password.setMaximumSize(new Dimension(200,40));
+		authPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 		JButton login = createButton("Login",authPanel,new ButtonAction() {
 			@Override
 			public void click() {

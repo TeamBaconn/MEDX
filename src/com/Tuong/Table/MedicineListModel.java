@@ -9,6 +9,7 @@ import com.Tuong.Medicine.Medicine;
 
 public class MedicineListModel extends AbstractTableModel {
 	private final String[] column = { "Name", "Hoat chat", "Nong do", "Ta duoc", "Stock", "giaKeKhai","" };
+	public static final double[] size = {0.2,0.1,0.1,0.3,0.1,0.1,0.1};
 	private ArrayList<Medicine> medicines;
 	private AuthManager auth_manager;
 	public MedicineListModel(AuthManager auth_manager) {
