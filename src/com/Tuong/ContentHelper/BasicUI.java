@@ -99,7 +99,7 @@ public class BasicUI extends JFrame {
 	}
 
 	protected JButton createButton(String displayText, Container comp, ButtonAction action) {
-		JButton button = new RoundButton(displayText);
+		JButton button = new CustomButton(displayText);
 		button.setText(displayText);
 		button.setAlignmentX(Component.CENTER_ALIGNMENT);
 		button.setAlignmentY(Component.CENTER_ALIGNMENT);

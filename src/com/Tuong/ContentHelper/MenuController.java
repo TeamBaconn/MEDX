@@ -15,18 +15,20 @@ import com.Tuong.MedXMain.MedXMain;
 public class MenuController {
 	private Container cont;
 	private ArrayList<JToggleButton> list;
+	private ArrayList<Boolean> canOpen;
 	private Container card;
 	private int width, height;
 	private boolean toggle = false;
 	public MenuController(Container cont, Container card, int width, int height) {
 		this.cont = cont;
 		this.list = new ArrayList<JToggleButton>();
+		this.canOpen = new ArrayList<Boolean>();
 		this.card = card;
 		this.width = width;
 		this.height = height;
 	}
 	
-	public JToggleButton createToggle(String name, String GUIOpen, ButtonAction action) {
+	public JToggleButton createToggle(String name, int GUIOpen, boolean b, ButtonAction action) {
 		JToggleButton button = new JToggleButton(name);
 		button.setBackground(Color.decode("#33d9b2"));
 		button.setForeground(Color.decode("#f7f1e3"));
@@ -34,23 +36,37 @@ public class MenuController {
         button.setFocusPainted(false);
         button.setOpaque(true);
         button.setFont(MedXMain.customFont);
-		button.setMaximumSize(new Dimension(width,height));
+        button.setMaximumSize(new Dimension(width,height));
 		if(!toggle) {
 			button.setSelected(true);
-			((CardLayout)card.getLayout()).show(card, GUIOpen);
+			((CardLayout)card.getLayout()).show(card, GUIOpen+"");
 			toggle = true;
 		}
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				list.forEach(t -> t.setSelected(false));
-				button.setSelected(true);
-				((CardLayout)card.getLayout()).show(card, GUIOpen);
-				if(action != null) action.click();
+				if(action != null && !action.click()) return;
+				setSelectedIndex(GUIOpen);
 			}
 		});
 		list.add(button);
+		canOpen.add(b);
 		cont.add(button);
 		return button;
+	}
+	public void setEnabledAt(int i, boolean b) {
+		i--;
+		canOpen.set(i,b);
+	}
+
+	public void setSelectedIndex(int i) {
+		i--;
+		if(!canOpen.get(i)) {
+			list.get(i).setSelected(false);
+			return;
+		}
+		list.forEach((t) -> t.setSelected(false));
+		list.get(i).setSelected(true);
+		((CardLayout)card.getLayout()).show(card, ""+(i+1));
 	}
 }

@@ -42,7 +42,7 @@ public class AuthManager {
 			medUI.requestFocus();
 			return;
 		}
-		medUI = new MedUI(this);
+		this.medUI = new MedUI(this);
 	}
 	
 	public MedicineManager getMedicineManager() {
@@ -51,10 +51,6 @@ public class AuthManager {
 	
 	public PatientManager getPatientManager() {
 		return this.patient_manager;
-	}
-	
-	public void setMedUI(MedUI UI) {
-		this.medUI = UI;
 	}
 	
 	public MedUI getMedUI() {

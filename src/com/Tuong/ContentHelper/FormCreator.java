@@ -24,7 +24,7 @@ public class FormCreator {
 		con.gridx = -1;
 		con.gridy = 0;
 		con.ipadx = 10;
-		con.insets = new Insets(0, 10, 0, 10);
+		con.insets = new Insets(0, 10, 10, 10);
 	}
 	public void setSize(int[] n) {
 		this.compsLength = n;

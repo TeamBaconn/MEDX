@@ -25,12 +25,14 @@ public class GraphCreatorUI extends BasicUI{
 		JTextField unit = createTextField("Graph unit", this);
 		createButton("Create graph", this, new ButtonAction() {
 			@Override
-			public void click() {
+			public boolean click() {
 				if(pUI.patientInfo.createNewGraph(name.getText(), unit.getText())) {
 					showDialog("Success", "You just created "+name.getText()+" graph", 1);
 					setVisible(false);
-				}else 
-					showDialog("Fail", name.getText()+" exists", 0);
+					return true;
+				}
+				showDialog("Fail", name.getText()+" exists", 0);
+				return false;
 			}
 		});
 	}

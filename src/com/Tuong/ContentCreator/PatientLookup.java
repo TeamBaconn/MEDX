@@ -3,6 +3,7 @@ package com.Tuong.ContentCreator;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -14,11 +15,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -32,7 +30,9 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
 import com.Tuong.Authenication.AuthManager;
+import com.Tuong.ContentHelper.CustomButton;
 import com.Tuong.ContentHelper.FormCreator;
+import com.Tuong.ContentHelper.RoundTextfield;
 import com.Tuong.MedXMain.MedXMain;
 import com.Tuong.Patient.Patient;
 import com.Tuong.Trie.TrieResult;
@@ -43,20 +43,23 @@ public class PatientLookup extends JPanel {
 	private JTextField patient_name_search;
 	private AuthManager auth_manager;
 
-	public PatientLookup(AuthManager auth_manager) {
+	public PatientLookup(AuthManager auth_manager, MedUI medUI) {
 		super();
 		this.auth_manager = auth_manager;
+		setBackground(Color.decode("#f7f1e3"));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		add(Box.createVerticalGlue());
 
 		p_list = new JList<Patient>();
 		p_list.setCellRenderer(new PatientListRenderer());
 		JPanel patient_info = new JPanel(new GridBagLayout());
+		patient_info.setMaximumSize(new Dimension(medUI.getSize().width,medUI.getSize().height/10));
+		patient_info.setBackground(Color.decode("#f7f1e3"));
 		FormCreator form3 = new FormCreator(patient_info, 2, MedXMain.form_size_constant, 30);
-		JButton create = new JButton("Create");
+		JButton create = new CustomButton("Create");
 
 		form3.createLabel("Patient name");
-		patient_name_search = form3.createTextField("");
+		patient_name_search = new RoundTextfield();
+		form3.addComponent(patient_name_search);
 		form3.addComponent(null);
 		form3.addComponent(create);
 

@@ -38,17 +38,10 @@ public class MedUI extends BasicUI{
 		medTable.model.add(medicine);
 	}
 
-	JTabbedPane patientTab;
+	MenuController menucont;
 	@Override
 	public void setupUI() {
 		UIManager.put("ToggleButton.select", Color.decode("#218c74"));
-		addCloseAction(new ButtonAction() {
-			@Override
-			public void click() {
-				patientInfo.savePatient();
-				auth_manager.setMedUI(null);
-			}
-		});
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.LINE_AXIS));
 		setForeground(Color.decode("#f7f1e3"));
 		JPanel menu = new JPanel();
@@ -61,15 +54,24 @@ public class MedUI extends BasicUI{
 		
 		JPanel card = new JPanel(new CardLayout());
 		card.setBackground(Color.decode("#f7f1e3"));
-		patient_lookup = new PatientLookup(auth_manager);
+		patient_lookup = new PatientLookup(auth_manager,this);
+		patientInfo = new PatientInfo(auth_manager);
 		listMed = new MedicineList(auth_manager);
 		
 		card.add(patient_lookup,"1");
-		card.add(listMed,"2");
+		card.add(patientInfo,"2");
+		card.add(listMed,"3");
 		
-		MenuController menucont = new MenuController(menu, card,getSize().width/10,getSize().height/12);
-		menucont.createToggle("Patient lookup", "1", null);
-		menucont.createToggle("Medicine lookup", "2", null);
+		menucont = new MenuController(menu, card,getSize().width/10,getSize().height/12);
+		menucont.createToggle("Patient lookup", 1, true, null);
+		menucont.createToggle("Patient info", 2, false, new ButtonAction() {
+			@Override
+			public boolean click() {
+				
+				return true;
+			}
+		});
+		menucont.createToggle("Medicine lookup", 3, true, null);
 		
 		add(menu);
 		add(card);
@@ -111,19 +113,18 @@ public class MedUI extends BasicUI{
 	}
 	
 	public void updatePatient(int id) {
-		auth_manager.getMedUI().patientTab.setEnabledAt(1, true);
+		menucont.setEnabledAt(2, true);
 		if(patientInfo.getPatient() != null) patientInfo.savePatient();
 		patientInfo.loadPatient(id);
-		patientTab.setSelectedIndex(1);
-		
-		prescription_patient_name.setText(patientInfo.getPatient().getName());
+		menucont.setSelectedIndex(2);
+		//prescription_patient_name.setText(patientInfo.getPatient().getName());
 	}
 	public void removePatient() {
 		patient_lookup.refreshList("");
-		auth_manager.getMedUI().patientTab.setEnabledAt(1, false);
-		patientTab.setSelectedIndex(0);
+		auth_manager.getMedUI().menucont.setEnabledAt(2, false);
+		menucont.setSelectedIndex(1);
 		
-		prescription_patient_name.setText("");
+		//prescription_patient_name.setText("");
 	}
 	private DatePicker start_date,end_date;
 	private JTextField note;

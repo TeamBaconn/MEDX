@@ -40,12 +40,14 @@ public class AuthUI extends BasicUI {
 		authPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 		JButton login = createButton("Login",authPanel,new ButtonAction() {
 			@Override
-			public void click() {
+			public boolean click() {
 				if(auth_manager.checkAuthenication(username.getText(), auth_manager.getMd5(password.getText()))) {
 					//Close auth ui and move to menu ui
 					auth_manager.openMenu();
+					return true;
 				}else {
 					showDialog("Login failed", "Please check again your username and password", JOptionPane.ERROR_MESSAGE);
+					return false;
 				}
 			}
 		});
