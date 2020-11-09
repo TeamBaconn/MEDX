@@ -21,7 +21,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.Tuong.Authenication.AuthManager;
+import com.Tuong.ContentHelper.CustomButton;
 import com.Tuong.ContentHelper.FormCreator;
+import com.Tuong.ContentHelper.RoundFormattedTextfield;
+import com.Tuong.ContentHelper.RoundTextfield;
 import com.Tuong.DateUtils.Date;
 import com.Tuong.DateUtils.DatePicker;
 import com.Tuong.Graph.Graph;
@@ -52,6 +55,7 @@ public class PatientInfo extends JPanel{
 		int[] n = {100,500};
 		FormCreator patientForm = new FormCreator(this, 2, n, 30);
 		patientForm.createLabel("Name");
+		setBackground(Color.decode("#f7f1e3"));
 		patient_name = patientForm.createTextField("");
 		patient_name.setEditable(false);
 		patient_name.setBackground(Color.LIGHT_GRAY);
@@ -60,7 +64,7 @@ public class PatientInfo extends JPanel{
 		try {
 			MaskFormatter formatter = new MaskFormatter("###-###-####");
 			formatter.setPlaceholderCharacter('_');
-			patient_dial = new JFormattedTextField(formatter);
+			patient_dial = new RoundFormattedTextfield(formatter);
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
@@ -71,26 +75,25 @@ public class PatientInfo extends JPanel{
 		patientForm.addComponent(DOB);
 		
 		patientForm.createLabel("Diagnosis");
-		diagnosis = new JTextField("");
-		patientForm.addComponent(diagnosis);
+		diagnosis = patientForm.createTextField("");
 		
 		patientForm.createLabel("Graph");
 		graphList = new JComboBox<GraphType>();
 		patientForm.addComponent(graphList);
 		patientForm.addComponent(null);
-		JButton newGraph = new JButton("Create new graph");
+		JButton newGraph = new CustomButton("Create new graph");
 		patientForm.addComponent(newGraph);
 		patientForm.setSize(n);
 		graph = new Graph((GraphType)graphList.getSelectedItem());
 		JPanel bGraph = new JPanel();
 		bGraph.setLayout(new BoxLayout(bGraph, BoxLayout.Y_AXIS));
 		JPanel adjust = new JPanel(new GridLayout(2,2));
-		JButton up = new JButton("Up");
-		JButton down = new JButton("Down");
+		JButton up = new CustomButton("Up");
+		JButton down = new CustomButton("Down");
 		adjust.add(up);
 		adjust.add(down);
-		JTextField value = new JTextField();
-		JButton insert = new JButton(">>");
+		JTextField value = new RoundTextfield();
+		JButton insert = new CustomButton(">>");
 		DatePicker dP = new DatePicker(new Date(), false);
 		dP.setMaximumSize(new Dimension(100,30));
 		adjust.add(value);

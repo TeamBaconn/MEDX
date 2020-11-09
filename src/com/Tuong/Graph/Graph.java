@@ -21,13 +21,24 @@ public class Graph extends JPanel implements MouseMotionListener {
 	private double median = 0;
 
 	private GraphType graph;
+	
+	private int radius;
 
 	public Graph(GraphType graph) {
 		this.graph = graph;
 		addMouseMotionListener(this);
-		setBorder(LineBorder.createBlackLineBorder());
 		setPreferredSize(new Dimension(400, 300));
 		setMaximumSize(new Dimension(400, 300));
+		setBackground(Color.decode("#f7f1e3"));
+		setRadius(40);
+	}
+	
+	public void setRadius(int radius) {
+		this.radius = radius;
+	}
+	
+	public int getRadius() {
+		return this.radius;
 	}
 
 	public void debugValue() {
@@ -64,7 +75,7 @@ public class Graph extends JPanel implements MouseMotionListener {
 		// Draw graph
 		// Draw background
 		g.setColor(Color.white);
-		g.fillRect(0, 0, getSize().width, getSize().height);
+		g.fillRoundRect(0, 0, getSize().width - 1, getSize().height - 1, getRadius(), getRadius());
 		if (graph == null)
 			return;
 		// Draw name

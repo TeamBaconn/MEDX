@@ -43,7 +43,7 @@ public class FormCreator {
 	}
 	
 	public JTextField createTextField(String displayText) {
-		JTextField t = new JTextField(displayText);
+		JTextField t = new RoundTextfield();
 		addComponent(t);
 		return t;
 	}
