@@ -27,6 +27,7 @@ import com.Tuong.ContentHelper.RoundFormattedTextfield;
 import com.Tuong.ContentHelper.RoundTextfield;
 import com.Tuong.DateUtils.Date;
 import com.Tuong.DateUtils.DatePicker;
+import com.Tuong.DateUtils.DateUI;
 import com.Tuong.Graph.Graph;
 import com.Tuong.Graph.GraphCreatorUI;
 import com.Tuong.Graph.GraphType;
@@ -38,7 +39,7 @@ import com.Tuong.Patient.PatientManager;
 public class PatientInfo extends JPanel{
 	private static final long serialVersionUID = -617639484263588585L;
 	
-	private DatePicker DOB;
+	private DateUI DOB;
 	private JTextField diagnosis;
 	private JComboBox<GraphType> graphList;
 	private Graph graph;
@@ -71,7 +72,7 @@ public class PatientInfo extends JPanel{
 		patientForm.addComponent(patient_dial);
 		
 		patientForm.createLabel("DOB");
-		DOB = new DatePicker(new Date(), false);
+		DOB = new DateUI();
 		patientForm.addComponent(DOB);
 		
 		patientForm.createLabel("Diagnosis");
@@ -94,7 +95,7 @@ public class PatientInfo extends JPanel{
 		adjust.add(down);
 		JTextField value = new RoundTextfield();
 		JButton insert = new CustomButton(">>");
-		DatePicker dP = new DatePicker(new Date(), false);
+		DateUI dP = new DateUI();
 		dP.setMaximumSize(new Dimension(100,30));
 		adjust.add(value);
 		adjust.add(insert);

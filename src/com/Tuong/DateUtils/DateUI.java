@@ -1,5 +1,6 @@
 package com.Tuong.DateUtils;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +19,8 @@ import javax.swing.plaf.basic.ComboPopup;
 public class DateUI extends JComboBox<Object>{
 	private static final long serialVersionUID = -186921978087652461L;
 	
+	private DatePicker _datePicker;
+	
 	public DateUI() {
 		super();
 		setUI(new BasicComboBoxUI() {
@@ -32,21 +35,21 @@ public class DateUI extends JComboBox<Object>{
 		        dateChooser.add(left);
 		        dateChooser.add(label);
 		        dateChooser.add(right);
-		        DatePicker datePicker = new DatePicker(comboBox,label, basicComboPopup.getPreferredSize().width,basicComboPopup.getPreferredSize().height);
-		        
+		        _datePicker = new DatePicker(comboBox,label, basicComboPopup.getMaximumSize().width);
+		        _datePicker.setMinimumSize(new Dimension(400, 400));
 		        basicComboPopup.add(dateChooser);
-		        basicComboPopup.add(datePicker);
+		        //basicComboPopup.add(_datePicker);
 		        
 		        left.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						datePicker.changeMonthAction(-1);
+						_datePicker.changeMonthAction(-1);
 					}
 				});
 		        right.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						datePicker.changeMonthAction(1);
+						_datePicker.changeMonthAction(1);
 					}
 				});
 		        comboBox.setRenderer(new DefaultListCellRenderer() {
@@ -55,11 +58,17 @@ public class DateUI extends JComboBox<Object>{
 					@Override
 			        public Component getListCellRendererComponent(final JList<?> list, Object value, final int index, final boolean isSelected,
 			                final boolean cellHasFocus) {
-			        	return new JLabel(datePicker.getDate().toReadable());
+			        	return new JLabel(_datePicker.getDate().toReadable());
 			        }
 			    });
 		        return basicComboPopup;
 		    }
 		});
+	}
+	public Date getDate() {
+		return _datePicker.getDate();
+	}
+	public void setDate(Date date) {
+		_datePicker.setDate(date);
 	}
 }

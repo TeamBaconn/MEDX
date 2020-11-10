@@ -23,7 +23,7 @@ public class DatePicker extends JPanel implements MouseMotionListener, MouseInpu
 	private JComboBox<?> cb;
 	private JLabel label;
 	
-	public DatePicker(JComboBox<?> cb, JLabel label, int x, int y) {
+	public DatePicker(JComboBox<?> cb, JLabel label, int x) {
 		addMouseMotionListener(this);
 		addMouseListener(this);
 		
@@ -33,34 +33,38 @@ public class DatePicker extends JPanel implements MouseMotionListener, MouseInpu
 		this.label = label;
 		this.cb = cb;
 		changeMonthAction(0);
-		setPreferredSize(new Dimension(x,x/Date.day_name.length*max_y));
+		setMaximumSize(new Dimension(x,(x/Date.day_name.length)*max_y));
+		
+		System.out.println(x);
 	}
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.setColor(Color.GRAY);
-		g.fillRect(0, 0, getSize().width, getSize().width/Date.day_name.length);
-		int xl = 0, yl=getSize().width/Date.day_name.length;
+		int width = getSize().width/Date.day_name.length;
+		int xl = 0, yl=width;
 		for(int i = 0; i < Date.day_name.length; i++) {
+			g.setColor(Color.DARK_GRAY);
+			g.fillRect(xl, 0, width, width);
 			g.setColor(Color.WHITE);
-			drawCenterString(g, Date.day_name[i], i*getSize().width/Date.day_name.length+getSize().width/Date.day_name.length/2, getSize().width/Date.day_name.length/2);
-			g.drawRect(xl, 0, getSize().width/Date.day_name.length, getSize().width/Date.day_name.length);
-			xl += getSize().width/Date.day_name.length;
+			drawCenterString(g, Date.day_name[i], i*width+width/2, width/2);
+			g.drawRect(xl, 0, width, width);
+			xl += width;
 		}
-		xl = getDay()*getSize().width/Date.day_name.length;
+		xl = getDay()*width;
 		int k = 1;
 		int max = Date.getDateInMonth(selectedDate);
 		while(k <= max) {
-			g.setColor(isToday(k,xl+getSize().width/Date.day_name.length/2,yl+getSize().width/Date.day_name.length/2,getSize().width/Date.day_name.length/2));
-			g.fillRect(xl, yl, getSize().width/Date.day_name.length, getSize().width/Date.day_name.length);
+			g.setColor(isToday(k,xl+width/2,yl+width/2,width/2));
+			g.fillRect(xl, yl, width, width);
 			g.setColor(Color.black);
-			drawCenterString(g,k+"", xl+getSize().width/Date.day_name.length/2, yl+getSize().width/Date.day_name.length/2);
-			if(xl >= getSize().width/Date.day_name.length*6) {
+			drawCenterString(g,k+"", xl+width/2, yl+width/2);
+			if(xl >= width*6) {
 				xl = 0;
-				yl += getSize().width/Date.day_name.length;
+				yl += width;
 			}else {
-				xl += getSize().width/Date.day_name.length;
+				xl += width;
 			}
 			k++;
 		}
@@ -90,6 +94,11 @@ public class DatePicker extends JPanel implements MouseMotionListener, MouseInpu
 	
 	private void drawCenterString(Graphics g, String s, int x,int y) {
 		g.drawString(s, x - g.getFontMetrics().stringWidth(s) / 2, y + g.getFontMetrics().getHeight()/2);
+	}
+	
+	public void setDate(Date date) {
+		this.date = new Date(date);
+		this.selectedDate = new Date(date);
 	}
 	
 	@Override

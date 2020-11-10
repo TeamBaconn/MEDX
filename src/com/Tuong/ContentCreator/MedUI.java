@@ -12,7 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
@@ -23,6 +22,7 @@ import com.Tuong.ContentHelper.FormCreator;
 import com.Tuong.ContentHelper.MenuController;
 import com.Tuong.DateUtils.Date;
 import com.Tuong.DateUtils.DatePicker;
+import com.Tuong.DateUtils.DateUI;
 import com.Tuong.Medicine.MedicinePrescription;
 
 public class MedUI extends BasicUI{
@@ -53,7 +53,7 @@ public class MedUI extends BasicUI{
 		menu.add(icon);
 		
 		JPanel card = new JPanel(new CardLayout());
-		card.setBackground(Color.decode("#f7f1e3"));
+		card.setBackground(Color.decode("#f7f1"));
 		patient_lookup = new PatientLookup(auth_manager,this);
 		patientInfo = new PatientInfo(auth_manager);
 		listMed = new MedicineList(auth_manager);
@@ -62,7 +62,7 @@ public class MedUI extends BasicUI{
 		card.add(patientInfo,"2");
 		card.add(listMed,"3");
 		
-		menucont = new MenuController(menu, card,getSize().width/10,getSize().height/12);
+		menucont = new MenuController(menu, card);
 		menucont.createToggle("Patient lookup", 1, true, null);
 		menucont.createToggle("Patient info", 2, false, new ButtonAction() {
 			@Override
@@ -126,7 +126,7 @@ public class MedUI extends BasicUI{
 		
 		//prescription_patient_name.setText("");
 	}
-	private DatePicker start_date,end_date;
+	private DateUI start_date,end_date;
 	private JTextField note;
 	private JList<MedicinePrescription> prescriptions;
 	private JTextField prescription_patient_name;
@@ -152,10 +152,10 @@ public class MedUI extends BasicUI{
 		note = form.createTextField("");
 	
 		form.createLabel("Start date:");
-		start_date = new DatePicker(new Date(), true);
+		start_date = new DateUI();
 		form.addComponent(start_date);
 		form.createLabel("End date:");
-		end_date = new DatePicker(new Date(), true);
+		end_date = new DateUI();
 		form.addComponent(end_date);
 		
 		pre.add(f);

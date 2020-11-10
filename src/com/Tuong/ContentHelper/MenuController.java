@@ -17,15 +17,12 @@ public class MenuController {
 	private ArrayList<JToggleButton> list;
 	private ArrayList<Boolean> canOpen;
 	private Container card;
-	private int width, height;
 	private boolean toggle = false;
-	public MenuController(Container cont, Container card, int width, int height) {
+	public MenuController(Container cont, Container card) {
 		this.cont = cont;
 		this.list = new ArrayList<JToggleButton>();
 		this.canOpen = new ArrayList<Boolean>();
 		this.card = card;
-		this.width = width;
-		this.height = height;
 	}
 	
 	public JToggleButton createToggle(String name, int GUIOpen, boolean b, ButtonAction action) {
@@ -36,8 +33,8 @@ public class MenuController {
         button.setFocusPainted(false);
         button.setOpaque(true);
         button.setFont(MedXMain.customFont);
-        button.setMaximumSize(new Dimension(width,height));
-		if(!toggle) {
+        
+        if(!toggle) {
 			button.setSelected(true);
 			((CardLayout)card.getLayout()).show(card, GUIOpen+"");
 			toggle = true;
