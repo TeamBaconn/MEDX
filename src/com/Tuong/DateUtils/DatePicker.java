@@ -4,15 +4,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
-
-import com.Tuong.ContentHelper.CustomButton;
 
 
 public class DatePicker extends JPanel implements MouseMotionListener, MouseInputListener {
@@ -24,8 +21,6 @@ public class DatePicker extends JPanel implements MouseMotionListener, MouseInpu
 	
 	private double mouseX=0, mouseY=0;
 	private JComboBox<?> cb;
-	
-	private ArrayList<CustomButton> buttons;
 	
 	public DatePicker(JComboBox<?> cb, int x) {
 		addMouseMotionListener(this);
