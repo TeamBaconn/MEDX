@@ -4,13 +4,16 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
+
+import com.Tuong.ContentHelper.CustomButton;
+
 
 public class DatePicker extends JPanel implements MouseMotionListener, MouseInputListener {
 	private static final long serialVersionUID = -4767519684879914638L;
@@ -21,61 +24,76 @@ public class DatePicker extends JPanel implements MouseMotionListener, MouseInpu
 	
 	private double mouseX=0, mouseY=0;
 	private JComboBox<?> cb;
-	private JLabel label;
 	
-	public DatePicker(JComboBox<?> cb, JLabel label, int x) {
+	private ArrayList<CustomButton> buttons;
+	
+	public DatePicker(JComboBox<?> cb, int x) {
 		addMouseMotionListener(this);
 		addMouseListener(this);
 		
 		date = new Date();
 		selectedDate = new Date();
 		
-		this.label = label;
 		this.cb = cb;
-		changeMonthAction(0);
-		setMaximumSize(new Dimension(x,(x/Date.day_name.length)*max_y));
 		
-		System.out.println(x);
+		setPreferredSize(new Dimension(x, max_y*x/Date.day_name.length));
+		changeMonthAction(0);
 	}
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.setColor(Color.GRAY);
 		int width = getSize().width/Date.day_name.length;
-		int xl = 0, yl=width;
+		int xl = getSize().width%Date.day_name.length / 2, yl=0;
+		drawButton("<<", g, width, xl, yl);
+		drawButton(">>", g, width, getSize().width-xl-width*2, yl);
+		g.setColor(Color.black);
+		drawCenterString(g, Date.month_name[selectedDate.month-1]+" "+selectedDate.year, getSize().width/2, width/2);
+		yl = width;
+		//Draw the name
 		for(int i = 0; i < Date.day_name.length; i++) {
 			g.setColor(Color.DARK_GRAY);
-			g.fillRect(xl, 0, width, width);
+			g.fillRect(xl, width, width, width);
 			g.setColor(Color.WHITE);
-			drawCenterString(g, Date.day_name[i], i*width+width/2, width/2);
-			g.drawRect(xl, 0, width, width);
+			drawCenterString(g, Date.day_name[i], i*width+width/2, width+width/2);
+			g.drawRect(xl, width, width, width);
 			xl += width;
 		}
-		xl = getDay()*width;
+		
+		//Draw the day
+		yl += width;
+		xl -= (Date.day_name.length-getDay())*width;
 		int k = 1;
 		int max = Date.getDateInMonth(selectedDate);
 		while(k <= max) {
-			g.setColor(isToday(k,xl+width/2,yl+width/2,width/2));
+			g.setColor(isToday(k,xl,yl,width));
 			g.fillRect(xl, yl, width, width);
 			g.setColor(Color.black);
 			drawCenterString(g,k+"", xl+width/2, yl+width/2);
 			if(xl >= width*6) {
-				xl = 0;
+				xl = getSize().width%Date.day_name.length / 2;
 				yl += width;
-			}else {
-				xl += width;
-			}
+			}else xl += width;
 			k++;
 		}
 	}
+	private void drawButton(String name, Graphics g, int width, int xl ,int yl) {
+		g.setColor(isHover(xl, yl, width*2, width) ? Color.gray : Color.white);
+		g.fillRect(xl, yl, width*2, width);
+		g.setColor(Color.black);
+		g.drawRect(xl, yl, width*2, width-1);
+		drawCenterString(g, name, xl+width, yl+width/2);
+	}
 	private Color isToday(int k, int xl, int yl, int d) {
 		if(Date.compare(date, new Date(k,selectedDate.month,selectedDate.year)) == 0) return Color.red;
-		if(Math.abs(xl-mouseX) < d && Math.abs(yl-mouseY) < d) {
+		if(isHover(xl, yl, d, d)) {
 			selectedDate.day = k;
 			return Color.gray;
 		}
 		return Color.white;
+	}
+	private boolean isHover(int xl, int yl, int dx, int dy) {
+		return ((xl < mouseX) && (mouseX < xl+dx)) && ((yl < mouseY) && (mouseY < yl+dy));
 	}
 	private int getDay() {
 		Calendar myCalendar = new GregorianCalendar(selectedDate.year, selectedDate.month-1, 0);
@@ -86,9 +104,8 @@ public class DatePicker extends JPanel implements MouseMotionListener, MouseInpu
 		return this.date;
 	}
 	
-	public void changeMonthAction(int k) {
+	private void changeMonthAction(int k) {
 		selectedDate.addDays(k);
-		label.setText(Date.month_name[selectedDate.month-1]+" "+selectedDate.year);
 		repaint();
 	}
 	
@@ -103,6 +120,17 @@ public class DatePicker extends JPanel implements MouseMotionListener, MouseInpu
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		int width = getSize().width/Date.day_name.length;
+		int xl = getSize().width%Date.day_name.length / 2;
+		if(isHover(xl, 0, width*2, width)) {
+			changeMonthAction(-1);
+			return;
+		}else if(isHover(getSize().width-xl-width*2,0, width*2, width)) {
+			changeMonthAction(1);
+			return;
+		}
+		
+		if(selectedDate.day == -1) return;
 		date = new Date(selectedDate);
 		cb.repaint();
 		repaint();
@@ -127,10 +155,14 @@ public class DatePicker extends JPanel implements MouseMotionListener, MouseInpu
 	public void mouseMoved(MouseEvent e) {
 		mouseX = e.getX();
 		mouseY = e.getY();
+		selectedDate.day = -1;
 		repaint();
 	}
 	@Override
 	public void mouseExited(MouseEvent e) {
-		
+		mouseX = -1;
+		mouseY = -1;
+		selectedDate.day = -1;
+		repaint();
 	}
 }

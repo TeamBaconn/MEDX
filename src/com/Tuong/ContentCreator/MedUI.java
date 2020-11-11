@@ -152,10 +152,10 @@ public class MedUI extends BasicUI{
 		note = form.createTextField("");
 	
 		form.createLabel("Start date:");
-		start_date = new DateUI();
+		start_date = new DateUI(n[1]);
 		form.addComponent(start_date);
 		form.createLabel("End date:");
-		end_date = new DateUI();
+		end_date = new DateUI(n[1]);
 		form.addComponent(end_date);
 		
 		pre.add(f);

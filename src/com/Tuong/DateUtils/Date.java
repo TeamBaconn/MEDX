@@ -6,7 +6,7 @@ import java.util.Calendar;
 public class Date {
 	
 	public static final String[] day_name = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
-	public static final String[] month_name = {"January","February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+	public static final String[] month_name = {"Jan","Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 	public static final int[] date_in_month = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	
 	public int day,month,year,hour,min;

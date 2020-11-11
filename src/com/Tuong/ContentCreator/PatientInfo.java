@@ -72,7 +72,7 @@ public class PatientInfo extends JPanel{
 		patientForm.addComponent(patient_dial);
 		
 		patientForm.createLabel("DOB");
-		DOB = new DateUI();
+		DOB = new DateUI(n[1]);
 		patientForm.addComponent(DOB);
 		
 		patientForm.createLabel("Diagnosis");
@@ -95,7 +95,7 @@ public class PatientInfo extends JPanel{
 		adjust.add(down);
 		JTextField value = new RoundTextfield();
 		JButton insert = new CustomButton(">>");
-		DateUI dP = new DateUI();
+		DateUI dP = new DateUI(100);
 		dP.setMaximumSize(new Dimension(100,30));
 		adjust.add(value);
 		adjust.add(insert);
