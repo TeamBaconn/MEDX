@@ -40,4 +40,7 @@ public class JSONHelper {
 		}
 		return null;
 	}
+	public static int convertToInt(Object obj) {
+		return Math.toIntExact((long) obj);
+	}
 }

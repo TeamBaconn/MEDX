@@ -29,7 +29,7 @@ public class MedUI extends BasicUI{
 	
 	private MedicineList listMed;
 	public PatientLookup patient_lookup;
-	public PatientInfo patientInfo;
+	public PatientPanel patientPanel;
 	
 	public MedUI(AuthManager auth_manager) {
 		super("Medicine Manager", Toolkit.getDefaultToolkit().getScreenSize(),true,auth_manager);
@@ -55,11 +55,11 @@ public class MedUI extends BasicUI{
 		JPanel card = new JPanel(new CardLayout());
 		card.setBackground(Color.decode("#f7f1"));
 		patient_lookup = new PatientLookup(auth_manager,this);
-		patientInfo = new PatientInfo(auth_manager);
+		patientPanel = new PatientPanel(auth_manager);
 		listMed = new MedicineList(auth_manager);
 		
 		card.add(patient_lookup,"1");
-		card.add(patientInfo,"2");
+		card.add(patientPanel,"2");
 		card.add(listMed,"3");
 		
 		menucont = new MenuController(menu, card);
@@ -114,10 +114,10 @@ public class MedUI extends BasicUI{
 	
 	public void updatePatient(int id) {
 		menucont.setEnabledAt(2, true);
-		if(patientInfo.getPatient() != null) patientInfo.savePatient();
-		patientInfo.loadPatient(id);
+		if(patientPanel.patientInfo.getPatient() != null) patientPanel.patientInfo.savePatient();
+		patientPanel.patientInfo.loadPatient(id);
+		patientPanel.prescriptionList.Load(patientPanel.patientInfo.getPatient());
 		menucont.setSelectedIndex(2);
-		//prescription_patient_name.setText(patientInfo.getPatient().getName());
 	}
 	public void removePatient() {
 		patient_lookup.refreshList("");

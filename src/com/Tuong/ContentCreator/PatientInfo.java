@@ -196,6 +196,7 @@ public class PatientInfo extends JPanel{
 		obj.put("Graphs",graph);
 		JSONHelper.writeFile(auth_manager.getPatientManager().getPatientPath(patient.getID()), obj.toJSONString());
 	}
+	
 	public boolean createNewGraph(String graphName, String graphUnit) {
 		for(int i = 0; i < graphList.getModel().getSize(); i++) if(graphList.getItemAt(i).name.equals(graphName)) return false;
 		graphList.addItem(new GraphType(graphName, graphUnit));
@@ -204,9 +205,5 @@ public class PatientInfo extends JPanel{
 	
 	public Patient getPatient() {
 		return this.patient;
-	}
-	
-	public void setPatient(Patient patient) {
-		this.patient = patient;
 	}
 }

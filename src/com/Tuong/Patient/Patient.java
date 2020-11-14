@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 import com.Tuong.DateUtils.Date;
 import com.Tuong.Graph.GraphType;
+import com.Tuong.Medicine.Prescription;
 
 public class Patient {
 	
 	public String name;
 	public ArrayList<GraphType> graphList;
+	public ArrayList<Prescription> prescriptions;
 	public Date DOB;
 	public String diagnosis;
 	private String dial;

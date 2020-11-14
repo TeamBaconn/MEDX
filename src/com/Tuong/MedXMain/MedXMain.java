@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.Tuong.Authenication.AuthManager;
+import com.Tuong.EventSystem.EventManager;
 
 public class MedXMain {
 	public static final int[] form_size_constant = {100,300};
@@ -22,7 +23,8 @@ public class MedXMain {
 		    e.printStackTrace();
 		} catch(FontFormatException e) {
 		    e.printStackTrace();
-		} 
+		}
+		new EventManager();
 		new AuthManager();
 	}
 }
