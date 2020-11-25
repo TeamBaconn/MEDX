@@ -8,13 +8,14 @@ import com.Tuong.Authenication.AuthManager;
 public class PatientPanel extends JPanel{
 	public PatientInfo patientInfo;
 	public EventLookup prescriptionList;
+	public EventCustomizer customizer;
 	
-	public PatientPanel(AuthManager auth_manager) {
+	public PatientPanel() {
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-		patientInfo = new PatientInfo(auth_manager);
-		prescriptionList = new EventLookup(auth_manager);
+		patientInfo = new PatientInfo();
+		prescriptionList = new EventLookup();
 		
 		add(patientInfo);
-		add(new EventCustomizer());
+		add(customizer = new EventCustomizer());
 	}
 }

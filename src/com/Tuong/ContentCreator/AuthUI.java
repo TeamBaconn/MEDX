@@ -16,11 +16,13 @@ import javax.swing.JTextField;
 import com.Tuong.Authenication.AuthManager;
 import com.Tuong.ContentHelper.BasicUI;
 import com.Tuong.ContentHelper.ButtonAction;
+import com.Tuong.ContentHelper.RoundPasswordField;
+import com.Tuong.EventListener.ConditionalFlag;
+import com.Tuong.EventListener.EventListenerManager;
 
 public class AuthUI extends BasicUI {
-	public AuthUI(AuthManager auth_manager) {
-		super("MedX", new Dimension(250, 380),true,auth_manager);
-		this.auth_manager = auth_manager;
+	public AuthUI() {
+		super("MedX", new Dimension(250, 380),true);
 	}
 
 	@Override
@@ -35,20 +37,20 @@ public class AuthUI extends BasicUI {
 		JTextField username = createTextField("Username",authPanel);
 		username.setMaximumSize(new Dimension(200,40));
 		authPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-		JTextField password = createTextField("Password",authPanel);
+		JTextField password = createPasswordField(authPanel);
 		password.setMaximumSize(new Dimension(200,40));
 		authPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 		JButton login = createButton("Login",authPanel,new ButtonAction() {
 			@Override
 			public boolean click() {
-				if(auth_manager.checkAuthenication(username.getText(), auth_manager.getMd5(password.getText()))) {
-					//Close auth ui and move to menu ui
-					auth_manager.openMenu();
-					return true;
-				}else {
+				if(!EventListenerManager.current.activateEvent("UserLoginEvent", username.getText().trim(), AuthManager.getMd5(password.getText().trim()), new ConditionalFlag())) {
 					showDialog("Login failed", "Please check again your username and password", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
+				//Login successful
+				close();
+				new MedUI();
+				return true;
 			}
 		});
 		login.setMaximumSize(new Dimension(200,35));

@@ -10,12 +10,10 @@ public class MedicineModel extends AbstractTableModel{
 	private static final long serialVersionUID = -6427474011442687982L;
 	final String[] columnNames = {
 			"No", 
-			"ID",
-       		"Name",
-            "Category",
-            "Unit",
-            "Volume",
-            "Price"};
+			"Name",
+       		"Dosage",
+            "Delete"};
+	public static final double[] size = {0.05,0.4,0.45,0.1};
 	private ArrayList<MedicinePrescription> med_list = new ArrayList<MedicinePrescription>();
 	
 	@Override

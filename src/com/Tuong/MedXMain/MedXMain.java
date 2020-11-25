@@ -6,10 +6,8 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.UnsupportedLookAndFeelException;
-
 import com.Tuong.Authenication.AuthManager;
-import com.Tuong.EventSystem.EventManager;
+import com.Tuong.EventListener.EventListenerManager;
 
 public class MedXMain {
 	public static final int[] form_size_constant = {100,300};
@@ -24,7 +22,7 @@ public class MedXMain {
 		} catch(FontFormatException e) {
 		    e.printStackTrace();
 		}
-		new EventManager();
+		new EventListenerManager();
 		new AuthManager();
 	}
 }

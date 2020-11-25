@@ -17,26 +17,21 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import com.Tuong.Authenication.AuthManager;
+import com.Tuong.ContentHelper.BasicPanel;
 import com.Tuong.ContentHelper.CustomButton;
 import com.Tuong.ContentHelper.FormCreator;
 import com.Tuong.ContentHelper.RoundFormattedTextfield;
 import com.Tuong.ContentHelper.RoundTextfield;
-import com.Tuong.DateUtils.Date;
-import com.Tuong.DateUtils.DatePicker;
 import com.Tuong.DateUtils.DateUI;
+import com.Tuong.EventListener.ConditionalFlag;
+import com.Tuong.EventListener.EventListenerManager;
 import com.Tuong.Graph.Graph;
 import com.Tuong.Graph.GraphCreatorUI;
 import com.Tuong.Graph.GraphType;
-import com.Tuong.Graph.GraphValue;
-import com.Tuong.MedXMain.JSONHelper;
 import com.Tuong.Patient.Patient;
-import com.Tuong.Patient.PatientManager;
 
-public class PatientInfo extends JPanel{
+public class PatientInfo extends BasicPanel{
 	private static final long serialVersionUID = -617639484263588585L;
 	
 	private DateUI DOB;
@@ -48,15 +43,11 @@ public class PatientInfo extends JPanel{
 	private JFormattedTextField patient_dial;
 	private JTextField patient_name;
 	
-	private AuthManager auth_manager;
-	
-	public PatientInfo(AuthManager auth_manager) {
-		super(new GridBagLayout());
-		this.auth_manager = auth_manager;
+	public PatientInfo() {
+		setLayout(new GridBagLayout());
 		int[] n = {100,500};
 		FormCreator patientForm = new FormCreator(this, 2, n, 30);
 		patientForm.createLabel("Name");
-		setBackground(Color.decode("#f7f1e3"));
 		patient_name = patientForm.createTextField("");
 		patient_name.setEditable(false);
 		patient_name.setBackground(Color.LIGHT_GRAY);
@@ -69,6 +60,7 @@ public class PatientInfo extends JPanel{
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
+		
 		patientForm.addComponent(patient_dial);
 		
 		patientForm.createLabel("DOB");
@@ -119,7 +111,7 @@ public class PatientInfo extends JPanel{
 		newGraph.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new GraphCreatorUI(auth_manager);
+				new GraphCreatorUI();
 			}
 		});
 		graphList.addActionListener(new ActionListener() {
@@ -131,16 +123,30 @@ public class PatientInfo extends JPanel{
 		up.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				/*
 				auth_manager.getPatientManager().delete(patient);
 				patient = null;
 				auth_manager.getMedUI().removePatient();
+				*/
 			}
 		});
 	}
 	
-	public void loadPatient(int id) {
-		if(id <= 0) return;
-		this.patient = auth_manager.getPatientManager().loadPatient(id);
+	@Override
+	public void PatientSelectEvent(Patient p) {
+		if(p == null) return;
+		if(patient != null) {
+			//Parse value into patient
+			patient.DOB = DOB.getDate();
+			patient.diagnosis = diagnosis.getText();
+			patient.graphList.clear();
+			patient.setPhoneNumber(patient_dial.getText());
+			for(int i = 0; i < graphList.getModel().getSize(); i++) patient.graphList.add(graphList.getModel().getElementAt(i));
+			
+			//Activate event
+			EventListenerManager.current.activateEvent("PatientDeselectEvent", patient);
+		}
+		this.patient = p;
 		graphList.setModel(new DefaultComboBoxModel<GraphType>());
 		patient.getGraphs().forEach(g -> graphList.addItem(g));
 		graph.setGraph((GraphType) graphList.getSelectedItem());
@@ -158,49 +164,13 @@ public class PatientInfo extends JPanel{
 		System.out.println("Open patient record " +patient.getName());
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void savePatient() {
-		if(patient == null) return;
-		System.out.println("Save patient "+patient.getName());
-		//Parse value into patient
-		patient.DOB = DOB.getDate();
-		patient.diagnosis = diagnosis.getText();
-		patient.graphList.clear();
-		
-		if(patient.havePhoneNumber() && patient.getPhoneNumber() != patient_dial.getText().replace("_", "0")) {
-			auth_manager.getPatientManager().patient_data.delete(patient.getValidPhoneNumber(), patient.id);
-			patient.setPhoneNumber(patient_dial.getText());
-			auth_manager.getPatientManager().patient_data.insert(patient.getValidPhoneNumber(), patient.id);
-			auth_manager.getPatientManager().patient_data.save(PatientManager.patient_data_path);
-		}else
-		patient.setPhoneNumber(patient_dial.getText());
-		
-		for(int i = 0; i < graphList.getModel().getSize(); i++) patient.graphList.add(graphList.getModel().getElementAt(i));
-		
-		JSONObject obj = new JSONObject();
-		obj.put("Name", patient.getName());
-		obj.put("DOB", patient.DOB.toString());
-		obj.put("Diagnosis", patient.diagnosis);
-		obj.put("Phone", patient.getPhoneNumber());
-		JSONArray graph = new JSONArray();
-		for(int i = 0; i < graphList.getModel().getSize(); i++) {
-			GraphType g = graphList.getModel().getElementAt(i);
-			JSONObject d = new JSONObject();
-			d.put("Name",g.name);
-			d.put("Unit",g.unit);
-			String s = "";
-			for(GraphValue v : g.value) s+=v.value+"/"+v.date.toString()+",";
-			d.put("Value",s);
-			graph.add(d);
+	@Override
+	public void CreateGraphEvent(String graphName, String graphUnit,ConditionalFlag flag) {
+		for(int i = 0; i < graphList.getModel().getSize(); i++) if(graphList.getItemAt(i).name.equals(graphName)) {
+			flag.disable();
+			return;
 		}
-		obj.put("Graphs",graph);
-		JSONHelper.writeFile(auth_manager.getPatientManager().getPatientPath(patient.getID()), obj.toJSONString());
-	}
-	
-	public boolean createNewGraph(String graphName, String graphUnit) {
-		for(int i = 0; i < graphList.getModel().getSize(); i++) if(graphList.getItemAt(i).name.equals(graphName)) return false;
 		graphList.addItem(new GraphType(graphName, graphUnit));
-		return true;
 	}
 	
 	public Patient getPatient() {

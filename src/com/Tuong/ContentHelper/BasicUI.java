@@ -16,23 +16,31 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import com.Tuong.Authenication.AuthManager;
+import com.Tuong.EventListener.EventListener;
+import com.Tuong.EventListener.EventListenerManager;
 
-public class BasicUI extends JFrame {
+public class BasicUI extends JFrame implements EventListener{
 	private static final long serialVersionUID = -8323627314065426705L;
-	protected AuthManager auth_manager;
-	public BasicUI(String name, Dimension d, boolean exit_on_close, AuthManager auth_manager) {
+	
+	public BasicUI(String name, Dimension d, boolean exit_on_close) {
 		// Setting up the UI
 		super(name);
-		this.auth_manager = auth_manager;
+		EventListenerManager.current.activateEvent("UIOpenEvent", name);
+		Register();
 		setSize(d);
 		setupUI();
 		setIconImage(new ImageIcon("Data/logo_size_invert.png").getImage());
 		if(exit_on_close) setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setVisible(true);
+	}
+	
+	protected void close() {
+		setVisible(false);
+		UnRegister();
 	}
 	
 	protected void setupUI() {
@@ -76,6 +84,13 @@ public class BasicUI extends JFrame {
 		JLabel label = new JLabel(displayText);
 		cont.add(label);
 		return label;
+	}
+	
+	protected JPasswordField createPasswordField(Container cont) {
+		JPasswordField t = new RoundPasswordField();
+		t.setBackground(Color.decode("#f7f1e3"));
+		cont.add(t);
+		return t;
 	}
 	
 	protected JTextField createTextField(String displayText, Container cont) {

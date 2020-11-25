@@ -6,11 +6,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
 
 import com.Tuong.DateUtils.Date;
 
@@ -74,25 +74,27 @@ public class Graph extends JPanel implements MouseMotionListener {
 		super.paintComponent(g);
 		// Draw graph
 		// Draw background
-		g.setColor(Color.white);
-		g.fillRoundRect(0, 0, getSize().width - 1, getSize().height - 1, getRadius(), getRadius());
+
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
+		g2d.setColor(Color.white);
+		g2d.fillRoundRect(0, 0, getSize().width - 1, getSize().height - 1, getRadius(), getRadius());
 		if (graph == null)
 			return;
 		// Draw name
 		Font smallFont = new Font("Monospaced", Font.PLAIN, 15);
-		g.setFont(smallFont);
-		g.setColor(Color.black);
-		g.drawString(graph.name, getSize().width / 2 - g.getFontMetrics().stringWidth(graph.name) / 2, 20);
+		g2d.setFont(smallFont);
+		g2d.setColor(Color.black);
+		g2d.drawString(graph.name, getSize().width / 2 - g2d.getFontMetrics().stringWidth(graph.name) / 2, 20);
 		// Draw line
 		if (graph.value.size() <= 0)
 			return;
 		double max = getMaxValue();
-		g.setColor(Color.magenta);
+		g2d.setColor(Color.magenta);
 		int ymed = (int) (getSize().height / 2
 				- ((float) (median - graph.value.get(0).value) / (float) max) * (getSize().height / 2 * 3 / 5));
-		g.drawLine(0, ymed, getSize().width, ymed);
-		g.drawString(String.format("%.2f", median) + " " + graph.unit, 0, 10 + ymed);
-		Graphics2D g2d = (Graphics2D) g;
+		g2d.drawLine(0, ymed, getSize().width, ymed);
+		g2d.drawString(String.format("%.2f", median) + " " + graph.unit, 0, 10 + ymed);
 		g2d.setColor(Color.black);
 		g2d.setStroke(new BasicStroke(3));
 		int ix = offset_x, iy = getSize().height / 2;

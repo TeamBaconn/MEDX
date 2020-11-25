@@ -9,16 +9,22 @@ import com.Tuong.Authenication.AuthManager;
 import com.Tuong.ContentCreator.MedUI;
 import com.Tuong.ContentHelper.BasicUI;
 import com.Tuong.ContentHelper.ButtonAction;
+import com.Tuong.EventListener.ConditionalFlag;
+import com.Tuong.EventListener.EventListener;
+import com.Tuong.EventListener.EventListenerManager;
 
 public class GraphCreatorUI extends BasicUI{
 	private static final long serialVersionUID = 4972121492576858217L;
-	
-	private MedUI pUI;
-	public GraphCreatorUI(AuthManager pUI) {
-		super("Create new graph", new Dimension(300,100), false, null);
+	public GraphCreatorUI() {
+		super("Create new graph", new Dimension(300,100), false);
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-		this.pUI = pUI.getMedUI();
 	}
+	
+	@Override
+	public void UIOpenEvent(String name) {
+		if(name == getName()) close();
+	}
+	
 	@Override
 	public void setupUI() {
 		JTextField name = createTextField("Graph name", this);
@@ -26,9 +32,10 @@ public class GraphCreatorUI extends BasicUI{
 		createButton("Create graph", this, new ButtonAction() {
 			@Override
 			public boolean click() {
-				if(pUI.patientPanel.patientInfo.createNewGraph(name.getText(), unit.getText())) {
+				if(EventListenerManager.current.activateEvent
+						("CreateGraphEvent", name.getText(), unit.getText(), new ConditionalFlag())){
 					showDialog("Success", "You just created "+name.getText()+" graph", 1);
-					setVisible(false);
+					close();
 					return true;
 				}
 				showDialog("Fail", name.getText()+" exists", 0);

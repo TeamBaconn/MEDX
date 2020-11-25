@@ -7,16 +7,20 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.Tuong.EventListener.EventListener;
+import com.Tuong.EventListener.EventListenerManager;
 import com.Tuong.MedXMain.JSONHelper;
 import com.Tuong.Trie.Trie;
+import com.Tuong.Trie.TrieResult;
 
-public class MedicineManager {
+public class MedicineManager implements EventListener{
 
 	private final String med_trie_path = "Data/MedicineInfo.dat";
 	private final String hoat_chat_trie_path = "Data/HoatChatInfo.dat";
@@ -25,6 +29,7 @@ public class MedicineManager {
 	public Trie hoat_chat_trie;
 
 	public MedicineManager() {
+		Register();
 		med_trie = new Trie(med_trie_path);
 		hoat_chat_trie = new Trie(hoat_chat_trie_path);
 		//crawlData();
@@ -32,7 +37,8 @@ public class MedicineManager {
 
 	public final String med_path_save = "Medicine/";
 	
-	public void deleteMedicine(Medicine medicine) {
+	@Override
+	public void MedicineDeleteEvent(Medicine medicine) {
 		med_trie.delete(medicine.getName(), medicine.getID());
 		med_trie.save(med_trie_path);
 		hoat_chat_trie.delete(medicine.getHoatChat().split(" ")[0], medicine.getID());
@@ -40,6 +46,22 @@ public class MedicineManager {
 		new File(med_path_save+medicine.getName()+".json").delete();
 	}
 	
+	@Override
+	public void MedicineQueryRequest(String query) {
+		ArrayList<TrieResult> res = med_trie.getRecommend(query, true);
+		for (int i = 0; i < res.size(); i++) {
+			JSONObject object = (JSONObject) JSONHelper
+					.readFile(med_path_save + (res.get(i).index + 1) + ".json");
+			Medicine med = new Medicine(((Long) object.get("ID")).intValue(),
+					(String) object.get("tenThuoc"), "Unit",
+					((Long) object.get("soLuong")).intValue(), (String) object.get("hoatChat"),
+					(String) object.get("tuoiTho"), (String) object.get("giaKeKhai"), (String) object.get("nongDo"),
+					(String) object.get("taDuoc"));
+			EventListenerManager.current.activateEvent("MedicineLoadEvent", med);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
 	public void crawlData() {
 		Trie duplicate = new Trie();
 		long time = System.currentTimeMillis();

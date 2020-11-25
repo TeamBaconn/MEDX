@@ -13,7 +13,7 @@ public class Patient {
 	public ArrayList<Prescription> prescriptions;
 	public Date DOB;
 	public String diagnosis;
-	private String dial;
+	public String dial, old_dial;
 	public int id;
 	
 	public Patient(int id,String name, String dial, String diagnosis, Date DOB, ArrayList<GraphType> graphList) {
@@ -23,6 +23,7 @@ public class Patient {
 		this.DOB = DOB;
 		this.id = id;
 		this.dial = dial;
+		this.old_dial = dial;
 	}
 	
 	public boolean isVertified() {

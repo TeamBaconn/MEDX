@@ -3,7 +3,6 @@ package com.Tuong.ContentCreator;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -29,30 +28,26 @@ import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
-import com.Tuong.Authenication.AuthManager;
+import com.Tuong.ContentHelper.BasicPanel;
 import com.Tuong.ContentHelper.CustomButton;
 import com.Tuong.ContentHelper.FormCreator;
 import com.Tuong.ContentHelper.RoundTextfield;
+import com.Tuong.EventListener.EventListenerManager;
 import com.Tuong.MedXMain.MedXMain;
 import com.Tuong.Patient.Patient;
 import com.Tuong.Trie.TrieResult;
 
-public class PatientLookup extends JPanel {
+public class PatientLookup extends BasicPanel{
 
 	private JList<Patient> p_list;
 	private JTextField patient_name_search;
-	private AuthManager auth_manager;
-
-	public PatientLookup(AuthManager auth_manager, MedUI medUI) {
-		super();
-		this.auth_manager = auth_manager;
-		setBackground(Color.decode("#f7f1e3"));
+	private DefaultListModel<Patient> model;
+	public PatientLookup() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
+		model = new DefaultListModel<Patient>();
 		p_list = new JList<Patient>();
 		p_list.setCellRenderer(new PatientListRenderer());
 		JPanel patient_info = new JPanel(new GridBagLayout());
-		patient_info.setMaximumSize(new Dimension(medUI.getSize().width,medUI.getSize().height/10));
 		patient_info.setBackground(Color.decode("#f7f1e3"));
 		FormCreator form3 = new FormCreator(patient_info, 2, MedXMain.form_size_constant, 30);
 		JButton create = new CustomButton("Create");
@@ -95,14 +90,16 @@ public class PatientLookup extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// Load new patient
-				auth_manager.getMedUI().updatePatient(p_list.getSelectedValue().getID());
+				if( p_list.getSelectedValue() == null) return;
+				EventListenerManager.current.activateEvent("PatientSelectEvent", p_list.getSelectedValue());
 			}
 		});
 
 		create.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				auth_manager.getPatientManager().createPatientInfo(patient_name_search.getText());
+				if(patient_name_search.getText().length() <= 0) return;
+				EventListenerManager.current.activateEvent("PatientCreateEvent", patient_name_search.getText());
 				refreshList(patient_name_search.getText());
 			}
 		});
@@ -123,15 +120,15 @@ public class PatientLookup extends JPanel {
 			}
 		});
 	}
-
+	
 	public void refreshList(String text) {
-		patient_name_search.setText(text);
-		ArrayList<TrieResult> score = auth_manager.getPatientManager().patient_data.getRecommend(text,true);
-		DefaultListModel<Patient> model = new DefaultListModel<Patient>();
-		for (int i = 0; i < score.size(); i++) {
-			if (score.get(i).index + 1 > 0)
-				model.addElement(auth_manager.getPatientManager().loadPatient(score.get(i).index + 1));
-		}
+		model.clear();
+		EventListenerManager.current.activateEvent("PatientQueryRequest", patient_name_search.getText());
+	}
+	
+	@Override
+	public void PatientLoadEvent(Patient patient) {
+		model.addElement(patient);
 		p_list.setModel(model);
 	}
 

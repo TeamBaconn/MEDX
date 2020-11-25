@@ -5,16 +5,18 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 import com.Tuong.Authenication.AuthManager;
+import com.Tuong.EventListener.EventListener;
+import com.Tuong.EventListener.EventListenerManager;
+import com.Tuong.EventSystem.EventManager;
 import com.Tuong.Medicine.Medicine;
 
 public class MedicineListModel extends AbstractTableModel {
-	private final String[] column = { "Name", "Hoat chat", "Nong do", "Ta duoc", "Stock", "giaKeKhai","" };
+	private final String[] column = { "Name", "Hoat chat", "Nong do", "Ta duoc", "Stock", "","" };
 	public static final double[] size = {0.2,0.1,0.1,0.3,0.1,0.1,0.1};
 	private ArrayList<Medicine> medicines;
-	private AuthManager auth_manager;
-	public MedicineListModel(AuthManager auth_manager) {
+	
+	public MedicineListModel() {
 		medicines = new ArrayList<Medicine>();
-		this.auth_manager = auth_manager;
 	}
 
 	@Override
@@ -23,9 +25,13 @@ public class MedicineListModel extends AbstractTableModel {
 	}
 	
 	public void deleteMedicine(int row) {
-		auth_manager.getMedicineManager().deleteMedicine(medicines.get(row));
+		EventListenerManager.current.activateEvent("MedicineDeleteEvent", medicines.get(row));
 		medicines.remove(row);
 		fireTableDataChanged();
+	}
+	
+	public void addMedicine(int row) {
+		
 	}
 	
 	public void setUnit(int i, int rowIndex, int columnIndex) {
@@ -73,7 +79,7 @@ public class MedicineListModel extends AbstractTableModel {
 		case 4:
 			return medicines.get(rowIndex).getStock();
 		case 5:
-			return medicines.get(rowIndex).giaKeKhai();
+			return "Add";
 		case 6:
 			return "Delete";
 		}

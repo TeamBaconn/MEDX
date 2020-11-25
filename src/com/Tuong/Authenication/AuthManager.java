@@ -10,54 +10,26 @@ import org.json.simple.JSONObject;
 
 import com.Tuong.ContentCreator.AuthUI;
 import com.Tuong.ContentCreator.MedUI;
+import com.Tuong.EventListener.ConditionalFlag;
+import com.Tuong.EventListener.EventListener;
 import com.Tuong.MedXMain.JSONHelper;
 import com.Tuong.Medicine.MedicineManager;
 import com.Tuong.Patient.PatientManager;
 
-public class AuthManager {
-	private AuthUI authUI;
-	private MedUI medUI;
+public class AuthManager implements EventListener{
 	
 	private final String account_path = "Data/employees.json";
 	private AccountInfo account_info;
 	
-	private MedicineManager med_manager;
-	private PatientManager patient_manager;
-	
 	public AuthManager() {
-		this.patient_manager = new PatientManager();
-		this.med_manager = new MedicineManager();
-		this.authUI = new AuthUI(this);
+		Register();
 		loadAuthenication();
+		new AuthUI();
 	}
 	
-	public void openMenu() {
-		this.authUI.setVisible(false);
-		this.authUI = null;
-		openMedUI();
-	}
-	public void openMedUI() {
-		if(medUI != null) {
-			medUI.toFront();
-			medUI.requestFocus();
-			return;
-		}
-		this.medUI = new MedUI(this);
-	}
-	
-	public MedicineManager getMedicineManager() {
-		return this.med_manager;
-	}
-	
-	public PatientManager getPatientManager() {
-		return this.patient_manager;
-	}
-	
-	public MedUI getMedUI() {
-		return this.medUI;
-	}
-	
-	public boolean checkAuthenication(String username, String password) {
+	@Override
+	public void UserLoginEvent(String username,String password, ConditionalFlag flag) {
+		flag.disable();
 		JSONArray auth = (JSONArray) JSONHelper.readFile(account_path);
 		for (int i = 0; i < auth.size(); i++) 
 		{
@@ -67,21 +39,17 @@ public class AuthManager {
 			{
 				//Establish the connection
 				this.account_info = new AccountInfo(object);
-				return true;
+				flag.lock();
+				return;
 			}
 		}
-		return false;
 	}
 	
 	//Load accounts
+	@SuppressWarnings("unchecked")
 	private void loadAuthenication() {
 		File file = new File(account_path);
-		if (file.exists()) 
-		{
-			
-		}
-		else 
-		{
+		if (!file.exists()) {
 			//Create file with basic user input
 			System.out.println("Create accounts data");
 			JSONObject obj = new JSONObject();
@@ -97,7 +65,7 @@ public class AuthManager {
 			JSONHelper.writeFile(file.getPath(), array2.toJSONString());
 		}
 	}
-	public String getMd5(String input) 
+	public static String getMd5(String input) 
     { 
         try { 
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -112,5 +80,5 @@ public class AuthManager {
         catch (NoSuchAlgorithmException e) { 
             throw new RuntimeException(e); 
         } 
-    } 
+    }
 }

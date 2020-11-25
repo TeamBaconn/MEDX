@@ -7,11 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
-import com.Tuong.Authenication.AuthManager;
 import com.Tuong.ContentHelper.CustomButton;
-import com.Tuong.DateUtils.Date;
-import com.Tuong.EventSystem.EventManager;
-import com.Tuong.EventSystem.EventType;
 import com.Tuong.Medicine.Prescription;
 import com.Tuong.Patient.Patient;
 
@@ -21,7 +17,7 @@ public class EventLookup extends JPanel{
 	private JList<Prescription> _List;
 	private String _CurrentPath;
 	
-	public EventLookup(AuthManager auth_manager) {
+	public EventLookup() {
 		setPreferredSize(new Dimension(450,400));
 		
 		_List = new JList<Prescription>();	
@@ -34,7 +30,7 @@ public class EventLookup extends JPanel{
 		_AddEvent.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				EventManager.createEvent(EventType.NONE, auth_manager.getMedUI().patientPanel.patientInfo.getPatient().id, new Date());
+				//EventManager.createEvent(EventType.NONE, auth_manager.getMedUI().patientPanel.patientInfo.getPatient().id, new Date());
 			}
 		});
 	}
