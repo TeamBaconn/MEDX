@@ -7,14 +7,22 @@ import javax.swing.table.AbstractTableModel;
 import com.Tuong.Medicine.MedicinePrescription;
 
 public class MedicineModel extends AbstractTableModel{
-	private static final long serialVersionUID = -6427474011442687982L;
+	private static final long serialVersionUID = 1L;
 	final String[] columnNames = {
 			"No", 
 			"Name",
        		"Dosage",
             "Delete"};
-	public static final double[] size = {0.05,0.4,0.45,0.1};
+	public static final double[] size = {0.05,0.4,0.3,0.25};
 	private ArrayList<MedicinePrescription> med_list = new ArrayList<MedicinePrescription>();
+	
+	public ArrayList<MedicinePrescription> getPrescription(){
+		return med_list;
+	}
+	
+	public void setPrescription(ArrayList<MedicinePrescription> med_list) {
+		this.med_list = med_list;
+	}
 	
 	@Override
 	public boolean isCellEditable(int row, int column)
@@ -35,14 +43,27 @@ public class MedicineModel extends AbstractTableModel{
 	public int getColumnCount() {
 		return columnNames.length;
 	}
+	
 	public void add(MedicinePrescription pre) {
 		med_list.add(pre);
 		fireTableDataChanged();
 	}
+	
+	public void remove(int row) {
+		med_list.remove(row);
+		fireTableDataChanged();
+	}
+	
 	public void setUnit(int i,int rowIndex, int columnIndex) {
 		med_list.get(rowIndex).volume = i;
 		fireTableDataChanged();
 	}
+	
+	public void reset() {
+		med_list.clear();
+		fireTableDataChanged();
+	}
+	
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		MedicinePrescription med = med_list.get(rowIndex);
@@ -54,13 +75,7 @@ public class MedicineModel extends AbstractTableModel{
 		case 2:
 			return med.medicine.getName();
 		case 3:
-			return med.medicine.getName();
-		case 4:
-			return med.volume;
-		case 5:
-			return med.volume;
-		case 6:
-			return "200.000d";
+			return "Delete";
 		}
 		return null;
 	}

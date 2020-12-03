@@ -1,5 +1,6 @@
 package com.Tuong.EventListener;
 
+import com.Tuong.EventSystem.Event;
 import com.Tuong.Medicine.Medicine;
 import com.Tuong.Patient.Patient;
 
@@ -19,11 +20,13 @@ public interface EventListener {
 	
 	default void CreateGraphEvent(String graphName, String graphUnit, ConditionalFlag flag) {};
 	
+	default void PatientListRefreshEvent(String input) {};
+	
 	default void PatientDeselectEvent(Patient patient) {};
 	
 	default void PatientSelectEvent(Patient patient) {};
 	
-	default void PatientCreateEvent(String name) {};
+	default void PatientCreateEvent(Patient patient) {};
 	
 	default void PatientLoadRequest(int id) {};
 	
@@ -38,4 +41,14 @@ public interface EventListener {
 	default void MedicineLoadEvent(Medicine med) {};
 	
 	default void MedicineDeleteEvent(Medicine med) {};
+	
+	default void MedicineAddEvent(Medicine med) {};
+	
+	default void EventCreateEvent(Event event) {};
+	
+	default void EventLoadEvent(Patient patient, int index) {};
+	
+	default void EventUnloadEvent(Event event) {};
+	
+	default void PanelNavigateEvent(int panelID, ConditionalFlag flag) {};
 }

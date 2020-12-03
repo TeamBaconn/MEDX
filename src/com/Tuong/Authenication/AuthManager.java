@@ -12,6 +12,7 @@ import com.Tuong.ContentCreator.AuthUI;
 import com.Tuong.ContentCreator.MedUI;
 import com.Tuong.EventListener.ConditionalFlag;
 import com.Tuong.EventListener.EventListener;
+import com.Tuong.EventSystem.EventManager;
 import com.Tuong.MedXMain.JSONHelper;
 import com.Tuong.Medicine.MedicineManager;
 import com.Tuong.Patient.PatientManager;
@@ -40,6 +41,11 @@ public class AuthManager implements EventListener{
 				//Establish the connection
 				this.account_info = new AccountInfo(object);
 				flag.lock();
+				//Establish the Menu
+				new EventManager();
+				new PatientManager();
+				new MedicineManager();
+				new MedUI();
 				return;
 			}
 		}

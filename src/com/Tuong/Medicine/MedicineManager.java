@@ -43,25 +43,18 @@ public class MedicineManager implements EventListener{
 		med_trie.save(med_trie_path);
 		hoat_chat_trie.delete(medicine.getHoatChat().split(" ")[0], medicine.getID());
 		hoat_chat_trie.save(hoat_chat_trie_path);
-		new File(med_path_save+medicine.getName()+".json").delete();
+		new File(med_path_save+medicine.getName()+".med").delete();
 	}
 	
 	@Override
 	public void MedicineQueryRequest(String query) {
 		ArrayList<TrieResult> res = med_trie.getRecommend(query, true);
 		for (int i = 0; i < res.size(); i++) {
-			JSONObject object = (JSONObject) JSONHelper
-					.readFile(med_path_save + (res.get(i).index + 1) + ".json");
-			Medicine med = new Medicine(((Long) object.get("ID")).intValue(),
-					(String) object.get("tenThuoc"), "Unit",
-					((Long) object.get("soLuong")).intValue(), (String) object.get("hoatChat"),
-					(String) object.get("tuoiTho"), (String) object.get("giaKeKhai"), (String) object.get("nongDo"),
-					(String) object.get("taDuoc"));
+			Medicine med = (Medicine) JSONHelper.readObject(med_path_save + (res.get(i).index + 1)+".med");
 			EventListenerManager.current.activateEvent("MedicineLoadEvent", med);
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void crawlData() {
 		Trie duplicate = new Trie();
 		long time = System.currentTimeMillis();
@@ -87,17 +80,11 @@ public class MedicineManager implements EventListener{
 							med_trie.insert(((String)obj.get("tenThuoc")),id);
 							String[] hoatChat = ((String)obj.get("hoatChat")).split(" ");
 							if(hoatChat.length > 0) hoat_chat_trie.insert(hoatChat[0], id);
-							JSONObject fin = new JSONObject();
-							fin.put("ID", id);
-							fin.put("tenThuoc", obj.get("tenThuoc"));
-							fin.put("hoatChat", obj.get("hoatChat"));
-							fin.put("nongDo", obj.get("nongDo"));
-							fin.put("taDuoc", obj.get("taDuoc"));
-							fin.put("tuoiTho", obj.get("tuoiTho"));
-							fin.put("dongGoi", obj.get("dongGoi"));
-							fin.put("giaKeKhai", obj.get("giaKeKhai"));
-							fin.put("soLuong", 0);
-							JSONHelper.writeFile(med_path_save + id + ".json", fin.toJSONString());
+							Medicine med = new Medicine(id, (String)obj.get("tenThuoc"),
+									0, (String)obj.get("hoatChat"),
+								(String)obj.get("giaKeKhai"), (String)obj.get("nongDo"));
+							
+							JSONHelper.writeObject(med_path_save + id + ".med", med);
 						}
 					}else flag = -1;
 					in.close();

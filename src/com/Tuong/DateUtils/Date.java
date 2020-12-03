@@ -1,9 +1,12 @@
 package com.Tuong.DateUtils;
 
 
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class Date {
+public class Date implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	
 	public static final String[] day_name = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 	public static final String[] month_name = {"Jan","Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};

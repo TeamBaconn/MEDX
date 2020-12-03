@@ -6,7 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -40,6 +43,46 @@ public class JSONHelper {
 		}
 		return null;
 	}
+	
+	public static void writeObject(String path, Object obj) {
+		try
+        {
+            FileOutputStream fos = new FileOutputStream(path);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(obj);
+            oos.close();
+            fos.close();
+        } 
+        catch (IOException ioe) 
+        {
+            ioe.printStackTrace();
+        }
+	}
+	
+	public static Object readObject(String path) {
+		Object obj = null;
+		try
+        {
+            FileInputStream fis = new FileInputStream(path);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+ 
+            obj= ois.readObject();
+ 
+            ois.close();
+            fis.close();
+        } 
+		catch (IOException ioe) 
+        {
+            ioe.printStackTrace();
+        } 
+        catch (ClassNotFoundException c) 
+        {
+            System.out.println("Class not found");
+            c.printStackTrace();
+        }
+		return obj;
+	}
+	
 	public static int convertToInt(Object obj) {
 		return Math.toIntExact((long) obj);
 	}

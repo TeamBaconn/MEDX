@@ -7,12 +7,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import com.Tuong.Table.ButtonEditor;
+import com.Tuong.Table.ButtonRenderer;
 import com.Tuong.Table.MedicineModel;
 
 public class MedicationTable extends JPanel{
 	private static final long serialVersionUID = -1308483990338641187L;
 	
-	public MedicineModel model;
+	private MedicineModel model;
 	
 	public MedicationTable() {
 		setLayout(new BoxLayout(this, 0));
@@ -23,6 +25,9 @@ public class MedicationTable extends JPanel{
         table.setFillsViewportHeight(true);
         table.setRowHeight(100);
  
+		table.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+		table.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(model, "remove"));
+        
         //Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
  
@@ -35,5 +40,8 @@ public class MedicationTable extends JPanel{
         add(scrollPane);
 	}
 	
+	public MedicineModel getModel() {
+		return this.model;
+	}
 }
 

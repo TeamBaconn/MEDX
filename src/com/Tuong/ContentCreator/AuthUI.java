@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 import com.Tuong.Authenication.AuthManager;
 import com.Tuong.ContentHelper.BasicUI;
 import com.Tuong.ContentHelper.ButtonAction;
-import com.Tuong.ContentHelper.RoundPasswordField;
 import com.Tuong.EventListener.ConditionalFlag;
 import com.Tuong.EventListener.EventListenerManager;
 
@@ -49,7 +48,6 @@ public class AuthUI extends BasicUI {
 				}
 				//Login successful
 				close();
-				new MedUI();
 				return true;
 			}
 		});

@@ -11,8 +11,8 @@ import com.Tuong.EventSystem.EventManager;
 import com.Tuong.Medicine.Medicine;
 
 public class MedicineListModel extends AbstractTableModel {
-	private final String[] column = { "Name", "Hoat chat", "Nong do", "Ta duoc", "Stock", "","" };
-	public static final double[] size = {0.2,0.1,0.1,0.3,0.1,0.1,0.1};
+	private final String[] column = { "Name", "Hoat chat", "Nong do", "Stock", "","" };
+	public static final double[] size = {0.2,0.4,0.1,0.1,0.1,0.1};
 	private ArrayList<Medicine> medicines;
 	
 	public MedicineListModel() {
@@ -31,7 +31,7 @@ public class MedicineListModel extends AbstractTableModel {
 	}
 	
 	public void addMedicine(int row) {
-		
+		EventListenerManager.current.activateEvent("MedicineAddEvent", medicines.get(row));
 	}
 	
 	public void setUnit(int i, int rowIndex, int columnIndex) {
@@ -75,12 +75,10 @@ public class MedicineListModel extends AbstractTableModel {
 		case 2:
 			return medicines.get(rowIndex).getNongDo();
 		case 3:
-			return medicines.get(rowIndex).getTaDuoc();
-		case 4:
 			return medicines.get(rowIndex).getStock();
-		case 5:
+		case 4:
 			return "Add";
-		case 6:
+		case 5:
 			return "Delete";
 		}
 		return null;

@@ -10,22 +10,26 @@ import java.util.ArrayList;
 
 import javax.swing.JToggleButton;
 
+import com.Tuong.EventListener.ConditionalFlag;
+import com.Tuong.EventListener.EventListener;
+import com.Tuong.EventListener.EventListenerManager;
 import com.Tuong.MedXMain.MedXMain;
 
-public class MenuController {
+public class MenuController implements EventListener{
 	private Container cont;
 	private ArrayList<JToggleButton> list;
 	private ArrayList<Boolean> canOpen;
 	private Container card;
 	private boolean toggle = false;
 	public MenuController(Container cont, Container card) {
+		Register();
 		this.cont = cont;
 		this.list = new ArrayList<JToggleButton>();
 		this.canOpen = new ArrayList<Boolean>();
 		this.card = card;
 	}
 	
-	public JToggleButton createToggle(String name, int GUIOpen, boolean b, ButtonAction action) {
+	public JToggleButton createToggle(String name, int GUIOpen, boolean b) {
 		JToggleButton button = new JToggleButton(name);
 		button.setBackground(Color.decode("#33d9b2"));
 		button.setForeground(Color.decode("#f7f1e3"));
@@ -42,8 +46,9 @@ public class MenuController {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(action != null && !action.click()) return;
-				setSelectedIndex(GUIOpen);
+				if(!EventListenerManager.current
+						.activateEvent("PanelNavigateEvent", GUIOpen, new ConditionalFlag()))
+				list.get(GUIOpen).setSelected(false);
 			}
 		});
 		list.add(button);
@@ -52,18 +57,17 @@ public class MenuController {
 		return button;
 	}
 	public void setEnabledAt(int i, boolean b) {
-		i--;
 		canOpen.set(i,b);
 	}
-
-	public void setSelectedIndex(int i) {
-		i--;
-		if(!canOpen.get(i)) {
-			list.get(i).setSelected(false);
+	
+	@Override
+	public void PanelNavigateEvent(int panelID, ConditionalFlag flag) {
+		if(!canOpen.get(panelID)) {
+			flag.disable();
 			return;
 		}
 		list.forEach((t) -> t.setSelected(false));
-		list.get(i).setSelected(true);
-		((CardLayout)card.getLayout()).show(card, ""+(i+1));
+		list.get(panelID).setSelected(true);
+		((CardLayout)card.getLayout()).show(card, ""+(panelID));
 	}
 }

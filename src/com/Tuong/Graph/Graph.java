@@ -49,6 +49,7 @@ public class Graph extends JPanel implements MouseMotionListener {
 	}
 
 	public void addValue(Date date, double k) {
+		if(graph == null) return;
 		GraphValue v = new GraphValue(date, k);
 		for (int i = 0; i < graph.value.size(); i++) {
 			System.out.println(graph.value.get(i).date + " " + Date.compare(date, graph.value.get(i).date));

@@ -12,12 +12,11 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import com.Tuong.ContentHelper.BasicUI;
-import com.Tuong.ContentHelper.ButtonAction;
 import com.Tuong.ContentHelper.MenuController;
-import com.Tuong.EventSystem.EventManager;
-import com.Tuong.Medicine.MedicineManager;
+import com.Tuong.EventListener.ConditionalFlag;
+import com.Tuong.EventListener.EventListenerManager;
 import com.Tuong.Patient.Patient;
-import com.Tuong.Patient.PatientManager;
+import com.Tuong.Table.MedicineList;
 
 public class MedUI extends BasicUI{
 	
@@ -27,9 +26,7 @@ public class MedUI extends BasicUI{
 	
 	public MedUI() {
 		super("Medicine Manager", Toolkit.getDefaultToolkit().getScreenSize(),true);
-		new EventManager();
-		new PatientManager();
-		new MedicineManager();
+		pack();
 	}
 
 	MenuController menucont;
@@ -52,20 +49,14 @@ public class MedUI extends BasicUI{
 		patientPanel = new PatientPanel();
 		listMed = new MedicineList();
 		
-		card.add(patient_lookup,"1");
-		card.add(patientPanel,"2");
-		card.add(listMed,"3");
+		card.add(patient_lookup,"0");
+		card.add(patientPanel,"1");
+		card.add(listMed,"2");
 		
 		menucont = new MenuController(menu, card);
-		menucont.createToggle("Patient lookup", 1, true, null);
-		menucont.createToggle("Patient info", 2, false, new ButtonAction() {
-			@Override
-			public boolean click() {
-				
-				return true;
-			}
-		});
-		menucont.createToggle("Medicine lookup", 3, true, null);
+		menucont.createToggle("Patient lookup", 0, true);
+		menucont.createToggle("Patient info", 1, false);
+		menucont.createToggle("Medicine lookup", 2, true);
 		
 		add(menu);
 		add(card);
@@ -73,13 +64,18 @@ public class MedUI extends BasicUI{
 	
 	@Override
 	public void PatientSelectEvent(Patient patient) {
-		menucont.setEnabledAt(2, true);
-		menucont.setSelectedIndex(2);
+		menucont.setEnabledAt(1, true);
+		EventListenerManager.current.activateEvent("PanelNavigateEvent", 1, new ConditionalFlag());
+	}
+	
+	@Override
+	public void PanelNavigateEvent(int panelID, ConditionalFlag flag) {
+		if(panelID != 0) return;
+		menucont.setEnabledAt(1, false);
 	}
 	
 	private void removePatient() {
-		patient_lookup.refreshList("");
-		menucont.setEnabledAt(2, false);
-		menucont.setSelectedIndex(1);
+		menucont.setEnabledAt(1, false);
+		EventListenerManager.current.activateEvent("PanelNavigateEvent", 0, new ConditionalFlag());
 	}
 }

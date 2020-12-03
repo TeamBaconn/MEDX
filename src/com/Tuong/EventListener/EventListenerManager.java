@@ -3,6 +3,8 @@ package com.Tuong.EventListener;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import com.Tuong.EventSystem.Event;
+
 public class EventListenerManager {
 	public static EventListenerManager current;
 	
@@ -23,10 +25,14 @@ public class EventListenerManager {
 					par[i] = (Class<?>) args[i].getClass().getField("TYPE").get(null);
 				} catch (Exception e1) {
 					par[i] = args[i].getClass();
+					if(par[i].getSuperclass() == Event.class) par[i] = Event.class;
 				}
 			}
 			Method f = EventListener.class.getMethod(name, par);
-				for(EventListener e :listeners) f.invoke(e, args);
+			
+			//Cloning the array to avoid concurrent modification exception
+			ArrayList<EventListener> list = new ArrayList<EventListener>(listeners);
+			for(EventListener e :list) f.invoke(e, args);
 		} catch (Exception e) { 
 			e.printStackTrace();
 			return false;

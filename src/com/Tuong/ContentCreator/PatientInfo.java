@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.EventHandler;
 import java.text.ParseException;
 
 import javax.swing.BoxLayout;
@@ -17,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 
-import com.Tuong.Authenication.AuthManager;
 import com.Tuong.ContentHelper.BasicPanel;
 import com.Tuong.ContentHelper.CustomButton;
 import com.Tuong.ContentHelper.FormCreator;
@@ -73,38 +73,37 @@ public class PatientInfo extends BasicPanel{
 		patientForm.createLabel("Graph");
 		graphList = new JComboBox<GraphType>();
 		patientForm.addComponent(graphList);
-		patientForm.addComponent(null);
-		JButton newGraph = new CustomButton("Create new graph");
-		patientForm.addComponent(newGraph);
+		
+		JButton newGraph = new CustomButton("New graph");
 		patientForm.setSize(n);
 		graph = new Graph((GraphType)graphList.getSelectedItem());
 		JPanel bGraph = new JPanel();
 		bGraph.setLayout(new BoxLayout(bGraph, BoxLayout.Y_AXIS));
-		JPanel adjust = new JPanel(new GridLayout(2,2));
-		JButton up = new CustomButton("Up");
-		JButton down = new CustomButton("Down");
-		adjust.add(up);
-		adjust.add(down);
+		JPanel adjust = new JPanel(new GridLayout(4,1));
+		
+		adjust.setBackground(getBackground());
+
 		JTextField value = new RoundTextfield();
 		JButton insert = new CustomButton(">>");
 		DateUI dP = new DateUI(100);
-		dP.setMaximumSize(new Dimension(100,30));
+		dP.setMaximumSize(new Dimension(n[0],35));
+		dP.setMinimumSize(new Dimension(n[0],35));
+		dP.setPreferredSize(new Dimension(n[0],35));
+		adjust.add(newGraph);
 		adjust.add(value);
 		adjust.add(insert);
-		
+		adjust.add(dP);
 		bGraph.add(adjust);
-		bGraph.add(dP);
 		patientForm.addComponent(bGraph);
 		bGraph.setPreferredSize(new Dimension(n[0],150));
-		bGraph.setMinimumSize(new Dimension(n[0],150));
 
 		patientForm.addComponent(graph);
 		graph.setPreferredSize(new Dimension(n[1],150));
-		graph.setMinimumSize(new Dimension(n[1],150));
 		
 		insert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(value.getText().length() == 0) return;
 				graph.addValue(dP.getDate(),Double.parseDouble(value.getText()));
 			}
 		});
@@ -120,32 +119,22 @@ public class PatientInfo extends BasicPanel{
 				graph.setGraph((GraphType) graphList.getSelectedItem());
 			}
 		});
-		up.addActionListener(new ActionListener() {
+		/*up.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				/*
+				
 				auth_manager.getPatientManager().delete(patient);
 				patient = null;
 				auth_manager.getMedUI().removePatient();
-				*/
+				
 			}
-		});
+		});*/
 	}
 	
 	@Override
 	public void PatientSelectEvent(Patient p) {
 		if(p == null) return;
-		if(patient != null) {
-			//Parse value into patient
-			patient.DOB = DOB.getDate();
-			patient.diagnosis = diagnosis.getText();
-			patient.graphList.clear();
-			patient.setPhoneNumber(patient_dial.getText());
-			for(int i = 0; i < graphList.getModel().getSize(); i++) patient.graphList.add(graphList.getModel().getElementAt(i));
-			
-			//Activate event
-			EventListenerManager.current.activateEvent("PatientDeselectEvent", patient);
-		}
+		if(patient != null) savePatient();
 		this.patient = p;
 		graphList.setModel(new DefaultComboBoxModel<GraphType>());
 		patient.getGraphs().forEach(g -> graphList.addItem(g));
@@ -172,8 +161,28 @@ public class PatientInfo extends BasicPanel{
 		}
 		graphList.addItem(new GraphType(graphName, graphUnit));
 	}
+
+	@Override
+	public void PanelNavigateEvent(int panelID, ConditionalFlag flag) {
+		if(panelID!=0 || patient == null) return;
+		savePatient();
+		EventListenerManager.current.activateEvent("PatientListRefreshEvent", "");
+	}
 	
 	public Patient getPatient() {
 		return this.patient;
+	}
+	
+	private void savePatient() {
+		//Parse value into patient
+		patient.DOB = DOB.getDate();
+		patient.diagnosis = diagnosis.getText();
+		patient.graphList.clear();
+		patient.setPhoneNumber(patient_dial.getText());
+		for(int i = 0; i < graphList.getModel().getSize(); i++) patient.graphList.add(graphList.getModel().getElementAt(i));
+		
+		//Activate event
+		EventListenerManager.current.activateEvent("PatientDeselectEvent", this.patient);
+		patient = null;
 	}
 }

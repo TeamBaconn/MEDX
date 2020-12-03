@@ -1,24 +1,23 @@
 package com.Tuong.Medicine;
 
-public class Medicine {
-	private String name,unit;
+import java.io.Serializable;
+
+public class Medicine implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	private String name;
 	public int stock;
-	private String taDuoc;
 	private String nongDo;
-	private String tuoiTho;
 	private String giaKeKhai;
 	private String hoatChat;
 	private int id;
-	public Medicine(int id, String name, String unit, int stock, String hoatChat, String tuoiTho, String giaKeKhai, String nongDo, String taDuoc) {
+	public Medicine(int id, String name, int stock, String hoatChat, String giaKeKhai, String nongDo) {
 		this.id = id;
 		this.name = name;
-		this.unit = unit;
 		this.stock = stock;
 		this.hoatChat = hoatChat;
-		this.tuoiTho = tuoiTho;
 		this.giaKeKhai = giaKeKhai;
 		this.nongDo = nongDo;
-		this.taDuoc = taDuoc;
 	}
 	
 	public int getID() {
@@ -41,21 +40,13 @@ public class Medicine {
 	public String getNongDo() {
 		return this.nongDo != null ? this.nongDo : "NaN";
 	}
-	
-	public String getUnit() {
-		return this.unit;
-	}
-	
+
 	public String getName() {
 		return this.name;
 	}
 	
 	public int getStock() {
 		return stock;
-	}
-	
-	public String getTaDuoc() {
-		return taDuoc;
 	}
 	
 	public void setStock(int stock) {

@@ -19,25 +19,11 @@ public class EventManager {
 	
 	public EventManager() {
 		current = this;
-		loadSetting();
 	}
 	
-	private void loadSetting() {
-		if(!new File(prescription_data_path).exists()) {
-			System.out.println("Can't find setting file, creating new setting file for event manager");
-			size = 0;
-			saveSetting();
-		}
-		JSONObject o = (JSONObject) JSONHelper.readFile(prescription_data_path);
-		size = JSONHelper.convertToInt(o.get("Size"));
-		System.out.println("Loading event manager setting "+size);
-	}
 	
 	private void saveSetting() {
 		System.out.println("Saving event manager setting");
-		JSONObject o = new JSONObject();
-		o.put("Size", size);
-		JSONHelper.writeFile(prescription_data_path, o.toJSONString());
 	}
 	
 	public static void createEvent(EventType type, int id, Date date) {

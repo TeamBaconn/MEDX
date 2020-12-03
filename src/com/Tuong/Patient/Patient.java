@@ -1,29 +1,33 @@
 package com.Tuong.Patient;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.Tuong.DateUtils.Date;
+import com.Tuong.EventSystem.Event;
 import com.Tuong.Graph.GraphType;
-import com.Tuong.Medicine.Prescription;
 
-public class Patient {
+public class Patient implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	
 	public String name;
 	public ArrayList<GraphType> graphList;
-	public ArrayList<Prescription> prescriptions;
+	
+	public ArrayList<Event> eventList;
+	
 	public Date DOB;
 	public String diagnosis;
-	public String dial, old_dial;
+	public String dial;
+	public transient String old_dial;
 	public int id;
 	
-	public Patient(int id,String name, String dial, String diagnosis, Date DOB, ArrayList<GraphType> graphList) {
+	public Patient(String name) {
 		this.name = name;
-		this.graphList = graphList;
-		this.diagnosis = diagnosis;
-		this.DOB = DOB;
-		this.id = id;
-		this.dial = dial;
-		this.old_dial = dial;
+		this.graphList = new ArrayList<GraphType>();
+		this.eventList = new ArrayList<Event>();
+		this.old_dial = "000-000-0000";
+		this.dial = "000-000-0000";
 	}
 	
 	public boolean isVertified() {
@@ -34,8 +38,8 @@ public class Patient {
 		this.dial = s.replace("_", "0");
 	}
 	
-	public String getValidPhoneNumber() {
-		return this.dial != null ? this.dial.replace("-", "") : "0000000000";
+	public String getValidPhoneNumber(String s) {
+		return s != null ? s.replace("-", "") : "0000000000";
 	}
 	
 	public String getPhoneNumber() {

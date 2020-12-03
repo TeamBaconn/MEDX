@@ -11,10 +11,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -35,7 +34,6 @@ import com.Tuong.ContentHelper.RoundTextfield;
 import com.Tuong.EventListener.EventListenerManager;
 import com.Tuong.MedXMain.MedXMain;
 import com.Tuong.Patient.Patient;
-import com.Tuong.Trie.TrieResult;
 
 public class PatientLookup extends BasicPanel{
 
@@ -58,7 +56,8 @@ public class PatientLookup extends BasicPanel{
 		form3.addComponent(null);
 		form3.addComponent(create);
 
-		refreshList("");
+
+		EventListenerManager.current.activateEvent("PatientListRefreshEvent","");
 		JScrollPane scrollPne = new JScrollPane(p_list);
 		scrollPne.setPreferredSize(new Dimension(400, 200));
 		scrollPne.setMaximumSize(new Dimension(400, 200));
@@ -66,31 +65,11 @@ public class PatientLookup extends BasicPanel{
 		add(patient_info);
 
 		p_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		p_list.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-
-			}
-
+		p_list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// Load new patient
-				if( p_list.getSelectedValue() == null) return;
+				if( p_list.getSelectedValue() == null || e.getClickCount() < 2) return;
 				EventListenerManager.current.activateEvent("PatientSelectEvent", p_list.getSelectedValue());
 			}
 		});
@@ -99,8 +78,10 @@ public class PatientLookup extends BasicPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(patient_name_search.getText().length() <= 0) return;
-				EventListenerManager.current.activateEvent("PatientCreateEvent", patient_name_search.getText());
-				refreshList(patient_name_search.getText());
+				Patient patient = new Patient(patient_name_search.getText());
+				EventListenerManager.current.activateEvent("PatientCreateEvent", patient);
+				EventListenerManager.current.activateEvent("PatientSelectEvent", patient);
+				EventListenerManager.current.activateEvent("PatientListRefreshEvent",patient_name_search.getText());
 			}
 		});
 
@@ -111,7 +92,7 @@ public class PatientLookup extends BasicPanel{
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				refreshList(patient_name_search.getText());
+				EventListenerManager.current.activateEvent("PatientListRefreshEvent",patient_name_search.getText());
 			}
 
 			@Override
@@ -121,7 +102,9 @@ public class PatientLookup extends BasicPanel{
 		});
 	}
 	
-	public void refreshList(String text) {
+	@Override
+	public void PatientListRefreshEvent(String text) {
+		patient_name_search.setText(text);
 		model.clear();
 		EventListenerManager.current.activateEvent("PatientQueryRequest", patient_name_search.getText());
 	}
