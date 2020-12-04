@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -29,11 +30,11 @@ public class MedUI extends BasicUI{
 		pack();
 	}
 
-	MenuController menucont;
+	private MenuController menucont;
 	@Override
 	public void setupUI() {
 		UIManager.put("ToggleButton.select", Color.decode("#218c74"));
-		setLayout(new BoxLayout(getContentPane(), BoxLayout.LINE_AXIS));
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		setForeground(Color.decode("#f7f1e3"));
 		JPanel menu = new JPanel();
 		menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
@@ -53,10 +54,16 @@ public class MedUI extends BasicUI{
 		card.add(patientPanel,"1");
 		card.add(listMed,"2");
 		
-		menucont = new MenuController(menu, card);
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.setBackground(Color.decode("#33d9b2"));
+		panel.add(Box.createHorizontalGlue());
+		menucont = new MenuController(panel, card);
 		menucont.createToggle("Patient lookup", 0, true);
 		menucont.createToggle("Patient info", 1, false);
 		menucont.createToggle("Medicine lookup", 2, true);
+		panel.add(Box.createVerticalGlue());
+		menu.add(panel);
 		
 		add(menu);
 		add(card);

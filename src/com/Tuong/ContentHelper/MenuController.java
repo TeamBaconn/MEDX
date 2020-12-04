@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 
 import com.Tuong.EventListener.ConditionalFlag;
 import com.Tuong.EventListener.EventListener;
@@ -31,6 +32,9 @@ public class MenuController implements EventListener{
 	
 	public JToggleButton createToggle(String name, int GUIOpen, boolean b) {
 		JToggleButton button = new JToggleButton(name);
+		button.setPreferredSize(new Dimension(200,30));
+		button.setMaximumSize(new Dimension(200,30));
+		button.setHorizontalAlignment(SwingConstants.LEFT);
 		button.setBackground(Color.decode("#33d9b2"));
 		button.setForeground(Color.decode("#f7f1e3"));
 		button.setBorderPainted(false);
