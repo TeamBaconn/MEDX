@@ -3,14 +3,16 @@ package com.Tuong.ContentCreator;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.EventHandler;
 import java.text.ParseException;
 
+import javax.swing.AbstractListModel;
 import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -38,6 +40,9 @@ public class PatientInfo extends BasicPanel{
 	private JTextField diagnosis;
 	private JComboBox<GraphType> graphList;
 	private Graph graph;
+	
+	private GraphModel model;
+	
 	private Patient patient;
 	
 	private JFormattedTextField patient_dial;
@@ -72,28 +77,34 @@ public class PatientInfo extends BasicPanel{
 		
 		patientForm.createLabel("Graph");
 		graphList = new JComboBox<GraphType>();
+		model = new GraphModel();
+		graphList.setModel(model);
 		patientForm.addComponent(graphList);
 		
-		JButton newGraph = new CustomButton("New graph");
-		patientForm.setSize(n);
+		JButton newGraph = new CustomButton(new ImageIcon("Data/new_icon.png"));
+		JButton deleteGraph = new CustomButton(new ImageIcon("Data/trash_icon.png"));
+		
 		graph = new Graph((GraphType)graphList.getSelectedItem());
 		JPanel bGraph = new JPanel();
 		bGraph.setLayout(new BoxLayout(bGraph, BoxLayout.Y_AXIS));
-		JPanel adjust = new JPanel(new GridLayout(4,1));
 		
-		adjust.setBackground(getBackground());
 
 		JTextField value = new RoundTextfield();
 		JButton insert = new CustomButton(">>");
 		DateUI dP = new DateUI(100);
-		dP.setMaximumSize(new Dimension(n[0],35));
-		dP.setMinimumSize(new Dimension(n[0],35));
-		dP.setPreferredSize(new Dimension(n[0],35));
-		adjust.add(newGraph);
-		adjust.add(value);
-		adjust.add(insert);
-		adjust.add(dP);
+		JPanel adjust = new JPanel(new GridBagLayout());
+		adjust.setBackground(getBackground());
+		int[] s = {50, 50};
+		FormCreator form = new FormCreator(adjust, 2, s, 50);
+		form.getGridBag().insets = new Insets(0, 0, 0, 0);
+		form.getGridBag().ipadx = 5;
+		form.addComponent(newGraph);
+		form.addComponent(deleteGraph);
+		form.addComponent(value);
+		form.addComponent(insert);
 		bGraph.add(adjust);
+		bGraph.add(dP);
+		
 		patientForm.addComponent(bGraph);
 		bGraph.setPreferredSize(new Dimension(n[0],150));
 
@@ -111,6 +122,14 @@ public class PatientInfo extends BasicPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new GraphCreatorUI();
+			}
+		});
+		deleteGraph.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				patient.graphList.remove(model.getSelectedItem());
+				model.setSelectedItem(model.getElementAt(0));
+				graph.setGraph((GraphType) graphList.getSelectedItem());
 			}
 		});
 		graphList.addActionListener(new ActionListener() {
@@ -136,9 +155,10 @@ public class PatientInfo extends BasicPanel{
 		if(p == null) return;
 		if(patient != null) savePatient();
 		this.patient = p;
-		graphList.setModel(new DefaultComboBoxModel<GraphType>());
-		patient.getGraphs().forEach(g -> graphList.addItem(g));
-		graph.setGraph((GraphType) graphList.getSelectedItem());
+		
+		model.setPatient(p);
+		
+		graph.setGraph((GraphType) model.getSelectedItem());
 
 		patient_name.setText(patient.getName());
 		diagnosis.setText(patient.getDiagnosis());
@@ -159,7 +179,10 @@ public class PatientInfo extends BasicPanel{
 			flag.disable();
 			return;
 		}
-		graphList.addItem(new GraphType(graphName, graphUnit));
+		patient.graphList.add(new GraphType(graphName, graphUnit));
+		
+		model.setSelectedItem(patient.graphList.get(patient.graphList.size()-1));
+		graph.setGraph((GraphType) graphList.getSelectedItem());
 	}
 
 	@Override
@@ -177,12 +200,43 @@ public class PatientInfo extends BasicPanel{
 		//Parse value into patient
 		patient.DOB = DOB.getDate();
 		patient.diagnosis = diagnosis.getText();
-		patient.graphList.clear();
 		patient.setPhoneNumber(patient_dial.getText());
-		for(int i = 0; i < graphList.getModel().getSize(); i++) patient.graphList.add(graphList.getModel().getElementAt(i));
 		
 		//Activate event
 		EventListenerManager.current.activateEvent("PatientDeselectEvent", this.patient);
 		patient = null;
+	}
+}
+
+class GraphModel extends AbstractListModel implements ComboBoxModel{
+	private Patient patient;
+	
+	private GraphType select;
+	@Override
+	public int getSize() {
+		if(patient == null) return 0;
+		return patient.graphList.size();
+	}
+
+	@Override
+	public Object getElementAt(int index) {
+		if(patient == null) return null;
+		return patient.graphList.size() > 0?patient.graphList.get(index):null;
+	}
+
+	@Override
+	public void setSelectedItem(Object anItem) {
+		select = (GraphType)anItem;
+		fireContentsChanged(this, 0, 0);
+	}
+
+	@Override
+	public Object getSelectedItem() {
+		return select;
+	}
+	
+	public void setPatient(Patient p) {
+		this.patient = p;
+		if(patient.graphList.size() > 0) select = patient.graphList.get(0);
 	}
 }

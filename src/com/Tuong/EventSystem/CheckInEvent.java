@@ -8,7 +8,8 @@ public class CheckInEvent extends Event{
 	private Date checkInDate;
 	private String description;
 	
-	public CheckInEvent(Date checkInDate, String description) {
+	public CheckInEvent(Date checkInDate, String description, Patient patient) {
+		super(patient);
 		this.checkInDate = checkInDate;
 		this.description = description;
 	}

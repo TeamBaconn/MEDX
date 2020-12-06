@@ -26,6 +26,9 @@ public class FormCreator {
 		con.ipadx = 10;
 		con.insets = new Insets(0, 10, 10, 10);
 	}
+	public GridBagConstraints getGridBag() {
+		return con;
+	}
 	public void setSize(int[] n) {
 		this.compsLength = n;
 	}

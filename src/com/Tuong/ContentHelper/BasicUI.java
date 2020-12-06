@@ -32,7 +32,7 @@ public class BasicUI extends JFrame implements EventListener{
 		Register();
 		setSize(d);
 		setupUI();
-		setIconImage(new ImageIcon("Data/logo_size_invert.png").getImage());
+		setIconImage(new ImageIcon("Data/logo_white.png").getImage());
 		if(exit_on_close) setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setVisible(true);

@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class CustomButton extends JButton {
@@ -15,6 +16,13 @@ public class CustomButton extends JButton {
 
     public CustomButton(String name) {
     	super(name);
+        setOpaque(false);
+        setBorder(null);
+        setRadius(20);
+    }
+    
+    public CustomButton(ImageIcon icon) {
+    	super(icon);
         setOpaque(false);
         setBorder(null);
         setRadius(20);
@@ -35,7 +43,11 @@ public class CustomButton extends JButton {
         g2.setColor(Color.white);
         FontMetrics fm = g2.getFontMetrics();
         int x = (getWidth() - fm.stringWidth(getText())) / 2;
-        int y = (getHeight() - fm.getHeight()) / 2  + fm.getAscent();;
+        int y = (getHeight() - fm.getHeight()) / 2  + fm.getAscent();
+        if(getIcon() != null) {
+        	getIcon().paintIcon(this, g2, (getWidth()-getIcon().getIconWidth())/2,
+        			(getHeight()-getIcon().getIconHeight())/2);
+        }
         g2.drawString(getText(), x, y);
     }
 

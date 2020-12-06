@@ -36,8 +36,8 @@ public class EventCustomizer extends BasicPanel {
 	public EventCustomizer() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-		prescription = new PrescriptionPane();
-		rexam = new ReExamination();
+		prescription = new PrescriptionPane(this);
+		rexam = new ReExamination(this);
 
 		JPanel customizer = new JPanel(new CardLayout());
 		customizer.add(prescription, prescription.toString());
@@ -120,13 +120,17 @@ public class EventCustomizer extends BasicPanel {
 				return;
 			}
 	}
+	public Patient getPatient() {
+		return this.patient;
+	}
 }
 
 class ReExamination extends EventType {
 	private DateUI retakeDate;
 	private JTextField description;
 
-	public ReExamination() {
+	public ReExamination(EventCustomizer custom) {
+		super(custom);
 		setLayout(new GridBagLayout());
 		int[] n = { 100, 300 };
 		FormCreator form = new FormCreator(this, 2, n, 30);
@@ -151,7 +155,7 @@ class ReExamination extends EventType {
 
 	@Override
 	public Event getEvent() {
-		return new CheckInEvent(new Date(retakeDate.getDate()), description.getText());
+		return new CheckInEvent(new Date(retakeDate.getDate()), description.getText(),custom.getPatient());
 	}
 
 	@Override
@@ -167,8 +171,8 @@ class PrescriptionPane extends EventType {
 	private MedicationTable table;
 	private DateUI start, end;
 
-	public PrescriptionPane() {
-		super();
+	public PrescriptionPane(EventCustomizer custom) {
+		super(custom);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		add(table = new MedicationTable());
@@ -183,8 +187,17 @@ class PrescriptionPane extends EventType {
 		form.createLabel("End date");
 		end = new DateUI(n[1]);
 		form.addComponent(end);
-
+		
+		CustomButton print = new CustomButton("Print");
+		
 		add(formPanel);
+		add(print);
+		print.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				((PrescriptionEvent)getEvent()).print();
+			}
+		});
 	}
 
 	public void addMedicine(Medicine med) {
@@ -207,7 +220,7 @@ class PrescriptionPane extends EventType {
 	@Override
 	public Event getEvent() {
 		return new PrescriptionEvent(new Date(start.getDate()), new Date(end.getDate()),
-				table.getModel().getPrescription());
+				table.getModel().getPrescription(),custom.getPatient());
 	}
 
 	@Override
@@ -220,6 +233,10 @@ class PrescriptionPane extends EventType {
 }
 
 abstract class EventType extends JPanel {
+	protected EventCustomizer custom;
+	public EventType(EventCustomizer custom) {
+		this.custom = custom;
+	}
 	public abstract Event getEvent();
 
 	public abstract void reset();

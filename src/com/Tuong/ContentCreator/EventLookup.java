@@ -64,7 +64,7 @@ public class EventLookup extends BasicPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (patient == null)
 					return;
-				Event def = new CheckInEvent(new Date(), "");
+				Event def = new CheckInEvent(new Date(), "",patient);
 				patient.eventList.add(def);
 				model.update();
 				EventListenerManager.current.activateEvent("EventCreateEvent", def);
