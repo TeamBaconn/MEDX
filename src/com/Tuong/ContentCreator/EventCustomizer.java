@@ -25,7 +25,8 @@ import com.Tuong.Medicine.MedicinePrescription;
 import com.Tuong.Patient.Patient;
 
 public class EventCustomizer extends BasicPanel {
-
+	private static final long serialVersionUID = 1L;
+	
 	private JComboBox<EventType> panel;
 	private PrescriptionPane prescription;
 	private ReExamination rexam;
@@ -40,10 +41,12 @@ public class EventCustomizer extends BasicPanel {
 		rexam = new ReExamination(this);
 
 		JPanel customizer = new JPanel(new CardLayout());
+		customizer.setOpaque(false);
 		customizer.add(prescription, prescription.toString());
 		customizer.add(rexam, rexam.toString());
 
 		JPanel selector = new JPanel(new GridBagLayout());
+		selector.setOpaque(false);
 		selector.setMaximumSize(new Dimension(450, 100));
 		int[] n = { 200, 200 };
 		FormCreator form = new FormCreator(selector, 2, n, 30);
@@ -126,6 +129,7 @@ public class EventCustomizer extends BasicPanel {
 }
 
 class ReExamination extends EventType {
+	private static final long serialVersionUID = 1L;
 	private DateUI retakeDate;
 	private JTextField description;
 
@@ -135,7 +139,7 @@ class ReExamination extends EventType {
 		int[] n = { 100, 300 };
 		FormCreator form = new FormCreator(this, 2, n, 30);
 		form.createLabel("Re-exam date");
-		retakeDate = new DateUI(n[1]);
+		retakeDate = new DateUI(n[1],false);
 		form.addComponent(retakeDate);
 
 		form.createLabel("Description");
@@ -168,6 +172,7 @@ class ReExamination extends EventType {
 
 class PrescriptionPane extends EventType {
 
+	private static final long serialVersionUID = 1L;
 	private MedicationTable table;
 	private DateUI start, end;
 
@@ -178,14 +183,15 @@ class PrescriptionPane extends EventType {
 		add(table = new MedicationTable());
 
 		JPanel formPanel = new JPanel(new GridBagLayout());
+		formPanel.setOpaque(false);
 		int[] n = { 100, 300 };
 		FormCreator form = new FormCreator(formPanel, 2, n, 30);
 		form.createLabel("Start date");
-		start = new DateUI(n[1]);
+		start = new DateUI(n[1],false);
 		form.addComponent(start);
 
 		form.createLabel("End date");
-		end = new DateUI(n[1]);
+		end = new DateUI(n[1],false);
 		form.addComponent(end);
 		
 		CustomButton print = new CustomButton("Print");
@@ -233,9 +239,11 @@ class PrescriptionPane extends EventType {
 }
 
 abstract class EventType extends JPanel {
+	private static final long serialVersionUID = 1L;
 	protected EventCustomizer custom;
 	public EventType(EventCustomizer custom) {
 		this.custom = custom;
+		setBackground(custom.getBackground());
 	}
 	public abstract Event getEvent();
 

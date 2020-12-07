@@ -11,7 +11,6 @@ import java.text.ParseException;
 import javax.swing.AbstractListModel;
 import javax.swing.BoxLayout;
 import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -55,7 +54,6 @@ public class PatientInfo extends BasicPanel{
 		patientForm.createLabel("Name");
 		patient_name = patientForm.createTextField("");
 		patient_name.setEditable(false);
-		patient_name.setBackground(Color.LIGHT_GRAY);
 		
 		patientForm.createLabel("Phone number");
 		try {
@@ -69,31 +67,30 @@ public class PatientInfo extends BasicPanel{
 		patientForm.addComponent(patient_dial);
 		
 		patientForm.createLabel("DOB");
-		DOB = new DateUI(n[1]);
+		DOB = new DateUI(n[1],false);
 		patientForm.addComponent(DOB);
 		
 		patientForm.createLabel("Diagnosis");
 		diagnosis = patientForm.createTextField("");
 		
-		patientForm.createLabel("Graph");
 		graphList = new JComboBox<GraphType>();
 		model = new GraphModel();
 		graphList.setModel(model);
-		patientForm.addComponent(graphList);
 		
 		JButton newGraph = new CustomButton(new ImageIcon("Data/new_icon.png"));
 		JButton deleteGraph = new CustomButton(new ImageIcon("Data/trash_icon.png"));
 		
 		graph = new Graph((GraphType)graphList.getSelectedItem());
 		JPanel bGraph = new JPanel();
+		bGraph.setOpaque(false);
 		bGraph.setLayout(new BoxLayout(bGraph, BoxLayout.Y_AXIS));
 		
 
 		JTextField value = new RoundTextfield();
 		JButton insert = new CustomButton(">>");
-		DateUI dP = new DateUI(100);
+		DateUI dP = new DateUI(100,true);
 		JPanel adjust = new JPanel(new GridBagLayout());
-		adjust.setBackground(getBackground());
+		adjust.setOpaque(false);
 		int[] s = {50, 50};
 		FormCreator form = new FormCreator(adjust, 2, s, 50);
 		form.getGridBag().insets = new Insets(0, 0, 0, 0);
@@ -102,6 +99,7 @@ public class PatientInfo extends BasicPanel{
 		form.addComponent(deleteGraph);
 		form.addComponent(value);
 		form.addComponent(insert);
+		bGraph.add(graphList);
 		bGraph.add(adjust);
 		bGraph.add(dP);
 		

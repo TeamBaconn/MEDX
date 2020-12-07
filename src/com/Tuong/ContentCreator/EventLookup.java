@@ -42,6 +42,7 @@ public class EventLookup extends BasicPanel {
 		scrollPne.setPreferredSize(new Dimension(300, 300));
 
 		JPanel infoPanel = new JPanel();
+		infoPanel.setOpaque(false);
 		infoPanel.setPreferredSize(new Dimension(300, 100));
 		CustomButton _AddEvent = new CustomButton("Add event");
 		_AddEvent.setPreferredSize(new Dimension(300, 30));

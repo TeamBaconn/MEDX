@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import com.Tuong.DateUtils.Date;
 
 public class Graph extends JPanel implements MouseMotionListener {
-	private static final long serialVersionUID = 3591139506652988572L;
+	private static final long serialVersionUID = 1L;
 	
 	private int mouseX = 0, mouseY = 0;
 	private double median = 0;

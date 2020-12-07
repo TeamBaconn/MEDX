@@ -46,7 +46,7 @@ public class PatientLookup extends BasicPanel{
 		p_list = new JList<Patient>();
 		p_list.setCellRenderer(new PatientListRenderer());
 		JPanel patient_info = new JPanel(new GridBagLayout());
-		patient_info.setBackground(Color.decode("#f7f1e3"));
+		patient_info.setOpaque(false);
 		FormCreator form3 = new FormCreator(patient_info, 2, MedXMain.form_size_constant, 30);
 		JButton create = new CustomButton("Create");
 
