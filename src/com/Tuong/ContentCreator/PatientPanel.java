@@ -20,7 +20,7 @@ public class PatientPanel extends BasicPanel {
 
 		eventPanel = new JPanel();
 		eventPanel.setLayout(new CardLayout());
-		eventPanel.setPreferredSize(new Dimension(400, 400));
+		eventPanel.setPreferredSize(new Dimension(500, 400));
 		eventPanel.add(new EventLookup(), "1");
 		eventPanel.add(new EventCustomizer(), "2");
 		add(eventPanel);

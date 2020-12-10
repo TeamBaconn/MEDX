@@ -1,18 +1,16 @@
 package com.Tuong.Graph;
 
-import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import com.Tuong.ContentHelper.BasicUI;
 import com.Tuong.ContentHelper.CustomButton;
-import com.Tuong.ContentHelper.FormCreator;
+import com.Tuong.ContentHelper.Form;
 import com.Tuong.EventListener.ConditionalFlag;
 import com.Tuong.EventListener.EventListenerManager;
 
@@ -29,17 +27,15 @@ public class GraphCreatorUI extends BasicUI{
 	
 	@Override
 	public void setupUI() {
-		JPanel panel = new JPanel(new GridBagLayout());
-		panel.setBackground(Color.decode("#f7f1e3"));
-		int[] n = {100,200};
-		FormCreator form = new FormCreator(panel, 2, n, 40);
-		form.createLabel("Graph name");
-		JTextField name = form.createTextField("");
-		form.createLabel("Graph unit");
-		JTextField unit = form.createTextField("");
-		form.addComponent(null);
+		Form panel = new Form(new int[] {100,200}, 40);
+		panel.setBackground(getBackground());
+		panel.createLabel("Graph name");
+		JTextField name = panel.createTextField("");
+		panel.createLabel("Graph unit");
+		JTextField unit = panel.createTextField("");
+		panel.add((Component)null);
 		CustomButton button = new CustomButton("Create graph");
-		form.addComponent(button);
+		panel.add(button);
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

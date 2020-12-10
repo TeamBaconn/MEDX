@@ -23,7 +23,7 @@ public class MedicationTable extends JPanel{
         JTable table = new JTable(model);
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
-        table.setRowHeight(100);
+        table.setRowHeight(50);
  
 		table.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
 		table.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(model, "remove"));

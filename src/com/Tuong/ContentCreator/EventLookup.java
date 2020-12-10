@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -39,15 +40,17 @@ public class EventLookup extends BasicPanel {
 		_List.setModel(model);
 
 		JScrollPane scrollPne = new JScrollPane(_List);
-		scrollPne.setPreferredSize(new Dimension(300, 300));
 
 		JPanel infoPanel = new JPanel();
+		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.X_AXIS));
 		infoPanel.setOpaque(false);
-		infoPanel.setPreferredSize(new Dimension(300, 100));
+		
 		CustomButton _AddEvent = new CustomButton("Add event");
-		_AddEvent.setPreferredSize(new Dimension(300, 30));
-		add(scrollPne);
+		_AddEvent.setMaximumSize(new Dimension(Integer.MAX_VALUE,_AddEvent.getMaximumSize().height));
 		infoPanel.add(_AddEvent);
+		
+		add(scrollPne);
+		add(Box.createVerticalStrut(10));
 		add(infoPanel);
 
 		_List.addMouseListener(new MouseAdapter() {
@@ -83,10 +86,6 @@ public class EventLookup extends BasicPanel {
 	@Override
 	public void EventUnloadEvent(Event e) {
 		model.update();
-	}
-
-	public void Load(Patient p) {
-
 	}
 }
 

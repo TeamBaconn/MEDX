@@ -1,6 +1,7 @@
 package com.Tuong.ContentHelper;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -27,7 +28,7 @@ public class CustomButton extends JButton {
         setBorder(null);
         setRadius(20);
     }
-
+    
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();

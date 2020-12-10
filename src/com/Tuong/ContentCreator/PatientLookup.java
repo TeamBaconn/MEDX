@@ -2,9 +2,7 @@ package com.Tuong.ContentCreator;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -29,38 +27,37 @@ import javax.swing.ListSelectionModel;
 
 import com.Tuong.ContentHelper.BasicPanel;
 import com.Tuong.ContentHelper.CustomButton;
-import com.Tuong.ContentHelper.FormCreator;
+import com.Tuong.ContentHelper.Form;
 import com.Tuong.ContentHelper.RoundTextfield;
 import com.Tuong.EventListener.EventListenerManager;
-import com.Tuong.MedXMain.MedXMain;
 import com.Tuong.Patient.Patient;
 
 public class PatientLookup extends BasicPanel{
-
+	private static final long serialVersionUID = 1L;
+	
 	private JList<Patient> p_list;
 	private JTextField patient_name_search;
 	private DefaultListModel<Patient> model;
 	public PatientLookup() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		
 		model = new DefaultListModel<Patient>();
 		p_list = new JList<Patient>();
 		p_list.setCellRenderer(new PatientListRenderer());
-		JPanel patient_info = new JPanel(new GridBagLayout());
-		patient_info.setOpaque(false);
-		FormCreator form3 = new FormCreator(patient_info, 2, MedXMain.form_size_constant, 30);
+		JScrollPane scrollPne = new JScrollPane(p_list);
+		
+		Form patient_info = new Form(new int[] {100,300} , 30);
+		
 		JButton create = new CustomButton("Create");
 
-		form3.createLabel("Patient name");
+		patient_info.createLabel("Patient name");
 		patient_name_search = new RoundTextfield();
-		form3.addComponent(patient_name_search);
-		form3.addComponent(null);
-		form3.addComponent(create);
-
+		patient_info.add(patient_name_search);
+		patient_info.add((Component)null);
+		patient_info.add(create);
 
 		EventListenerManager.current.activateEvent("PatientListRefreshEvent","");
-		JScrollPane scrollPne = new JScrollPane(p_list);
-		scrollPne.setPreferredSize(new Dimension(400, 200));
-		scrollPne.setMaximumSize(new Dimension(400, 200));
+		
 		add(scrollPne);
 		add(patient_info);
 
@@ -121,6 +118,8 @@ public class PatientLookup extends BasicPanel{
 }
 
 class PatientListRenderer extends JLabel implements ListCellRenderer<Patient> {
+	private static final long serialVersionUID = 1L;
+	
 	private ImageIcon vertify;
 	private ImageIcon unvertify;
 

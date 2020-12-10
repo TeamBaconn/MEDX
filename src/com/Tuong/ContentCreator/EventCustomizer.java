@@ -3,6 +3,7 @@ package com.Tuong.ContentCreator;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -10,10 +11,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import com.Tuong.ContentHelper.BasicPanel;
 import com.Tuong.ContentHelper.CustomButton;
-import com.Tuong.ContentHelper.FormCreator;
+import com.Tuong.ContentHelper.Form;
 import com.Tuong.DateUtils.Date;
 import com.Tuong.DateUtils.DateUI;
 import com.Tuong.EventListener.EventListenerManager;
@@ -45,23 +47,22 @@ public class EventCustomizer extends BasicPanel {
 		customizer.add(prescription, prescription.toString());
 		customizer.add(rexam, rexam.toString());
 
-		JPanel selector = new JPanel(new GridBagLayout());
+		Form selector = new Form(new int[] {200,200}, 30);
 		selector.setOpaque(false);
 		selector.setMaximumSize(new Dimension(450, 100));
-		int[] n = { 200, 200 };
-		FormCreator form = new FormCreator(selector, 2, n, 30);
-		form.createLabel("Event type");
+		
+		selector.createLabel("Event type");
 		panel = new JComboBox<EventType>();
 		panel.addItem(prescription);
 		panel.addItem(rexam);
 
-		form.addComponent(panel);
+		selector.add(panel);
 
 		CustomButton save = new CustomButton("Save");
-		form.addComponent(save);
+		selector.add(save);
 
 		CustomButton remove = new CustomButton("Remove");
-		form.addComponent(remove);
+		selector.add(remove);
 
 		add(customizer);
 		add(selector);
@@ -135,15 +136,15 @@ class ReExamination extends EventType {
 
 	public ReExamination(EventCustomizer custom) {
 		super(custom);
-		setLayout(new GridBagLayout());
-		int[] n = { 100, 300 };
-		FormCreator form = new FormCreator(this, 2, n, 30);
+		setBorder(new EmptyBorder(new Insets(10, 0, 0, 0)));
+		Form form = new Form(new int[] {100,300}, 30);
 		form.createLabel("Re-exam date");
-		retakeDate = new DateUI(n[1],false);
-		form.addComponent(retakeDate);
+		retakeDate = new DateUI(100,false);
+		form.add(retakeDate);
 
 		form.createLabel("Description");
 		description = form.createTextField("");
+		add(form);
 	}
 
 	@Override
@@ -182,22 +183,19 @@ class PrescriptionPane extends EventType {
 
 		add(table = new MedicationTable());
 
-		JPanel formPanel = new JPanel(new GridBagLayout());
+		Form formPanel = new Form(new int[] {100,300}, 30);
 		formPanel.setOpaque(false);
-		int[] n = { 100, 300 };
-		FormCreator form = new FormCreator(formPanel, 2, n, 30);
-		form.createLabel("Start date");
-		start = new DateUI(n[1],false);
-		form.addComponent(start);
+		formPanel.createLabel("Start date");
+		start = new DateUI(100,false);
+		formPanel.add(start);
 
-		form.createLabel("End date");
-		end = new DateUI(n[1],false);
-		form.addComponent(end);
+		formPanel.createLabel("End date");
+		end = new DateUI(100,false);
+		formPanel.add(end);
 		
 		CustomButton print = new CustomButton("Print");
-		
+		formPanel.add(print);
 		add(formPanel);
-		add(print);
 		print.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

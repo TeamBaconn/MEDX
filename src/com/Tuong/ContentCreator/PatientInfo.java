@@ -1,6 +1,5 @@
 package com.Tuong.ContentCreator;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -17,11 +16,12 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
 
 import com.Tuong.ContentHelper.BasicPanel;
 import com.Tuong.ContentHelper.CustomButton;
-import com.Tuong.ContentHelper.FormCreator;
+import com.Tuong.ContentHelper.Form;
 import com.Tuong.ContentHelper.RoundFormattedTextfield;
 import com.Tuong.ContentHelper.RoundTextfield;
 import com.Tuong.DateUtils.DateUI;
@@ -48,9 +48,9 @@ public class PatientInfo extends BasicPanel{
 	private JTextField patient_name;
 	
 	public PatientInfo() {
-		setLayout(new GridBagLayout());
-		int[] n = {100,500};
-		FormCreator patientForm = new FormCreator(this, 2, n, 30);
+		setBorder(new EmptyBorder(new Insets(10, 0, 10, 0)));
+		Form patientForm = new Form(new int[] {100,500}, 40);
+		
 		patientForm.createLabel("Name");
 		patient_name = patientForm.createTextField("");
 		patient_name.setEditable(false);
@@ -64,11 +64,11 @@ public class PatientInfo extends BasicPanel{
 			e1.printStackTrace();
 		}
 		
-		patientForm.addComponent(patient_dial);
+		patientForm.add(patient_dial);
 		
 		patientForm.createLabel("DOB");
-		DOB = new DateUI(n[1],false);
-		patientForm.addComponent(DOB);
+		DOB = new DateUI(patientForm.getSize(1),false);
+		patientForm.add(DOB);
 		
 		patientForm.createLabel("Diagnosis");
 		diagnosis = patientForm.createTextField("");
@@ -89,25 +89,25 @@ public class PatientInfo extends BasicPanel{
 		JTextField value = new RoundTextfield();
 		JButton insert = new CustomButton(">>");
 		DateUI dP = new DateUI(100,true);
-		JPanel adjust = new JPanel(new GridBagLayout());
+		Form adjust = new Form(new int[] {50,50}, 50);
 		adjust.setOpaque(false);
-		int[] s = {50, 50};
-		FormCreator form = new FormCreator(adjust, 2, s, 50);
-		form.getGridBag().insets = new Insets(0, 0, 0, 0);
-		form.getGridBag().ipadx = 5;
-		form.addComponent(newGraph);
-		form.addComponent(deleteGraph);
-		form.addComponent(value);
-		form.addComponent(insert);
+		adjust.getGridBag().insets = new Insets(0, 0, 0, 0);
+		adjust.getGridBag().ipadx = 5;
+		adjust.add(newGraph);
+		adjust.add(deleteGraph);
+		adjust.setComponentHeight(25);
+		adjust.add(value);
+		adjust.add(insert);
 		bGraph.add(graphList);
 		bGraph.add(adjust);
 		bGraph.add(dP);
 		
-		patientForm.addComponent(bGraph);
-		bGraph.setPreferredSize(new Dimension(n[0],150));
+		patientForm.setComponentHeight(150);
+		patientForm.add(bGraph);
 
-		patientForm.addComponent(graph);
-		graph.setPreferredSize(new Dimension(n[1],150));
+		patientForm.add(graph);
+		
+		add(patientForm);
 		
 		insert.addActionListener(new ActionListener() {
 			@Override

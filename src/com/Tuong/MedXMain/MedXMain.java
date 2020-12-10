@@ -10,7 +10,6 @@ import com.Tuong.Authenication.AuthManager;
 import com.Tuong.EventListener.EventListenerManager;
 
 public class MedXMain {
-	public static final int[] form_size_constant = {100,300};
 	public static Font customFont;
 	public static void main(String[] args) {
 		try {
