@@ -51,8 +51,9 @@ public class FormCreator {
 		return t;
 	}
 	
-	public void createLabel(String text) {
+	public JLabel createLabel(String text) {
 		JLabel t = new JLabel(text);
 		addComponent(t);
+		return t;
 	}
 }

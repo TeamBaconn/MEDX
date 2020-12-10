@@ -1,47 +1,37 @@
 package com.Tuong.Table;
 
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.CompoundBorder;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
-import org.json.simple.JSONObject;
-
-import com.Tuong.Authenication.AuthManager;
 import com.Tuong.ContentHelper.BasicPanel;
+import com.Tuong.ContentHelper.FormCreator;
+import com.Tuong.ContentHelper.RoundTextfield;
 import com.Tuong.EventListener.EventListenerManager;
-import com.Tuong.MedXMain.JSONHelper;
 import com.Tuong.Medicine.Medicine;
-import com.Tuong.Table.ButtonEditor;
-import com.Tuong.Table.ButtonRenderer;
-import com.Tuong.Table.MedicineListModel;
-import com.Tuong.Table.SpinnerEditor;
-import com.Tuong.Trie.TrieResult;
 
 public class MedicineList extends BasicPanel {
 	private static final long serialVersionUID = 7598135574795319656L;
 
 	private JTable list;
-
-	private JTextField medName;
 	
 	private MedicineListModel model;
 
 	public MedicineList() {
-		setBorder(new CompoundBorder(new TitledBorder("Medication Information"), new EmptyBorder(0, 0, 0, 0)));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
+		setBorder(new EmptyBorder(new Insets(20, 10, 10, 10)));
 		model = new MedicineListModel();
 		list = new JTable(model);
 		
@@ -54,27 +44,40 @@ public class MedicineList extends BasicPanel {
 		list.setRowHeight(40);
 		list.setPreferredScrollableViewportSize(new Dimension(1000, 70));
 		JScrollPane scrollPne = new JScrollPane(list);
-		scrollPne.setPreferredSize(new Dimension(1000, 400));
-		scrollPne.setMaximumSize(new Dimension(1000, 400));
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		//Resize column
 		for(int i = 0; i < MedicineListModel.size.length; i++) list.getColumnModel().getColumn(i).setPreferredWidth((int) (scrollPne.getPreferredSize().getWidth()*MedicineListModel.size[i]));
 		
-		medName = new JTextField();
+		JPanel search = new JPanel(new GridBagLayout());
+		search.setMaximumSize(new Dimension(1000,40));
+		search.setOpaque(false);
+		int[] n = {100,200,100,200};
+		FormCreator form = new FormCreator(search, 4, n, 30);
+		form.createLabel("Medicine Name").setHorizontalAlignment(SwingConstants.RIGHT);
+		JTextField medName = form.createTextField("");
+		form.createLabel("Promoter").setHorizontalAlignment(SwingConstants.RIGHT);
+		JTextField promoterName = form.createTextField("");
 		medName.addKeyListener(new KeyAdapter() {
 			@Override 
 			public void keyReleased (KeyEvent e) {
-				refreshSearch(medName.getText());
+				refreshSearch(medName.getText(),promoterName.getText());
 			}
 		});
-		refreshSearch("");
-		add(medName);
+		promoterName.addKeyListener(new KeyAdapter() {
+			@Override 
+			public void keyReleased (KeyEvent e) {
+				refreshSearch(medName.getText(),promoterName.getText());
+			}
+		});
+		refreshSearch("","");
+		add(search);
+		add(Box.createVerticalStrut(10));
 		add(scrollPne);
 	}
 
-	private void refreshSearch(String query) {
+	private void refreshSearch(String query, String promoter) {
 		model.clear();
-		EventListenerManager.current.activateEvent("MedicineQueryRequest", query);
+		EventListenerManager.current.activateEvent("MedicineQueryRequest", query,promoter);
 		list.clearSelection();
 	}
 	

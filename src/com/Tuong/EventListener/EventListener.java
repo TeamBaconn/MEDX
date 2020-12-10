@@ -36,7 +36,7 @@ public interface EventListener {
 	
 	default void PatientQueryRequest(String name) {};
 	
-	default void MedicineQueryRequest(String name) {};
+	default void MedicineQueryRequest(String name, String promoter) {};
 	
 	default void MedicineLoadEvent(Medicine med) {};
 	
