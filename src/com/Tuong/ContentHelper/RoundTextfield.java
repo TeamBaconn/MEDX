@@ -9,8 +9,9 @@ import java.awt.RenderingHints;
 import javax.swing.JTextField;
 
 public class RoundTextfield extends JTextField {
-
-    private int radius;
+	private static final long serialVersionUID = 1L;
+	
+	private int radius;
 
     public RoundTextfield() {
     	super();

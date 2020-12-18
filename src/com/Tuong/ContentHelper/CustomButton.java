@@ -1,7 +1,6 @@
 package com.Tuong.ContentHelper;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,8 +11,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class CustomButton extends JButton {
-
-    private int radius;
+	private static final long serialVersionUID = 1L;
+	
+	private int radius;
 
     public CustomButton(String name) {
     	super(name);

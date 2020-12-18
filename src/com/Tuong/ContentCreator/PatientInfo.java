@@ -1,7 +1,5 @@
 package com.Tuong.ContentCreator;
 
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -206,7 +204,9 @@ public class PatientInfo extends BasicPanel{
 	}
 }
 
-class GraphModel extends AbstractListModel implements ComboBoxModel{
+class GraphModel extends AbstractListModel<GraphType> implements ComboBoxModel<GraphType>{
+	private static final long serialVersionUID = 1L;
+
 	private Patient patient;
 	
 	private GraphType select;
@@ -217,7 +217,7 @@ class GraphModel extends AbstractListModel implements ComboBoxModel{
 	}
 
 	@Override
-	public Object getElementAt(int index) {
+	public GraphType getElementAt(int index) {
 		if(patient == null) return null;
 		return patient.graphList.size() > 0?patient.graphList.get(index):null;
 	}

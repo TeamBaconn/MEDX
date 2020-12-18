@@ -34,6 +34,7 @@ public class MedicineManager implements EventListener {
 		med_trie = new Trie(med_trie_path);
 		hoat_chat_trie = new Trie(hoat_chat_trie_path);
 		// crawlData();
+		crawlDataType("dongGoi");
 	}
 
 	public final String med_path_save = "Medicine/";
@@ -66,7 +67,7 @@ public class MedicineManager implements EventListener {
 		}
 	}
 
-	public void crawlData() {
+	private void crawlData() {
 		Trie duplicate = new Trie();
 		long time = System.currentTimeMillis();
 		for (int k = 'a'; k <= 'z'; k++) {
@@ -97,6 +98,47 @@ public class MedicineManager implements EventListener {
 									(String) obj.get("nongDo"));
 
 							JSONHelper.writeObject(med_path_save + id + ".med", med);
+						}
+					} else
+						flag = -1;
+					in.close();
+				} catch (MalformedURLException e) {
+					System.out.println("Malformed URL: " + e.getMessage());
+				} catch (IOException e) {
+					System.out.println("I/O Error: " + e.getMessage());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		System.out.println("Finish with time " + (System.currentTimeMillis() - time));
+		med_trie.save(med_trie_path);
+		hoat_chat_trie.save(hoat_chat_trie_path);
+	}
+	
+	private void crawlDataType(String query) {
+		Trie duplicate = new Trie();
+		long time = System.currentTimeMillis();
+		for (int k = 'a'; k <= 'z'; k++) {
+			int flag = 0;
+			//System.out.println("Start with " + (char) k);
+			while (flag != -1) {
+				try {
+					URL url = new URL("https://drugbank.vn/services/drugbank/api/public/thuoc?page=" + flag
+							+ "&size=10000&tenThuoc=" + (char) k + "&sort=rate,desc&sort=+" + (char) k + ",asc");
+					flag++;
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
+					String line = in.readLine();
+					if (line.length() > 2) {
+						JSONParser parser = new JSONParser();
+						JSONArray arr = (JSONArray) parser.parse(line);
+						for (int i = 0; i < arr.size(); i++) {
+							JSONObject obj = (JSONObject) arr.get(i);
+							if (duplicate.contains((String) obj.get(query)))
+								continue;
+							int id = duplicate.insert((String) obj.get(query));
+							System.out.println((String) obj.get(query));
 						}
 					} else
 						flag = -1;

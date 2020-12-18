@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,11 +20,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
 
 import com.Tuong.ContentHelper.BasicPanel;
 import com.Tuong.ContentHelper.CustomButton;
@@ -40,6 +41,7 @@ public class PatientLookup extends BasicPanel{
 	private DefaultListModel<Patient> model;
 	public PatientLookup() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setBorder(new EmptyBorder(new Insets(10, 10, 0, 10)));
 		
 		model = new DefaultListModel<Patient>();
 		p_list = new JList<Patient>();

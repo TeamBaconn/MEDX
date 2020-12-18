@@ -11,6 +11,8 @@ import javax.swing.JFormattedTextField;
 import javax.swing.text.MaskFormatter;
 
 public class RoundFormattedTextfield extends JFormattedTextField{
+	private static final long serialVersionUID = 1L;
+	
 	private int radius;
 
     public RoundFormattedTextfield(MaskFormatter format) {

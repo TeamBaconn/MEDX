@@ -1,7 +1,6 @@
 package com.Tuong.Table;
 
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -17,8 +16,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.Tuong.ContentHelper.BasicPanel;
-import com.Tuong.ContentHelper.FormCreator;
-import com.Tuong.ContentHelper.RoundTextfield;
+import com.Tuong.ContentHelper.Form;
 import com.Tuong.EventListener.EventListenerManager;
 import com.Tuong.Medicine.Medicine;
 
@@ -48,15 +46,12 @@ public class MedicineList extends BasicPanel {
 		//Resize column
 		for(int i = 0; i < MedicineListModel.size.length; i++) list.getColumnModel().getColumn(i).setPreferredWidth((int) (scrollPne.getPreferredSize().getWidth()*MedicineListModel.size[i]));
 		
-		JPanel search = new JPanel(new GridBagLayout());
+		Form search = new Form(new int[] {100,300,100,300}, 30);
 		search.setMaximumSize(new Dimension(1000,40));
-		search.setOpaque(false);
-		int[] n = {100,200,100,200};
-		FormCreator form = new FormCreator(search, 4, n, 30);
-		form.createLabel("Medicine Name").setHorizontalAlignment(SwingConstants.RIGHT);
-		JTextField medName = form.createTextField("");
-		form.createLabel("Promoter").setHorizontalAlignment(SwingConstants.RIGHT);
-		JTextField promoterName = form.createTextField("");
+		search.createLabel("Medicine Name").setHorizontalAlignment(SwingConstants.RIGHT);
+		JTextField medName = search.createTextField("");
+		search.createLabel("Promoter").setHorizontalAlignment(SwingConstants.RIGHT);
+		JTextField promoterName = search.createTextField("");
 		medName.addKeyListener(new KeyAdapter() {
 			@Override 
 			public void keyReleased (KeyEvent e) {
